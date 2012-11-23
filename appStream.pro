@@ -16,16 +16,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
     audiosystem.cpp \
-    serverconnectiondialog.cpp
+    serverconnectiondialog.cpp \
+    streaminfodialog.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
     audiosystem.h \
-    serverconnectiondialog.h
+    serverconnectiondialog.h \
+    streaminfodialog.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
-    serverconnectiondialog.ui
+    serverconnectiondialog.ui \
+    streaminfodialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/dep/lib/ -lportaudio_x86
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/dep/lib/ -lportaudio_x86

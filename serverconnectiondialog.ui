@@ -35,7 +35,7 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -130,6 +130,15 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>edName</tabstop>
+  <tabstop>cbType</tabstop>
+  <tabstop>edAdress</tabstop>
+  <tabstop>sbPort</tabstop>
+  <tabstop>edPassword</tabstop>
+  <tabstop>edMountpoint</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

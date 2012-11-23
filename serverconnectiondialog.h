@@ -15,7 +15,7 @@ public:
     explicit ServerConnectionDialog(QWidget *parent = 0);
     ~ServerConnectionDialog();
 
-    void setConnection(QString name);
+    void setConnection(const QString &name);
 
 public slots:
     void accept();

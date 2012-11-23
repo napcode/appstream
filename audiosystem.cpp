@@ -1,5 +1,5 @@
 #include "audiosystem.h"
-#include <portaudio.h>
+
 
 using namespace AudioSystem;
 
@@ -14,6 +14,8 @@ Manager& Manager::getInstance()
 }
 
 Manager::Manager()
+ : _stream(0),
+   _isDeviceStreaming(false)
 {
 
 }
@@ -28,11 +30,11 @@ bool Manager::init()
     PaError e;
     e = Pa_Initialize();
     if(e != paNoError) {
-        QString msg("PortAudio init failed: ");
-        msg.append(Pa_GetErrorText(e));
-        emit stateChanged(msg);
+        emit stateChanged(QString("PortAudio init failed"));
+        emit stateChanged(QString(Pa_GetErrorText(e)));        
     }
-    emit stateChanged(QString("Audio initialized: " + QString(Pa_GetVersionText())));
+    emit stateChanged(QString("Audio initialized"));
+    emit stateChanged(QString(Pa_GetVersionText()));
 
     return true;
 }
@@ -84,4 +86,52 @@ bool Manager::checkModeSupported(const Device &d, const Mode &m) const
     if(Pa_IsFormatSupported(&params ,0 , m.sampleRate) == paNoError)
         return true;
     return false;
+}
+bool Manager::openDeviceStream()
+{
+    PaError err;
+    PaStreamParameters params;
+    params.device = 2;
+    params.channelCount = 1;
+    params.sampleFormat = paInt16;
+    params.suggestedLatency = 2048;
+    params.hostApiSpecificStreamInfo = 0;
+
+    err = Pa_OpenStream(&_stream, 
+                        &params, 
+                        0,
+                        44100,
+                        44100,
+                        paNoFlag,
+                        Manager::_PAcallback,
+                        this);
+    if(err != paNoError) {
+        emit stateChanged("Error opening device");
+        emit stateChanged(QString(Pa_GetErrorText(err)));
+        return false;
+    }
+    Pa_StartStream(_stream);
+    _isDeviceStreaming = true;
+    return true;
+}
+bool Manager::closeDeviceStream()
+{
+    if (!_isDeviceStreaming)
+        return false;
+
+    Pa_StopStream(_stream);
+    Pa_CloseStream(_stream);
+    _isDeviceStreaming = false;
+    return true;
+}
+int Manager::_PAcallback(  const void* input,
+                            void *output,
+                            unsigned long frameCount,
+                            const PaStreamCallbackTimeInfo* ti,
+                            PaStreamCallbackFlags statusFlags,
+                            void *user)
+{
+    Manager *self = static_cast<Manager*>(user);
+    emit self->stateChanged(QString::number(frameCount));
+    return 0;
 }

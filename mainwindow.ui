@@ -36,29 +36,17 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="loglabel">
+   <widget class="QPlainTextEdit" name="logLabel">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>130</y>
       <width>351</width>
-      <height>121</height>
+      <height>111</height>
      </rect>
     </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Sunken</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="textFormat">
-     <enum>Qt::LogText</enum>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+    <property name="maximumBlockCount">
+     <number>20</number>
     </property>
    </widget>
   </widget>
@@ -69,6 +57,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionStartStream"/>
+   <addaction name="actionStopStream"/>
+   <addaction name="separator"/>
    <addaction name="actionSettings"/>
    <addaction name="separator"/>
   </widget>
@@ -81,6 +72,30 @@
    </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionStartStream">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/call-start.png</normaloff>:/new/prefix1/res/call-start.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start Stream</string>
+   </property>
+   <property name="toolTip">
+    <string>Start Streaming</string>
+   </property>
+  </action>
+  <action name="actionStopStream">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/call-stop.png</normaloff>:/new/prefix1/res/call-stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Stream</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop Streaming</string>
    </property>
   </action>
  </widget>

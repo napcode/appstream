@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QCoreApplication::setApplicationName("appStream");
 
     connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbarTriggered(QAction*)));
+
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
     as.init();
@@ -31,20 +32,22 @@ void MainWindow::toolbarTriggered(QAction *a)
 {
     QString text;
     if(a == ui->actionSettings) {
-        text.append("click");
-        SettingsDialog *s = new SettingsDialog;
-        s->show();
-        //delete s;
-    } else
-        text.append("asdfjakösdj");
-    ui->loglabel->setText(text);
+        SettingsDialog s;
+        s.exec();
+    }
+    else if (a == ui->actionStartStream) {
+        AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+        as.openDeviceStream();
+    }
+    else if (a = ui->actionStopStream) {
+        AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+        as.closeDeviceStream();
+    }
 }
 void MainWindow::log(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
-    QString entry = current.toString();
-    entry += QString(": ") + s + QString("\n");
-    QString old = ui->loglabel->text();
-    old.append(entry);
-    ui->loglabel->setText(old);
+    QString entry = current.toString(Qt::SystemLocaleShortDate);
+    entry += QString(": ") + s;
+    ui->logLabel->appendPlainText(entry);
 }

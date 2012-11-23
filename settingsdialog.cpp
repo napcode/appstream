@@ -2,7 +2,9 @@
 #include "ui_settingsdialog.h"
 #include "audiosystem.h"
 #include "serverconnectiondialog.h"
+#include "streaminfodialog.h"
 #include <QSettings>
+#include <QMessageBox>
 #include <iostream>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
@@ -17,7 +19,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->cbChannels, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAudioDeviceList(int)));
     connect(ui->addConnection, SIGNAL(released()), this, SLOT(addConnection()));
     connect(ui->editConnection, SIGNAL(released()), this, SLOT(editConnection()));
-    connect(ui->delConnection, SIGNAL(released()), this, SLOT(delConnection()));
+    connect(ui->rmConnection, SIGNAL(released()), this, SLOT(rmConnection()));
+    connect(ui->addStreamInfo, SIGNAL(released()), this, SLOT(addStreamInfo()));
+    connect(ui->editStreamInfo, SIGNAL(released()), this, SLOT(editStreamInfo()));
+    connect(ui->rmStreamInfo, SIGNAL(released()), this, SLOT(rmStreamInfo()));
 
     /* load settings */
     applySettings();
@@ -32,31 +37,34 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::applySettings()
 {
     QSettings s;
-    if (s.contains("audio/sampleRate"))
+    s.beginGroup("audio");
+    if (s.contains("sampleRate"))
     {
-        int i = ui->cbSampleRate->findText(s.value("audio/sampleRate").toString());
+        int i = ui->cbSampleRate->findText(s.value("sampleRate").toString());
         ui->cbSampleRate->setCurrentIndex(i);
     }
-    if (s.contains("audio/bitsPerSample"))
+    if (s.contains("bitsPerSample"))
     {
-        int i = ui->cbBitsPerSample->findText(s.value("audio/bitsPerSample").toString());
+        int i = ui->cbBitsPerSample->findText(s.value("bitsPerSample").toString());
         ui->cbBitsPerSample->setCurrentIndex(i);
     }
-    if (s.contains("audio/numChannels"))
+    if (s.contains("numChannels"))
     {
-        int i = ui->cbChannels->findText(s.value("audio/numChannels").toString());
+        int i = ui->cbChannels->findText(s.value("numChannels").toString());
         ui->cbChannels->setCurrentIndex(i);
     }
-    if (s.contains("audio/deviceName"))
+    if (s.contains("deviceName"))
     {
-        int i = ui->cbInputDevices->findText(s.value("audio/deviceName").toString());
+        int i = ui->cbInputDevices->findText(s.value("deviceName").toString());
         ui->cbInputDevices->setCurrentIndex(i);
     }
+    s.endGroup();
     applyConnectionSettings();
     applyStreamSettings();
 }
 void SettingsDialog::applyConnectionSettings()
 {
+    ui->cbConnection->clear();
     QSettings s;
     s.beginGroup("connection");
     QStringList connections = s.childGroups();
@@ -73,6 +81,7 @@ void SettingsDialog::applyConnectionSettings()
 }
 void SettingsDialog::applyStreamSettings()
 {
+    ui->cbStreamInfo->clear();
     QSettings s;
     s.beginGroup("stream");
     QStringList connections = s.childGroups();
@@ -109,8 +118,7 @@ void SettingsDialog::accept()
         s.setValue("selected", ui->cbStreamInfo->currentText());
         s.endGroup();
     }
-    // close & delete dialog
-    delete this;
+    this->done(QDialog::Accepted);
 }
 void SettingsDialog::updateAudioDeviceList(int)
 {
@@ -135,20 +143,71 @@ void SettingsDialog::updateAudioDeviceList(int)
 }
 void SettingsDialog::addConnection()
 {
-    ServerConnectionDialog *scd = new ServerConnectionDialog;
-    scd->show();
+    ServerConnectionDialog scd;
+    int ret = scd.exec();
+    if (ret == QDialog::Accepted) {
+        applyConnectionSettings();
+    }
 }
 void SettingsDialog::editConnection()
 {
-    ServerConnectionDialog *scd = new ServerConnectionDialog;
-    scd->setConnection(ui->cbConnection->currentText());
-    scd->show();
+    if (ui->cbConnection->currentText().isNull() || ui->cbConnection->currentText().isEmpty())
+        return;
+    ServerConnectionDialog scd;
+    scd.setConnection(ui->cbConnection->currentText());
+    scd.exec(); 
 }
-void SettingsDialog::delConnection()
+void SettingsDialog::rmConnection()
 {
-
+    if (ui->cbConnection->currentText().isNull() || ui->cbConnection->currentText().isEmpty())
+        return;
+    QMessageBox m(QMessageBox::Warning, "Delete connection?","Delete the selected connection?", QMessageBox::Yes | QMessageBox::No );
+    m.setDefaultButton(QMessageBox::No);
+    int ret = m.exec();
+    if (ret != QMessageBox::Yes)
+        return;
+    QSettings s;
+    s.beginGroup("connection");
+    s.remove("selected");
+    s.beginGroup(ui->cbConnection->currentText());
+    s.remove("");
+    s.endGroup();
+    s.endGroup();
+    int i = ui->cbConnection->currentIndex();
+    ui->cbConnection->removeItem(i);
 }
-void SettingsDialog::editStreamInfos()
+void SettingsDialog::addStreamInfo()
 {
-
+    StreamInfoDialog sid;
+    int ret = sid.exec();
+    if (ret == QDialog::Accepted) {
+        applyStreamSettings();
+    }
+}
+void SettingsDialog::editStreamInfo()
+{
+    if (ui->cbStreamInfo->currentText().isNull() || ui->cbStreamInfo->currentText().isEmpty())
+        return;
+    StreamInfoDialog sid;
+    sid.setStreamInfo(ui->cbStreamInfo->currentText());
+    sid.exec();
+}
+void SettingsDialog::rmStreamInfo()
+{
+    if (ui->cbStreamInfo->currentText().isNull() || ui->cbStreamInfo->currentText().isEmpty())
+        return;
+    QMessageBox m(QMessageBox::Warning, "Delete stream?","Delete the selected stream?", QMessageBox::Yes | QMessageBox::No );
+    m.setDefaultButton(QMessageBox::No);
+    int ret = m.exec();
+    if (ret != QMessageBox::Yes)
+        return;
+    QSettings s;
+    s.beginGroup("stream");
+    s.remove("selected");
+    s.beginGroup(ui->cbStreamInfo->currentText());
+    s.remove("");
+    s.endGroup();
+    s.endGroup();
+    int i = ui->cbStreamInfo->currentIndex();
+    ui->cbStreamInfo->removeItem(i);
 }

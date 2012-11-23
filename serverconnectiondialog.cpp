@@ -14,18 +14,31 @@ ServerConnectionDialog::~ServerConnectionDialog()
 {
     delete ui;
 }
-void ServerConnectionDialog::setConnection(QString name)
+void ServerConnectionDialog::setConnection(const QString &name)
 {
 	QSettings s;
-	QString base("connection/");
-	if(s.contains(base+name)) {
-		QString tmp(base+name+"/");
-		if(s.contains(tmp + QString("type"))) {
-			int i = ui->cbType->findText(s.value(tmp + QString("type")).toString());
-			ui->cbType->setCurrentIndex(i);
-		}
+  s.beginGroup("connection");
+	s.beginGroup(name);
+  ui->edName->setText(name);
+  ui->edName->setReadOnly(true);
+	if(s.contains("type")) {
+    int i = ui->cbType->findText(s.value("type").toString());
+		ui->cbType->setCurrentIndex(i);		
 	}
-
+  if(s.contains("adress")) {
+    ui->edAdress->setText(s.value("adress").toString());
+  }
+  if(s.contains("port")) {
+    ui->sbPort->setValue(s.value("port").toInt());
+  }
+  if(s.contains("password")) {
+    ui->edPassword->setText(s.value("password").toString());
+  }
+  if(s.contains("mountpoint")) {
+    ui->edMountpoint->setText(s.value("mountpoint").toString());
+  }
+  s.endGroup();
+  s.endGroup();
 }
 void ServerConnectionDialog::accept()
 {
@@ -48,8 +61,5 @@ void ServerConnectionDialog::accept()
    	}
     s.endGroup();
     s.endGroup();
-
-
-    // close & delete dialog
-    delete this;
+    this->done(QDialog::Accepted);
 }

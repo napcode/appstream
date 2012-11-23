@@ -18,8 +18,10 @@ public:
 public slots:
     void addConnection();
     void editConnection();
-    void delConnection();
-    void editStreamInfos();
+    void rmConnection();
+    void addStreamInfo();
+    void editStreamInfo();
+    void rmStreamInfo();
     void accept();
     
 private:

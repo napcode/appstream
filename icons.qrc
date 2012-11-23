@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/new/prefix1">
         <file>res/preferences-system.png</file>
+        <file>res/call-start.png</file>
+        <file>res/call-stop.png</file>
     </qresource>
 </RCC>
