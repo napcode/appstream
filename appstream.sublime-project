@@ -1,8 +1,10 @@
 {
-	"folders":
-	[
-		{
-			"path": "/home/buhr/projects/appStream"
-		}
-	]
+ "folders": [
+  {
+   "folder_exclude_patterns": [
+    "/home/buhr/projects/appStream"
+   ], 
+   "path": "/home/buhr/projects/appStream"
+  }
+ ]
 }

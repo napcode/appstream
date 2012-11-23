@@ -16,11 +16,19 @@ public:
     ~SettingsDialog();
 
 public slots:
-    void editServerConnections();
+    void addConnection();
+    void editConnection();
+    void delConnection();
     void editStreamInfos();
+    void accept();
     
 private:
+	void applySettings();
+	void applyConnectionSettings();
+	void applyStreamSettings();
+
     Ui::SettingsDialog *ui;
+
 private slots:
     void updateAudioDeviceList(int dummy);
 };

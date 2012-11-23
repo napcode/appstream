@@ -14,6 +14,11 @@ class ServerConnectionDialog : public QDialog
 public:
     explicit ServerConnectionDialog(QWidget *parent = 0);
     ~ServerConnectionDialog();
+
+    void setConnection(QString name);
+
+public slots:
+    void accept();
     
 private:
     Ui::ServerConnectionDialog *ui;

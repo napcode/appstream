@@ -12,6 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // setup settings system
+    QCoreApplication::setOrganizationName("apparatus");
+    QCoreApplication::setOrganizationDomain("apparatus.de");
+    QCoreApplication::setApplicationName("appStream");
+
     connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbarTriggered(QAction*)));
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
