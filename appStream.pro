@@ -37,3 +37,6 @@ DEPENDPATH += $$PWD/dep/portaudio/include
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_x86.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_x86.lib
 else:unix: LIBS += -lportaudio
+
+RESOURCES += \
+    icons.qrc

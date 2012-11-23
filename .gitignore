@@ -1,5 +1,8 @@
 *.[oa]
 moc_*.*
 ui_*.*
+qrc_*.*
 appStream
 Makefile
+appStream.pro.user
+

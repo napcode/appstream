@@ -75,9 +75,9 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSettings">
    <property name="icon">
-    <iconset>
-     <normalon>../../Downloads/oxygen/32x32/categories/applications-system.png</normalon>
-    </iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/preferences-system.png</normaloff>
+     <normalon>../../Downloads/oxygen/32x32/categories/applications-system.png</normalon>:/new/prefix1/res/preferences-system.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -85,7 +85,9 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>actionTriggered(QAction*)</slot>
