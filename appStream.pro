@@ -41,5 +41,6 @@ win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_x86.lib
 else:unix: LIBS += -lportaudio
 
+win32::RC_FILE = w32app.rc
 RESOURCES += \
     icons.qrc
