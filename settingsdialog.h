@@ -25,9 +25,11 @@ public slots:
     void accept();
     
 private:
-	void applySettings();
-	void applyConnectionSettings();
-	void applyStreamSettings();
+    void applySettings();
+    void applyAudioSettings();
+    void applyRecordSettings();
+    void applyConnectionSettings();
+    void applyStreamSettings();
 
     Ui::SettingsDialog *ui;
 

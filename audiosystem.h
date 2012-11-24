@@ -33,12 +33,14 @@ public:
     bool checkModeSupported(const Device &d, const Mode &m) const;
     bool openDeviceStream();
     bool closeDeviceStream();
+    Device getDeviceByName(const QString &name);
 signals:
     void stateChanged(QString text) const;
 
 private:
     Manager();
     ~Manager();
+
 
     static int _PAcallback(const void* input,
                             void *output,
@@ -51,6 +53,7 @@ private:
     PaStream *_stream;
 
     bool _isDeviceStreaming;
+    Mode _streamingMode;
 };
 }
 #endif // AUDIOSYSTEM_H

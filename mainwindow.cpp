@@ -39,7 +39,7 @@ void MainWindow::toolbarTriggered(QAction *a)
         AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
         as.openDeviceStream();
     }
-    else if (a = ui->actionStopStream) {
+    else if (a == ui->actionStopStream) {
         AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
         as.closeDeviceStream();
     }

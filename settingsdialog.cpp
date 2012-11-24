@@ -37,6 +37,18 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::applySettings()
 {
     QSettings s;
+    s.beginGroup("general");
+    if (s.contains("connectAtStart"))
+	ui->cbConnectAtStart->setChecked(s.value("connectAtStart").toBool());
+    s.endGroup();
+    applyAudioSettings();
+    applyRecordSettings();
+    applyConnectionSettings();
+    applyStreamSettings();
+}
+void SettingsDialog::applyAudioSettings()
+{
+    QSettings s;
     s.beginGroup("audio");
     if (s.contains("sampleRate"))
     {
@@ -50,6 +62,7 @@ void SettingsDialog::applySettings()
     }
     if (s.contains("numChannels"))
     {
+	// FIXME don't use string to configure combobox
         int i = ui->cbChannels->findText(s.value("numChannels").toString());
         ui->cbChannels->setCurrentIndex(i);
     }
@@ -59,8 +72,9 @@ void SettingsDialog::applySettings()
         ui->cbInputDevices->setCurrentIndex(i);
     }
     s.endGroup();
-    applyConnectionSettings();
-    applyStreamSettings();
+}
+void SettingsDialog::applyRecordSettings()
+{
 }
 void SettingsDialog::applyConnectionSettings()
 {
@@ -104,6 +118,8 @@ void SettingsDialog::accept()
         s.beginGroup("audio");
         s.setValue("sampleRate", ui->cbSampleRate->currentText());
         s.setValue("bitsPerSample", ui->cbBitsPerSample->currentText());
+	// FIXME don't use currentText here
+	// store channelCount in combobox
         s.setValue("numChannels", ui->cbChannels->currentText());
         s.setValue("deviceName", ui->cbInputDevices->currentText());
         s.endGroup();
@@ -118,6 +134,14 @@ void SettingsDialog::accept()
         s.setValue("selected", ui->cbStreamInfo->currentText());
         s.endGroup();
     }
+    {
+	s.beginGroup("general");
+	s.setValue("connectOnStart", ui->cbConnectAtStart->isChecked());
+	s.endGroup();
+    }
+    {
+	/* store record settings here */
+    }
     this->done(QDialog::Accepted);
 }
 void SettingsDialog::updateAudioDeviceList(int)
@@ -127,6 +151,8 @@ void SettingsDialog::updateAudioDeviceList(int)
 
     m.sampleRate = ui->cbSampleRate->currentText().toInt();
     m.bitsPerSample = ui->cbBitsPerSample->currentText().toInt();
+    // FIXME don't use currentText here
+    // store channelCount in comboBox
     if (ui->cbChannels->currentText() == QString("Mono"))
         m.numChannels = 1;
     else

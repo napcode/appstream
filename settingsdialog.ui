@@ -63,7 +63,7 @@
      <property name="title">
       <string>Server</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget1">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -152,7 +152,7 @@
      <property name="title">
       <string>Stream</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget2">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -242,7 +242,7 @@
      <property name="title">
       <string>General</string>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget3">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -260,7 +260,7 @@
         </widget>
        </item>
        <item row="0" column="1" alignment="Qt::AlignHCenter">
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="cbConnectAtStart">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -277,7 +277,7 @@
     <attribute name="title">
      <string>Audio</string>
     </attribute>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="layoutWidget4">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -426,7 +426,7 @@
   <tabstop>rmStreamInfo</tabstop>
   <tabstop>addStreamInfo</tabstop>
   <tabstop>editStreamInfo</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>cbConnectAtStart</tabstop>
   <tabstop>cbSampleRate</tabstop>
   <tabstop>cbBitsPerSample</tabstop>
   <tabstop>cbChannels</tabstop>
