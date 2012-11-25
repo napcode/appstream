@@ -38,6 +38,7 @@ bool Manager::init()
     emit stateChanged(QString("Audio initialized"));
     emit stateChanged(QString(Pa_GetVersionText()));
 
+
     return true;
 }
 DeviceList Manager::getDeviceList() const
@@ -144,6 +145,11 @@ bool Manager::openDeviceStream()
 	default:
 	    params.sampleFormat = paInt16;
     }
+
+    // FIXME we'll set that for now to
+    params.sampleFormat = paInt16;
+    m.bitsPerSample = 16;
+
     params.device = d.second;
     params.channelCount = m.numChannels;
     params.suggestedLatency = FRAMESIZE;
@@ -158,13 +164,17 @@ bool Manager::openDeviceStream()
 	    Manager::_PAcallback,
 	    this);
     if(err != paNoError) {
-	emit stateChanged("Error opening device");
-	emit stateChanged(QString(Pa_GetErrorText(err)));
-	return false;
+    	emit stateChanged("Error opening device");
+    	emit stateChanged(QString(Pa_GetErrorText(err)));
+    	return false;
     }
     /* setup went well -> start device stream */
     _isDeviceStreaming = true;
     _streamingMode = m;
+    emit stateChanged("Stream started...");
+
+    // FIXME ringbuffer should be inited to type
+    _ringbuffer.init(1);
     Pa_StartStream(_stream);
 
     return true;
@@ -172,21 +182,27 @@ bool Manager::openDeviceStream()
 bool Manager::closeDeviceStream()
 {
     if (!_isDeviceStreaming)
-	return false;
+	   return false;
 
     Pa_StopStream(_stream);
     Pa_CloseStream(_stream);
+    emit stateChanged("Stream stopped...");
     _isDeviceStreaming = false;
     return true;
 }
-int Manager::_PAcallback(  const void* input,
+int Manager::_PAcallback(const void* input,
 	void *output,
 	unsigned long frameCount,
 	const PaStreamCallbackTimeInfo* ti,
 	PaStreamCallbackFlags statusFlags,
 	void *user)
 {
+    // get "this" pointer
     Manager *self = static_cast<Manager*>(user);
-    emit self->stateChanged(QString::number(frameCount));
-    return 0;
+    
+    //int written = self->_ringbuffer.write(input,frameCount);
+    short f;
+    self->_ringbuffer.write(&f,1);
+    //self->closeDeviceStream();
+    return paContinue;
 }

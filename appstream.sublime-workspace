@@ -3,23 +3,55 @@
 	{
 		"selected_items":
 		[
+			[
+				"r",
+				"_ringbuffer"
+			],
+			[
+				"en",
+				"endptr"
+			],
+			[
+				"re",
+				"readFragments"
+			],
+			[
+				"_",
+				"_stream"
+			],
+			[
+				"apply",
+				"applyStreamSettings"
+			],
+			[
+				"cbS",
+				"cbStreamInfo"
+			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "serverconnectiondialog.h",
+			"file": "settingsdialog.cpp",
 			"settings":
 			{
-				"buffer_size": 463,
+				"buffer_size": 7382,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "serverconnectiondialog.cpp",
+			"file": "audiosystem.cpp",
 			"settings":
 			{
-				"buffer_size": 1688,
+				"buffer_size": 4915,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "audiosystem.h",
+			"settings":
+			{
+				"buffer_size": 1280,
 				"line_ending": "Windows"
 			}
 		},
@@ -27,33 +59,77 @@
 			"file": "mainwindow.cpp",
 			"settings":
 			{
-				"buffer_size": 1209,
+				"buffer_size": 1741,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "settingsdialog.h",
+			"file": "ringbuffer.h",
 			"settings":
 			{
-				"buffer_size": 658,
+				"buffer_size": 3816,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "settingsdialog.cpp",
+			"file": "dsp.h",
 			"settings":
 			{
-				"buffer_size": 4981,
+				"buffer_size": 245,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "dsp.cpp",
+			"settings":
+			{
+				"buffer_size": 92,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/butt.cpp",
+			"settings":
+			{
+				"buffer_size": 4095,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/port_audio.cpp",
+			"settings":
+			{
+				"buffer_size": 13013,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/ringbuffer.cpp",
+			"settings":
+			{
+				"buffer_size": 3226,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/ringbuffer.h",
+			"settings":
+			{
+				"buffer_size": 1015,
+				"line_ending": "Unix"
 			}
 		}
 	],
 	"build_system": "Packages/Makefile/Make.sublime-build",
 	"command_palette":
 	{
-		"height": 127.0,
+		"height": 361.0,
 		"selected_items":
 		[
+			[
+				"rein",
+				"Indentation: Reindent Lines"
+			],
 			[
 				"key",
 				"Preferences: Key Bindings - User"
@@ -96,6 +172,18 @@
 	},
 	"file_history":
 	[
+		"/E/Source/appStream/mainwindow.h",
+		"/E/Source/appStream/ringbuffer.cpp",
+		"/E/Source/appStream/w32app.rc",
+		"/E/Source/appStream/mainwindow.ui",
+		"/E/Source/appStream/settingsdialog.h",
+		"/E/Source/appStream/mainwindow.cpp",
+		"/E/Source/appStream/serverconnectiondialog.cpp",
+		"/E/Source/appStream/serverconnectiondialog.h",
+		"/E/Source/appStream/streaminfodialog.h",
+		"/E/Source/appStream/streaminfodialog.cpp",
+		"/E/Source/appStream/streaminfodialog.ui",
+		"/E/Source/appStream/settingsdialog.ui",
 		"/C/Users/Mathias Buhr/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/E/Source/appStream/settingsdialog.cpp",
 		"/home/buhr/projects/diss/xsiteq/CMakeLists.txt",
@@ -205,77 +293,23 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "serverconnectiondialog.h",
+					"file": "settingsdialog.cpp",
 					"settings":
 					{
-						"buffer_size": 463,
+						"buffer_size": 7382,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "serverconnectiondialog.cpp",
-					"settings":
-					{
-						"buffer_size": 1688,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								711,
-								711
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 917.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "mainwindow.cpp",
-					"settings":
-					{
-						"buffer_size": 1209,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1208,
-								1208
+								1491,
+								1491
 							]
 						],
 						"settings":
@@ -285,25 +319,53 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 60.0,
+						"translation.y": 750.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "settingsdialog.h",
+					"buffer": 1,
+					"file": "audiosystem.cpp",
 					"settings":
 					{
-						"buffer_size": 658,
+						"buffer_size": 4915,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								538,
-								538
+								4856,
+								4856
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3880.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "audiosystem.h",
+					"settings":
+					{
+						"buffer_size": 1280,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1236,
+								1236
 							]
 						],
 						"settings":
@@ -319,19 +381,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "settingsdialog.cpp",
+					"buffer": 3,
+					"file": "mainwindow.cpp",
 					"settings":
 					{
-						"buffer_size": 4981,
+						"buffer_size": 1741,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4834,
-								4834
+								1703,
+								1703
 							]
 						],
 						"settings":
@@ -341,7 +403,201 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2917.0,
+						"translation.y": 928.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "ringbuffer.h",
+					"settings":
+					{
+						"buffer_size": 3816,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3487,
+								3487
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3420.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "dsp.h",
+					"settings":
+					{
+						"buffer_size": 245,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								113,
+								113
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "dsp.cpp",
+					"settings":
+					{
+						"buffer_size": 92,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								90,
+								90
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 7,
+					"file": "/E/Source/butt-0.1.12/src/butt.cpp",
+					"settings":
+					{
+						"buffer_size": 4095,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								413,
+								413
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1560.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/E/Source/butt-0.1.12/src/port_audio.cpp",
+					"settings":
+					{
+						"buffer_size": 13013,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2767,
+								2767
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7084.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/E/Source/butt-0.1.12/src/ringbuffer.cpp",
+					"settings":
+					{
+						"buffer_size": 3226,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2685,
+								2685
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2280.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/E/Source/butt-0.1.12/src/ringbuffer.h",
+					"settings":
+					{
+						"buffer_size": 1015,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								32,
+								32
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -366,11 +622,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.571521456437,
 			1.0
 		],
 		"rows":
@@ -409,6 +672,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 193.0,
+	"side_bar_width": 202.0,
 	"status_bar_visible": true
 }

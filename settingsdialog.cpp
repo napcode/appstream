@@ -26,9 +26,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     /* load settings */
     applySettings();
-
-    /* trigger refresh */
-    updateAudioDeviceList(-1);
 }
 SettingsDialog::~SettingsDialog()
 {
@@ -38,13 +35,19 @@ void SettingsDialog::applySettings()
 {
     QSettings s;
     s.beginGroup("general");
-    if (s.contains("connectAtStart"))
-	ui->cbConnectAtStart->setChecked(s.value("connectAtStart").toBool());
+    if (s.contains("connectOnStart"))
+	ui->cbConnectAtStart->setChecked(s.value("connectOnStart").toBool());
     s.endGroup();
+    /* trigger refresh */
+    updateAudioDeviceList(-1);
     applyAudioSettings();
     applyRecordSettings();
     applyConnectionSettings();
     applyStreamSettings();
+
+
+
+    
 }
 void SettingsDialog::applyAudioSettings()
 {

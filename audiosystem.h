@@ -6,6 +6,7 @@
 #include <QPair>
 
 #include <portaudio.h>
+#include "ringbuffer.h"
 
 namespace AudioSystem {
 
@@ -36,6 +37,7 @@ public:
     Device getDeviceByName(const QString &name);
 signals:
     void stateChanged(QString text) const;
+    void newAudioFrame(unsigned long frames) const;
 
 private:
     Manager();
@@ -54,6 +56,7 @@ private:
 
     bool _isDeviceStreaming;
     Mode _streamingMode;
+    RingBuffer<short> _ringbuffer;
 };
 }
 #endif // AUDIOSYSTEM_H

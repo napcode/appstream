@@ -20,7 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),this,SLOT(toolbarTriggered(QAction*)));
 
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    // whenever there is a state change in the audio manager we'd like to log it
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
+    connect(&as, SIGNAL(newAudioFrame(unsigned long)), this, SLOT(updateVUMeter(unsigned long)));
+
     as.init();
 }
 
@@ -50,4 +53,10 @@ void MainWindow::log(QString s)
     QString entry = current.toString(Qt::SystemLocaleShortDate);
     entry += QString(": ") + s;
     ui->logLabel->appendPlainText(entry);
+}
+void MainWindow::updateVUMeter(unsigned long value)
+{
+
+    log(QString::number(value));
+
 }

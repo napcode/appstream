@@ -18,6 +18,7 @@ public:
 public slots:
     void toolbarTriggered(QAction *a);
     void log(QString s);
+    void updateVUMeter(unsigned long);
     
 private:
     Ui::MainWindow *ui;

@@ -17,13 +17,16 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     audiosystem.cpp \
     serverconnectiondialog.cpp \
-    streaminfodialog.cpp
+    streaminfodialog.cpp \
+    dsp.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
     audiosystem.h \
     serverconnectiondialog.h \
-    streaminfodialog.h
+    streaminfodialog.h \
+    ringbuffer.h \
+    dsp.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
