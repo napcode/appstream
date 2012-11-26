@@ -5,34 +5,45 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include "ringbuffer.h"
+#include "config.h"
+#include "processor.h"
 
 class DSP : public QThread
 {
+    Q_OBJECT
 public:
-    DSP();
+    DSP(uint8_t channels);
     ~DSP();
 
-    void feed(const short* buffer, unsigned long frames);
+    // add peaks and maybe more
+    void defaultSetup();
+    SignalChain& getSignalChain() const;
+    void setSignalChain(SignalChain s);
+
+    void feed(const sample_t* buffer, unsigned long frames);
     void run();
+    void test();
     bool isActive() const { return _active; }
-    void disable() { _active = false; }
+    void disable();
 
-    RingBuffer<short>& getBuffer() { return _ringbuffer; }
-    const RingBuffer<short>& getBuffer() const { return _ringbuffer; }
+    RingBuffer<sample_t>& getBuffer() { return _inbuffer; }
+    const RingBuffer<sample_t>& getBuffer() const { return _inbuffer; }
+signals:
+    void stateChanged(QString s);
 
-    void getPeaks(short *l, short *r);
 private:
     void setSize();
-    void checkPeak();
+    void initPeaks();
+    void checkPeaks();
 
 	bool _active;
-    RingBuffer<short> _ringbuffer;
-    QMutex _bufferlock;
+    RingBuffer<sample_t> _inbuffer;
     QMutex _work;
     QWaitCondition _workCondition;
     unsigned int _blockSize;
-    short *_workBuffer;
-    short _max_l, _max_r;
+    uint8_t _numChannels;
+    sample_t *_buffers[2];
+    SignalChain _signalChain;
 };
 
 #endif // DSP_H

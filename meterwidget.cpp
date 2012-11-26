@@ -1,16 +1,16 @@
-#include "vuwidget.h"
+#include "meterwidget.h"
 #include <QPainter>
 
-VUWidget::VUWidget(short channels)
+MeterWidget::MeterWidget(short channels)
     :_numChannels(channels)
 {
     _values = new short[_numChannels];
 }
-VUWidget::~VUWidget()
+MeterWidget::~MeterWidget()
 {
     delete[] _values;
 }
-void VUWidget::paintEvent(QPaintEvent *event)
+void MeterWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.setPen(Qt::green);

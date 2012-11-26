@@ -3,12 +3,12 @@
 
 #include <QLabel>
 
-class VUWidget : public QLabel
+class MeterWidget : public QLabel
 {
     Q_OBJECT
 public:
-    VUWidget(short channels = 1);
-    ~VUWidget();
+    MeterWidget(short channels = 1);
+    ~MeterWidget();
 protected:
     void paintEvent(QPaintEvent *event);
 private:

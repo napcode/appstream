@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <stdlib.h>
+#include <stdint.h>
 
 template<typename T>
 class RingBuffer
@@ -12,24 +13,24 @@ class RingBuffer
 public:
     RingBuffer();
     ~RingBuffer();
-    bool init(unsigned int size);
+    bool init(uint32_t size);
 
     bool isFull() const;
     bool isEmpty() const;
-    inline unsigned int getSize() const { return _size; }
-    void setSize(unsigned int size); 
+    inline uint32_t getSize() const { return _size; }
+    void setSize(uint32_t size); 
 
-    inline unsigned int getSpace() const { return _space; }
-    inline unsigned int getFillLevel() const { return _size - _space; }
+    inline uint32_t getSpace() const { return _space; }
+    inline uint32_t getFillLevel() const { return _size - _space; }
 
-    unsigned int read(T* dest, unsigned int num = 0);
-	unsigned int write(const T* src, unsigned int num, bool partialWrite = false);
-	unsigned int write(const void* src, unsigned int num, bool partialWrite = false);
+    uint32_t read(T* dest, uint32_t num = 0);
+	uint32_t write(const T* src, uint32_t num, bool partialWrite = false);
+	uint32_t write(const void* src, uint32_t num, bool partialWrite = false);
 
 private:
 	T *_buffer;	
-	unsigned int _size;
-	unsigned int _space;
+	uint32_t _size;
+	uint32_t _space;
 	T *_rptr;
 	T *_wptr;
 };
@@ -50,7 +51,7 @@ RingBuffer<T>::~RingBuffer()
 }
 
 template<typename T>
-bool RingBuffer<T>::init(unsigned int size)
+bool RingBuffer<T>::init(uint32_t size)
 {
 	if(_buffer) {
         delete[] _buffer;
@@ -68,7 +69,7 @@ bool RingBuffer<T>::init(unsigned int size)
 	return true;
 }
 template<typename T>
-void RingBuffer<T>::setSize(unsigned int size)
+void RingBuffer<T>::setSize(uint32_t size)
 {
 	init(size);
 }
@@ -90,7 +91,7 @@ bool RingBuffer<T>::isFull() const
 }
 
 template<typename T>
-unsigned int RingBuffer<T>::read(T* dest, unsigned int num)
+unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
 {
 	// are the buffers valid?
 	if(!dest || !_buffer)
@@ -101,8 +102,8 @@ unsigned int RingBuffer<T>::read(T* dest, unsigned int num)
 		return 0;
 
 	T* endptr = _buffer + (_size * sizeof(T));
-	unsigned int numBytes;
-	unsigned int numElements;
+	uint32_t numBytes;
+	uint32_t numElements;
 	// read all 
 	if (num == 0) 
 		numElements = getFillLevel();
@@ -115,14 +116,14 @@ unsigned int RingBuffer<T>::read(T* dest, unsigned int num)
 	// content is between begin & end
 	if(_rptr + numBytes < endptr) {
 		memcpy(dest, _rptr, numBytes);
-		_rptr += numBytes;
+		_rptr += numElements;
 	}
 	// content wraps around
 	else {
-		unsigned int from_rptr = endptr - _rptr;
-		unsigned int from_begin = numBytes - from_rptr; 
+		uint32_t from_rptr = endptr - _rptr;
+		uint32_t from_begin = numBytes - from_rptr; 
 		memcpy(dest, _rptr, from_rptr);
-		dest += from_rptr;
+		dest += from_rptr/sizeof(T);
 		memcpy(dest, _buffer, from_begin);
 		_rptr = _buffer + from_begin;
 	}
@@ -133,54 +134,50 @@ unsigned int RingBuffer<T>::read(T* dest, unsigned int num)
 }
 
 template<typename T>
-unsigned int RingBuffer<T>::write(const void* src, unsigned int num, bool partialWrite)
+uint32_t RingBuffer<T>::write(const void* src, uint32_t num, bool partialWrite)
 {
 	return write(static_cast<const T*>(src),num,partialWrite);
 }
 
 template<typename T>
-unsigned int RingBuffer<T>::write(const T* src, unsigned int num, bool partialWrite)
+uint32_t RingBuffer<T>::write(const T* src, uint32_t num, bool partialWrite)
 {
 	// are the buffers valid?
-	if(!src || !_buffer)
-		return 0;
+	assert(src && _buffer);		
 
 	// can we actually fulfill the request?
+
+
 	if(isFull())
-		return 0;
-	if(!partialWrite && (num > getSpace()))
 		return 0;
 
 	T* endptr = _buffer + (_size * sizeof(T));
-	unsigned int numBytes;
-	unsigned int numElements = num;
+	uint32_t numBytes;
+	uint32_t numElements;
 	// read all 
 	if (partialWrite) {
-		if (num <= getSpace()) 
+		if (num <= _space) 
 			numElements = num;
 		else
-			numElements = getSpace();
+			numElements = _space;
 	}
 	// read number of elements
-	else
-		numElements = num;
+	else {
+		if (num <= _space)
+			numElements = num;
+		else 
+			return 0;
+	}
 
 	numBytes = numElements * sizeof(T);
-    /*
-    std::cout << "_buffer" << _buffer << std::endl;
-    std::cout << "_wptr" << _wptr << std::endl;
-    std::cout << "endptr" << endptr << std::endl;
-    std::cout << "numElements" << numElements << std::endl;
-    std::cout << "numBytes" << numBytes << std::endl;
-    */
 
 	if(_wptr + numBytes < endptr) {
 		memcpy(_wptr, src, numBytes);
 		_wptr += numElements;
 	} 
 	else {
-		unsigned int from_wptr = endptr - _wptr;
-		unsigned int from_begin = numBytes - from_wptr;
+		uint32_t from_wptr = endptr - _wptr;
+		uint32_t from_begin = numBytes - from_wptr;
 		memcpy(_wptr, src, from_wptr);
 		src += from_wptr/sizeof(T);
 		memcpy(_buffer, src, from_begin);

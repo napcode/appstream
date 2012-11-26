@@ -19,7 +19,9 @@ SOURCES += main.cpp\
     serverconnectiondialog.cpp \
     streaminfodialog.cpp \
     dsp.cpp \
-    vuwidget.cpp
+    processor.cpp \
+    peakprocessor.cpp \
+    meterwidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -28,7 +30,9 @@ HEADERS  += mainwindow.h \
     streaminfodialog.h \
     ringbuffer.h \
     dsp.h \
-    vuwidget.h
+    processor.h \
+    peakprocessor.h \
+    meterwidget.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

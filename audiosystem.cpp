@@ -2,8 +2,6 @@
 #include "dsp.h"
 #include <QSettings>
 
-#define FRAMESIZE 2048
-
 using namespace AudioSystem;
 
 Manager* Manager::_instance = 0;
@@ -107,6 +105,8 @@ bool Manager::checkModeSupported(const Device &d, const Mode &m) const
 }
 bool Manager::openDeviceStream()
 {
+    if (_isDeviceStreaming)
+        return false;
     PaError err;
     PaStreamParameters params;
 
@@ -148,19 +148,19 @@ bool Manager::openDeviceStream()
     }
 
     // FIXME we'll set that for now to
-    params.sampleFormat = paInt16;
-    m.bitsPerSample = 16;
+    params.sampleFormat = paFloat32;
+    m.bitsPerSample = 32;
 
     params.device = d.second;
     params.channelCount = m.numChannels;
-    params.suggestedLatency = FRAMESIZE;
+    params.suggestedLatency = PA_FRAMES;
     params.hostApiSpecificStreamInfo = 0;
 
     err = Pa_OpenStream(&_stream, 
 	    &params, 
 	    0,
 	    m.sampleRate,
-	    FRAMESIZE,
+	    PA_FRAMES,
 	    paNoFlag,
 	    Manager::_PAcallback,
 	    this);
@@ -200,7 +200,8 @@ int Manager::_PAcallback(const void* input,
     Manager *self = static_cast<Manager*>(user);
     
     // FIXME casting is rather ugly here
-    self->_dsp->feed(static_cast<const short*>(input), frameCount);
+    const sample_t *in = static_cast<const sample_t*>(input);
+    self->_dsp->feed(in, frameCount);
     emit self->newAudioFrames();
     //self->closeDeviceStream();
     return paContinue;
