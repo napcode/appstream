@@ -3,10 +3,12 @@
 
 #include <QMainWindow>
 
+
 namespace Ui {
 class MainWindow;
 
 }
+class DSP;
 
 class MainWindow : public QMainWindow
 {
@@ -18,10 +20,11 @@ public:
 public slots:
     void toolbarTriggered(QAction *a);
     void log(QString s);
-    void updateVUMeter(unsigned long);
+    void updateVUMeter();
     
 private:
     Ui::MainWindow *ui;
+    DSP *_dsp;
 };
 
 #endif // MAINWINDOW_H

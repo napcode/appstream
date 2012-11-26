@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     audiosystem.cpp \
     serverconnectiondialog.cpp \
     streaminfodialog.cpp \
-    dsp.cpp
+    dsp.cpp \
+    vuwidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -26,7 +27,8 @@ HEADERS  += mainwindow.h \
     serverconnectiondialog.h \
     streaminfodialog.h \
     ringbuffer.h \
-    dsp.h
+    dsp.h \
+    vuwidget.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

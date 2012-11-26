@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cassert>
 #include <iostream>
+#include <stdlib.h>
 
 template<typename T>
 class RingBuffer
@@ -45,20 +46,18 @@ RingBuffer<T>::RingBuffer()
 template<typename T>
 RingBuffer<T>::~RingBuffer()
 {
-	//	delete[] _buffer;
-	if(_buffer)
-		free(_buffer);
+	delete[] _buffer;
 }
 
 template<typename T>
 bool RingBuffer<T>::init(unsigned int size)
 {
 	if(_buffer) {
-		free(_buffer);
+        delete[] _buffer;
 		_buffer = 0;
 	}
 
-	_buffer = static_cast<T*>(malloc(sizeof(T) * size));
+	_buffer = new T[size];
 	if (!_buffer)
 		return false;
 
@@ -115,7 +114,7 @@ unsigned int RingBuffer<T>::read(T* dest, unsigned int num)
 
 	// content is between begin & end
 	if(_rptr + numBytes < endptr) {
-		memcpy(dest, _rptr, numBytes)
+		memcpy(dest, _rptr, numBytes);
 		_rptr += numBytes;
 	}
 	// content wraps around
@@ -167,23 +166,28 @@ unsigned int RingBuffer<T>::write(const T* src, unsigned int num, bool partialWr
 		numElements = num;
 
 	numBytes = numElements * sizeof(T);
+    /*
+    std::cout << "_buffer" << _buffer << std::endl;
+    std::cout << "_wptr" << _wptr << std::endl;
+    std::cout << "endptr" << endptr << std::endl;
+    std::cout << "numElements" << numElements << std::endl;
+    std::cout << "numBytes" << numBytes << std::endl;
+    */
 
 	if(_wptr + numBytes < endptr) {
 		memcpy(_wptr, src, numBytes);
-		_wptr += numBytes;
+		_wptr += numElements;
 	} 
 	else {
-		std::cout << "wrap" << std::endl;
 		unsigned int from_wptr = endptr - _wptr;
 		unsigned int from_begin = numBytes - from_wptr;
 		memcpy(_wptr, src, from_wptr);
-		src += from_wptr;
+		src += from_wptr/sizeof(T);
 		memcpy(_buffer, src, from_begin);
 		_wptr = _buffer + from_begin;
 	}
 
 	_space -= numElements;
-	assert(_space >= 0);
 	return numElements;
 }
 

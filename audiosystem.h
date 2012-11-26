@@ -6,7 +6,8 @@
 #include <QPair>
 
 #include <portaudio.h>
-#include "ringbuffer.h"
+
+class DSP;
 
 namespace AudioSystem {
 
@@ -35,14 +36,17 @@ public:
     bool openDeviceStream();
     bool closeDeviceStream();
     Device getDeviceByName(const QString &name);
+
+    DSP* getDSP() { return _dsp; }
+    const DSP* getDSP() const { return _dsp; }
+    void setDSP(DSP *dsp) { _dsp = dsp; }
 signals:
     void stateChanged(QString text) const;
-    void newAudioFrame(unsigned long frames) const;
+    void newAudioFrames();
 
 private:
     Manager();
     ~Manager();
-
 
     static int _PAcallback(const void* input,
                             void *output,
@@ -56,7 +60,7 @@ private:
 
     bool _isDeviceStreaming;
     Mode _streamingMode;
-    RingBuffer<short> _ringbuffer;
+    DSP *_dsp;
 };
 }
 #endif // AUDIOSYSTEM_H

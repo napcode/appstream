@@ -1,4 +1,5 @@
 #include "audiosystem.h"
+#include "dsp.h"
 #include <QSettings>
 
 #define FRAMESIZE 2048
@@ -173,8 +174,6 @@ bool Manager::openDeviceStream()
     _streamingMode = m;
     emit stateChanged("Stream started...");
 
-    // FIXME ringbuffer should be inited to type
-    _ringbuffer.init(1);
     Pa_StartStream(_stream);
 
     return true;
@@ -200,9 +199,9 @@ int Manager::_PAcallback(const void* input,
     // get "this" pointer
     Manager *self = static_cast<Manager*>(user);
     
-    //int written = self->_ringbuffer.write(input,frameCount);
-    short f;
-    self->_ringbuffer.write(&f,1);
+    // FIXME casting is rather ugly here
+    self->_dsp->feed(static_cast<const short*>(input), frameCount);
+    emit self->newAudioFrames();
     //self->closeDeviceStream();
     return paContinue;
 }

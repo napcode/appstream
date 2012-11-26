@@ -5,10 +5,11 @@
 #include <QDateTime>
 
 #include "audiosystem.h"
+#include "dsp.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::MainWindow)
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -22,14 +23,17 @@ MainWindow::MainWindow(QWidget *parent) :
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     // whenever there is a state change in the audio manager we'd like to log it
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
-    connect(&as, SIGNAL(newAudioFrame(unsigned long)), this, SLOT(updateVUMeter(unsigned long)));
+    connect(&as, SIGNAL(newAudioFrames()), this, SLOT(updateVUMeter()), Qt::QueuedConnection);
 
+    _dsp = new DSP;
     as.init();
+    as.setDSP(_dsp);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete _dsp;
 }
 void MainWindow::toolbarTriggered(QAction *a)
 {
@@ -40,6 +44,7 @@ void MainWindow::toolbarTriggered(QAction *a)
     }
     else if (a == ui->actionStartStream) {
         AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+        // FIXME ringbuffer should be inited to type
         as.openDeviceStream();
     }
     else if (a == ui->actionStopStream) {
@@ -54,9 +59,10 @@ void MainWindow::log(QString s)
     entry += QString(": ") + s;
     ui->logLabel->appendPlainText(entry);
 }
-void MainWindow::updateVUMeter(unsigned long value)
+void MainWindow::updateVUMeter()
 {
-
-    log(QString::number(value));
-
+    std::cout << "write" << std::endl;
+    short l, r;
+    _dsp->getPeaks(&l, &r);
+    log(QString::number(l) + QString(", ") + QString::number(r));
 }
