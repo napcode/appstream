@@ -22,7 +22,6 @@ public:
 
     void feed(const sample_t* buffer, unsigned long frames);
     void run();
-    void test();
     bool isActive() const { return _active; }
     void disable();
 

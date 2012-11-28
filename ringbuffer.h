@@ -101,7 +101,7 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
 	if(isEmpty() || (num > getFillLevel()))
 		return 0;
 
-	T* endptr = _buffer + (_size * sizeof(T));
+	T* endptr = _buffer + _size;
 	uint32_t numBytes;
 	uint32_t numElements;
 	// read all 
@@ -114,7 +114,7 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
 	numBytes = numElements * sizeof(T);
 
 	// content is between begin & end
-	if(_rptr + numBytes < endptr) {
+	if(_rptr + numElements <= endptr) {
 		memcpy(dest, _rptr, numBytes);
 		_rptr += numElements;
 	}
@@ -125,7 +125,7 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
 		memcpy(dest, _rptr, from_rptr);
 		dest += from_rptr/sizeof(T);
 		memcpy(dest, _buffer, from_begin);
-		_rptr = _buffer + from_begin;
+		_rptr = _buffer + (from_begin/sizeof(T));
 	}
 	
 	_space += numElements;
@@ -144,34 +144,30 @@ uint32_t RingBuffer<T>::write(const T* src, uint32_t num, bool partialWrite)
 {
 	// are the buffers valid?
 	assert(src && _buffer);		
+	uint32_t numBytes;
+	uint32_t numElements;
 
 	// can we actually fulfill the request?
-
-
 	if(isFull())
 		return 0;
 
-	T* endptr = _buffer + (_size * sizeof(T));
-	uint32_t numBytes;
-	uint32_t numElements;
-	// read all 
 	if (partialWrite) {
 		if (num <= _space) 
 			numElements = num;
 		else
 			numElements = _space;
 	}
-	// read number of elements
 	else {
 		if (num <= _space)
 			numElements = num;
 		else 
 			return 0;
 	}
+	T* endptr = _buffer + _size;
 
 	numBytes = numElements * sizeof(T);
 
-	if(_wptr + numBytes < endptr) {
+	if(_wptr + numElements <= endptr) {
 		memcpy(_wptr, src, numBytes);
 		_wptr += numElements;
 	} 
@@ -181,7 +177,7 @@ uint32_t RingBuffer<T>::write(const T* src, uint32_t num, bool partialWrite)
 		memcpy(_wptr, src, from_wptr);
 		src += from_wptr/sizeof(T);
 		memcpy(_buffer, src, from_begin);
-		_wptr = _buffer + from_begin;
+		_wptr = _buffer + (from_begin/sizeof(T));
 	}
 
 	_space -= numElements;

@@ -6,6 +6,7 @@
 #include <QPair>
 
 #include <portaudio.h>
+#include <stdint.h>
 
 class DSP;
 
@@ -42,8 +43,7 @@ public:
     void setDSP(DSP *dsp) { _dsp = dsp; }
 signals:
     void stateChanged(QString text) const;
-    void newAudioFrames();
-
+    void newAudioFrames(float timestamp, uint32_t frames);
 private:
     Manager();
     ~Manager();

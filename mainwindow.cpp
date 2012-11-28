@@ -24,7 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     // whenever there is a state change in the audio manager we'd like to log it
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
-    connect(&as, SIGNAL(newAudioFrames()), this, SLOT(updateVUMeter()), Qt::QueuedConnection);    
+    qRegisterMetaType<uint32_t>("uint32_t");
+    connect(&as, SIGNAL(newAudioFrames(float, uint32_t)), this, SLOT(newAudioFrames(float, uint32_t)));    
     connect(_dsp, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)), Qt::QueuedConnection);;
     
     _dsp->start();
@@ -60,9 +61,9 @@ void MainWindow::log(QString s)
     entry += QString(": ") + s;
     ui->logLabel->appendPlainText(entry);
 }
-void MainWindow::updateVUMeter()
+void MainWindow::newAudioFrames(float ts, uint32_t frames)
 {
     //_dsp->test();
     //const sample_t *p = _dsp->getPeaks();
-    //log(QString::number(p[0]) + QString(", ") + QString::number(p[1]));
+    //log(QString::number(ts) + QString("::") + QString::number(frames));
 }

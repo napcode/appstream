@@ -1,4 +1,6 @@
 #include "peakprocessor.h"
+#include <cmath>
+#include <cstring>
 
 PeakProcessor::PeakProcessor(uint8_t channels)
 : Processor(channels)

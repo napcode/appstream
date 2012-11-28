@@ -144,7 +144,7 @@ bool Manager::openDeviceStream()
 	case 32:
 	    params.sampleFormat = paInt32; break;
 	default:
-	    params.sampleFormat = paInt16;
+	    params.sampleFormat = paFloat32;
     }
 
     // FIXME we'll set that for now to
@@ -153,7 +153,7 @@ bool Manager::openDeviceStream()
 
     params.device = d.second;
     params.channelCount = m.numChannels;
-    params.suggestedLatency = PA_FRAMES;
+    params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowInputLatency;
     params.hostApiSpecificStreamInfo = 0;
 
     err = Pa_OpenStream(&_stream, 
@@ -173,7 +173,8 @@ bool Manager::openDeviceStream()
     _isDeviceStreaming = true;
     _streamingMode = m;
     emit stateChanged("Stream started...");
-
+    emit stateChanged(s.value("deviceName").toString());
+    emit newAudioFrames(1.0f, 10);
     Pa_StartStream(_stream);
 
     return true;
@@ -197,12 +198,12 @@ int Manager::_PAcallback(const void* input,
 	void *user)
 {
     // get "this" pointer
-    Manager *self = static_cast<Manager*>(user);
+    Manager *self = static_cast<Manager*>(user);    
     
-    // FIXME casting is rather ugly here
     const sample_t *in = static_cast<const sample_t*>(input);
-    self->_dsp->feed(in, frameCount);
-    emit self->newAudioFrames();
-    //self->closeDeviceStream();
+    if(_dsp)
+        self->_dsp->feed(in, frameCount);    
+        
+    emit self->newAudioFrames((float)ti->inputBufferAdcTime, (uint32_t)frameCount);
     return paContinue;
 }
