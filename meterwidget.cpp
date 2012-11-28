@@ -3,10 +3,14 @@
 #include <QPaintEvent>
 #include <iostream>
 
-MeterWidget::MeterWidget(QWidget *parent, short channels)
+MeterWidget::MeterWidget(QWidget *parent, uint8_t channels)
     : QLabel(parent), _numChannels(channels)
 {
     _values = new sample_t[_numChannels];
+    for(uint8_t i = 0; i < _numChannels; ++i)
+        _values[i] = 0;
+    _width = width() / _numChannels;
+    _colorspan = 120.0f/360.0f;
 }
 MeterWidget::~MeterWidget()
 {
@@ -16,26 +20,19 @@ MeterWidget::~MeterWidget()
 void MeterWidget::paintEvent(QPaintEvent *event)
 {
     QRect r = event->rect();
-    int w = r.width();
+    int w = r.width() / _numChannels;
     int h = r.height();
-    QRect left(0 , h - h*_values[0], w>>1, h*_values[0]);
-    QRect right(w>>1 , h - h*_values[1], w>>1, h*_values[1]);
-    QColor cleft,cright;
-
-    float colorspan = 120.0/360.0;
-    float cl = colorspan - (colorspan * _values[0]);
-    float cr = colorspan - (colorspan * _values[1]);
-
-    cleft.setHsvF(cl, 1.0f, 1.0f);
-    cright.setHsvF(cr, 1.0f, 1.0f);
-    
+    QRect rect;
+    QColor color;
     QPainter painter(this);
-    QBrush b(cleft);
-    painter.setBrush(b); 
-
-    painter.drawRect(left);
-    b.setColor(cright);
-    painter.drawRect(right);
+    for (uint8_t i=0; i < _numChannels; ++i) {
+        rect.setRect(i*w , h - h*_values[i], w, h*_values[i]);
+        float col = _colorspan - (_colorspan * _values[i]);
+        color.setHsvF(col, 1.0f, 1.0f);
+        QBrush b(color);
+        painter.setBrush(b);
+        painter.drawRect(rect);
+    }
 }
 void MeterWidget::setValues(sample_t l, sample_t r)
 {  

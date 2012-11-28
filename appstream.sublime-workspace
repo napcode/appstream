@@ -4,34 +4,102 @@
 		"selected_items":
 		[
 			[
-				"cb",
-				"cbConnection"
+				"r",
+				"_ringbuffer"
 			],
 			[
-				"current",
-				"setCurrentIndex"
+				"en",
+				"endptr"
 			],
 			[
-				"ch",
-				"numChannels"
+				"re",
+				"readFragments"
+			],
+			[
+				"_",
+				"_stream"
+			],
+			[
+				"apply",
+				"applyStreamSettings"
+			],
+			[
+				"cbS",
+				"cbStreamInfo"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "serverconnectiondialog.h",
+			"file": "mainwindow.cpp",
 			"settings":
 			{
-				"buffer_size": 470,
+				"buffer_size": 2143,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "serverconnectiondialog.cpp",
+			"file": "dsp.h",
 			"settings":
 			{
-				"buffer_size": 1682,
+				"buffer_size": 1062,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "processor.h",
+			"settings":
+			{
+				"buffer_size": 707,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "dsp.cpp",
+			"settings":
+			{
+				"buffer_size": 2268,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "meterwidget.h",
+			"settings":
+			{
+				"buffer_size": 503,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "meterwidget.cpp",
+			"settings":
+			{
+				"buffer_size": 1158,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/FLTK/fl_funcs.cpp",
+			"settings":
+			{
+				"buffer_size": 18609,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/E/Source/butt-0.1.12/src/FLTK/fl_funcs.h",
+			"settings":
+			{
+				"buffer_size": 1686,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "peakprocessor.cpp",
+			"settings":
+			{
+				"buffer_size": 842,
 				"line_ending": "Windows"
 			}
 		}
@@ -39,16 +107,32 @@
 	"build_system": "Packages/Makefile/Make.sublime-build",
 	"command_palette":
 	{
-		"height": 332.0,
+		"height": 81.0,
 		"selected_items":
 		[
 			[
-				"packa",
+				"format",
+				"SublimeAStyleFormatter: Format Current File"
+			],
+			[
+				"pack",
 				"Package Control: Install Package"
 			],
 			[
 				":w",
 				":w - Save"
+			],
+			[
+				"rein",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
 			],
 			[
 				":q",
@@ -59,7 +143,7 @@
 				"Build: Build"
 			]
 		],
-		"width": 449.0
+		"width": 400.0
 	},
 	"console":
 	{
@@ -76,12 +160,35 @@
 	},
 	"file_history":
 	[
-		"/home/buhr/projects/appStream/settingsdialog.h",
-		"/home/buhr/.config/sublime-text-2/Packages/User/qt.sublime-build",
-		"/home/buhr/projects/appStream/main.cpp",
-		"/home/buhr/projects/appStream/settingsdialog.cpp",
-		"/home/buhr/projects/appStream/mainwindow.cpp",
-		"/home/buhr/projects/appStream/appstream.sublime-project",
+		"/E/Source/appStream/config.h",
+		"/E/sync/Abschlussarbeiten/Buhr/QTrak/QTrakCamWidget.cpp",
+		"/E/sync/Abschlussarbeiten/Buhr/QTrak/QTrakCamWidget.h",
+		"/E/Source/appStream/peakprocessor.cpp",
+		"/E/Source/appStream/processor.cpp",
+		"/E/Source/appStream/peakprocessor.h",
+		"/E/Source/appStream/audiosystem.cpp",
+		"/E/Source/appStream/ringbuffer.h",
+		"/E/Source/appStream/settingsdialog.cpp",
+		"/E/Source/appStream/audiosystem.h",
+		"/E/Source/appStream/ringbuffer.cpp",
+		"/E/Source/butt-0.1.12/src/ringbuffer.h",
+		"/E/Source/butt-0.1.12/src/ringbuffer.cpp",
+		"/E/Source/butt-0.1.12/src/port_audio.cpp",
+		"/E/Source/butt-0.1.12/src/butt.cpp",
+		"/E/Source/appStream/appStream.pro",
+		"/E/Source/appStream/processor.h",
+		"/E/Source/appStream/mainwindow.h",
+		"/E/Source/appStream/w32app.rc",
+		"/E/Source/appStream/mainwindow.ui",
+		"/E/Source/appStream/settingsdialog.h",
+		"/E/Source/appStream/mainwindow.cpp",
+		"/E/Source/appStream/serverconnectiondialog.cpp",
+		"/E/Source/appStream/serverconnectiondialog.h",
+		"/E/Source/appStream/streaminfodialog.h",
+		"/E/Source/appStream/streaminfodialog.cpp",
+		"/E/Source/appStream/streaminfodialog.ui",
+		"/E/Source/appStream/settingsdialog.ui",
+		"/C/Users/Mathias Buhr/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/home/buhr/projects/diss/xsiteq/CMakeLists.txt",
 		"/home/buhr/projects/diss/xsiteq/src/client/main.cpp",
 		"/home/buhr/projects/diss/xsiteq/src/client/NodeFactory.cpp",
@@ -152,6 +259,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"TRESHOLD_1",
+			"update",
+			"upd",
+			"	\n",
 			"void",
 			"    \n",
 			"singl",
@@ -189,28 +300,85 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "serverconnectiondialog.h",
+					"file": "mainwindow.cpp",
 					"settings":
 					{
-						"buffer_size": 470,
+						"buffer_size": 2143,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1193,
+								1193
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 420.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "dsp.h",
+					"settings":
+					{
+						"buffer_size": 1062,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								801,
+								801
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 180.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "processor.h",
+					"settings":
+					{
+						"buffer_size": 707,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								155,
+								155
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -219,29 +387,163 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "serverconnectiondialog.cpp",
+					"buffer": 3,
+					"file": "dsp.cpp",
 					"settings":
 					{
-						"buffer_size": 1682,
+						"buffer_size": 2268,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1364,
+								1364
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 525.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "meterwidget.h",
+					"settings":
+					{
+						"buffer_size": 503,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								266,
+								266
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 120.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "meterwidget.cpp",
+					"settings":
+					{
+						"buffer_size": 1158,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								419,
+								419
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 355.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/E/Source/butt-0.1.12/src/FLTK/fl_funcs.cpp",
+					"settings":
+					{
+						"buffer_size": 18609,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								18333,
+								18343
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 15175.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/E/Source/butt-0.1.12/src/FLTK/fl_funcs.h",
+					"settings":
+					{
+						"buffer_size": 1686,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								825,
+								825
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 420.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "peakprocessor.cpp",
+					"settings":
+					{
+						"buffer_size": 842,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								707,
+								707
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 180.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -282,7 +584,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 171.0
+		"height": 130.0
 	},
 	"replace":
 	{
@@ -309,6 +611,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 276.0,
+	"side_bar_width": 202.0,
 	"status_bar_visible": true
 }

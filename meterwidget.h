@@ -3,12 +3,13 @@
 
 #include <QLabel>
 #include "config.h"
+#include <stdint.h>
 
 class MeterWidget : public QLabel
 {
     Q_OBJECT
 public:
-    MeterWidget(QWidget *parent, short channels = 1);
+    MeterWidget(QWidget *parent, uint8_t channels = 2);
     ~MeterWidget();
 public slots:
     void setValues(sample_t l, sample_t r);
@@ -21,6 +22,8 @@ private:
 	}
     short _numChannels;
     sample_t *_values;
+    float _width;
+    float _colorspan;
 };
 
 #endif // VUWIDGET_H
