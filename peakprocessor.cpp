@@ -1,11 +1,13 @@
 #include "peakprocessor.h"
 #include <cmath>
 #include <cstring>
+#include <iostream>
 
 PeakProcessor::PeakProcessor(uint8_t channels)
 : Processor(channels)
 {
 	_peaks = new sample_t[_numChannels];
+	setType(Processor::PEAK);
 }
 PeakProcessor::~PeakProcessor()
 {
@@ -20,14 +22,16 @@ void PeakProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
                 _peaks[c] = fabs(in[s+c]);
 			// copy in to out
 			out[s+c] = in[s+c];
-		} 
+        }
 	}
 }
 void PeakProcessor::initPeaks()
 {
     memset(_peaks, 0, sizeof(sample_t)*_numChannels);
 }
-const sample_t* PeakProcessor::getPeaks() const
+sample_t PeakProcessor::getPeak(uint8_t channel) const
 {
-    return _peaks;
+	if (channel >= _numChannels)
+    	return 0;
+    return _peaks[channel];
 }

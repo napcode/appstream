@@ -25,9 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // whenever there is a state change in the audio manager we'd like to log it
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
     qRegisterMetaType<uint32_t>("uint32_t");
+    qRegisterMetaType<sample_t>("sample_t");
     connect(&as, SIGNAL(newAudioFrames(float, uint32_t)), this, SLOT(newAudioFrames(float, uint32_t)));    
-    connect(_dsp, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)), Qt::QueuedConnection);;
+    connect(_dsp, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)), Qt::QueuedConnection);
+    connect(_dsp, SIGNAL(newPeaks(sample_t,sample_t)), ui->meterwidget, SLOT(setValues(sample_t,sample_t)));
     
+    _dsp->defaultSetup();
     _dsp->start();
     as.init();
     as.setDSP(_dsp);

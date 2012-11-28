@@ -11,7 +11,7 @@ class PeakProcessor : public Processor
 		~PeakProcessor();
 		void process(sample_t *in, sample_t *out, uint32_t frames);
 		
-        const sample_t* getPeaks() const;
+        sample_t getPeak(uint8_t channel) const;
 	private:
 		sample_t *_peaks;
 

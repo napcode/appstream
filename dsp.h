@@ -29,6 +29,7 @@ public:
     const RingBuffer<sample_t>& getBuffer() const { return _inbuffer; }
 signals:
     void stateChanged(QString s);
+    void newPeaks(sample_t l,sample_t r);
 
 private:
     void setSize();

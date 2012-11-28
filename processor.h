@@ -5,18 +5,41 @@
 #include <stdint.h>
 #include "config.h"
 
+
 class Processor
 {
-	public:
-		Processor(uint8_t channels);
-		virtual ~Processor() {};
-		virtual void process(sample_t *in, sample_t *out, uint32_t frames) = 0;
+public:
+    enum ProcessorType
+    {
+        DEFAULT,
+        PEAK,
+        EQ,
+        LIMIT,
+        COMPRESSOR
+    };
 
-		uint8_t getChannels() const { return _numChannels; }		
-	protected:
-		uint8_t _numChannels;		
+    Processor(uint8_t channels);
+    virtual ~Processor() {};
+    virtual void process(sample_t *in, sample_t *out, uint32_t frames) = 0;
+
+    uint8_t getChannels() const
+    {
+        return _numChannels;
+    }
+
+    ProcessorType getType() const
+    {
+        return _type;
+    }
+    void setType(ProcessorType t)
+    {
+        _type = t;
+    }
+protected:
+    uint8_t _numChannels;
+    ProcessorType _type;
 };
 
-typedef std::vector<Processor*> SignalChain;
+typedef std::vector<Processor *> SignalChain;
 
 #endif

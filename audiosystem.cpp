@@ -201,7 +201,7 @@ int Manager::_PAcallback(const void* input,
     Manager *self = static_cast<Manager*>(user);    
     
     const sample_t *in = static_cast<const sample_t*>(input);
-    if(_dsp)
+    if(self->_dsp)
         self->_dsp->feed(in, frameCount);    
         
     emit self->newAudioFrames((float)ti->inputBufferAdcTime, (uint32_t)frameCount);

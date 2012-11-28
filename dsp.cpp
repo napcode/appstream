@@ -38,6 +38,7 @@ void DSP::defaultSetup()
 void DSP::run()
 {
     _active = true;
+    sample_t peaks[2];
     while(1)
     {
         _work.lock();
@@ -56,10 +57,16 @@ void DSP::run()
         SignalChain::iterator it = _signalChain.begin();
         while(it != _signalChain.end()) {
             (*it)->process(_buffers[0],_buffers[1], _blockSize);
+            if ((*it)->getType() == Processor::PEAK) {
+                PeakProcessor *p = static_cast<PeakProcessor*>(*it);
+
+                emit newPeaks(p->getPeak(0),p->getPeak(1));
+            }
             // now reuse/swap buffers for next processor
-            sample_t* tmp = _buffers[0];
-            _buffers[0] = _buffers[1];
-            _buffers[1] = tmp;
+            //sample_t* tmp = _buffers[0];
+            //_buffers[0] = _buffers[1];
+            //_buffers[1] = tmp;
+            it++;
         }
         if(!_active)
             return;

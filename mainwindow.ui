@@ -26,16 +26,6 @@
    <string>appStream</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGraphicsView" name="graphicsView">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>10</y>
-      <width>20</width>
-      <height>231</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPlainTextEdit" name="logLabel">
     <property name="geometry">
      <rect>
@@ -47,6 +37,28 @@
     </property>
     <property name="maximumBlockCount">
      <number>20</number>
+    </property>
+   </widget>
+   <widget class="MeterWidget" name="meterwidget">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>10</y>
+      <width>21</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="midLineWidth">
+     <number>1</number>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>
@@ -100,6 +112,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MeterWidget</class>
+   <extends>QLabel</extends>
+   <header location="global">meterwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="icons.qrc"/>
  </resources>
