@@ -20,7 +20,7 @@ SOURCES += main.cpp\
     streaminfodialog.cpp \
     dsp.cpp \
     processor.cpp \
-    peakprocessor.cpp \
+    meterprocessor.cpp \
     meterwidget.cpp
 
 HEADERS  += mainwindow.h \
@@ -31,7 +31,7 @@ HEADERS  += mainwindow.h \
     ringbuffer.h \
     dsp.h \
     processor.h \
-    peakprocessor.h \
+    meterprocessor.h \
     meterwidget.h
 
 FORMS    += mainwindow.ui \

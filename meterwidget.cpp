@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <iostream>
+#include <cmath>
 
 MeterWidget::MeterWidget(QWidget *parent, uint8_t channels)
     : QLabel(parent), _numChannels(channels)
@@ -36,7 +37,7 @@ void MeterWidget::paintEvent(QPaintEvent *event)
 }
 void MeterWidget::setValues(sample_t l, sample_t r)
 {  
-    _values[0] = clamp(log10(100*l), 0.0f, 1.0f);
-    _values[1] = clamp(log10(100*r), 0.0f, 1.0f);
+    _values[0] = l;
+    _values[1] = r;
     update();
 }

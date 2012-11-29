@@ -1,6 +1,6 @@
 #include "dsp.h"
 #include <cassert>
-#include "peakprocessor.h"
+#include "meterprocessor.h"
 
     DSP::DSP(uint8_t channels)
 :   _active(false), 
@@ -33,7 +33,7 @@ void DSP::setSize()
 }
 void DSP::defaultSetup()
 {
-    _signalChain.push_back(new PeakProcessor(2));
+    _signalChain.push_back(new MeterProcessor(2));
 }
 void DSP::run()
 {
@@ -57,8 +57,8 @@ void DSP::run()
         SignalChain::iterator it = _signalChain.begin();
         while(it != _signalChain.end()) {
             (*it)->process(_buffers[0],_buffers[1], _blockSize);
-            if ((*it)->getType() == Processor::PEAK) {
-                PeakProcessor *p = static_cast<PeakProcessor*>(*it);
+            if ((*it)->getType() == Processor::METER) {
+                MeterProcessor *p = static_cast<MeterProcessor*>(*it);
 
                 emit newPeaks(p->getPeak(0),p->getPeak(1));
             }

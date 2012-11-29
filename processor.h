@@ -12,7 +12,7 @@ public:
     enum ProcessorType
     {
         DEFAULT,
-        PEAK,
+        METER,
         EQ,
         LIMIT,
         COMPRESSOR
