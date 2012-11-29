@@ -29,6 +29,7 @@ void MeterWidget::paintEvent(QPaintEvent *event)
     for (uint8_t i=0; i < _numChannels; ++i) {
         rect.setRect(i*w , h - h*_values[i], w, h*_values[i]);
         float col = _colorspan - (_colorspan * _values[i]);
+
         color.setHsvF(col, 1.0f, 1.0f);
         QBrush b(color);
         painter.setBrush(b);
@@ -37,7 +38,7 @@ void MeterWidget::paintEvent(QPaintEvent *event)
 }
 void MeterWidget::setValues(sample_t l, sample_t r)
 {  
-    _values[0] = l;
-    _values[1] = r;
+    _values[0] = clamp(l, 0.0f, 1.0f);
+    _values[1] = clamp(r, 0.0f, 1.0f);
     update();
 }

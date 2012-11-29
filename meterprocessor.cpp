@@ -60,8 +60,8 @@ void MeterProcessor::initPeaks()
 }
 sample_t MeterProcessor::getPeak(uint8_t channel) const
 {
-    _res[channel] = true;
     if (channel >= _numChannels)
         return 0;
+    _res[channel] = true;
     return _peaks[channel];
 }
