@@ -43,11 +43,7 @@ void SettingsDialog::applySettings()
     applyAudioSettings();
     applyRecordSettings();
     applyConnectionSettings();
-    applyStreamSettings();
-
-
-
-    
+    applyStreamSettings();    
 }
 void SettingsDialog::applyAudioSettings()
 {

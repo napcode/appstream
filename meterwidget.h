@@ -4,6 +4,7 @@
 #include <QLabel>
 #include "config.h"
 #include <stdint.h>
+#include "meterprocessor.h"
 
 class MeterWidget : public QLabel
 {
@@ -12,7 +13,7 @@ public:
     MeterWidget(QWidget *parent, uint8_t channels = 2);
     ~MeterWidget();
 public slots:
-    void setValues(sample_t l, sample_t r);
+    void setValues(MeterValues m);
 protected:
     void paintEvent(QPaintEvent *event);
 private:
@@ -20,8 +21,8 @@ private:
 	{
 	    return x < a ? a : (x > b ? b : x);
 	}
-    short _numChannels;
-    sample_t *_values;
+    uint8_t _numChannels;
+    MeterValues _v;
     float _width;
     float _colorspan;
 };

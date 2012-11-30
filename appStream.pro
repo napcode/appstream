@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     dsp.cpp \
     processor.cpp \
     meterprocessor.cpp \
-    meterwidget.cpp
+    meterwidget.cpp \
+    output.cpp \
+    encoder.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -32,7 +34,10 @@ HEADERS  += mainwindow.h \
     dsp.h \
     processor.h \
     meterprocessor.h \
-    meterwidget.h
+    meterwidget.h \
+    config.h \
+    output.h \
+    encoder.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

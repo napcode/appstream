@@ -22,8 +22,9 @@ Manager& Manager::getInstance()
 }
 Manager::~Manager()
 {
+    if(_isDeviceStreaming)
+        closeDeviceStream();
     Pa_Terminate();
-
 }
 
 bool Manager::init()
@@ -148,8 +149,8 @@ bool Manager::openDeviceStream()
     }
 
     // FIXME we'll set that for now to
-    params.sampleFormat = paFloat32;
-    m.bitsPerSample = 32;
+    params.sampleFormat = paInt16;
+    m.bitsPerSample = 16;
 
     params.device = d.second;
     params.channelCount = m.numChannels;

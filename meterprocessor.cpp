@@ -6,17 +6,17 @@
 MeterProcessor::MeterProcessor(uint8_t channels)
     : Processor(channels)
 {
-    _peaks = new sample_t[_numChannels];
-    _z1 = new sample_t[_numChannels];
-    _z2 = new sample_t[_numChannels];
-    _res = new bool[_numChannels];
+    _v.resize(channels);
+    _z1.resize(_numChannels);
+    _z2.resize(_numChannels);
+    _reset.resize(_numChannels);
     setType(Processor::METER);
     _w = 11.1f / 44100;
     _g = 1.5f * 1.571f;
 }
 MeterProcessor::~MeterProcessor()
 {
-    delete[] _peaks;
+
 }
 void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
 {
@@ -26,8 +26,8 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
         float z1, z2, m, t1, t2;
         z1 = _z1[c];
         z2 = _z2[c];
-        m = _res[c] ? 0 : _peaks[c];
-        _res[c] = false;
+        m = _reset[c] ? 0 : _v[c];
+        _reset[c] = false;
         //n /= 4;
         for (uint32_t s = c; s < frames; s += _numChannels)
         {
@@ -48,20 +48,23 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
         }
         _z1[c] = z1;
         _z2[c] = z2 + 1e-10f;
-        _peaks[c] = m;
+        _v[c] = m;
     }
 }
 void MeterProcessor::initPeaks()
 {
-    memset(_peaks, 0, sizeof(sample_t)*_numChannels);
-    memset(_z1, 0, sizeof(sample_t)*_numChannels);
-    memset(_z2, 0, sizeof(sample_t)*_numChannels);
-    memset(_res, 0, sizeof(bool)*_numChannels);
+    for(uint8_t i = 0; i < _numChannels; ++i) {
+        _v[i] = 0.0f;
+        _z1[i] = 0.0f;
+        _z2[i] = 0.0f;
+        _reset[i] = false;
+    }
 }
-sample_t MeterProcessor::getPeak(uint8_t channel) const
+MeterValues MeterProcessor::getValues()
 {
-    if (channel >= _numChannels)
-        return 0;
-    _res[channel] = true;
-    return _peaks[channel];
+    for(uint8_t i = 0; i < _numChannels; ++i) {
+        _reset[i] = true;
+        _v[i] = fabs(_v[i] / 32768);
+    }
+    return _v;
 }

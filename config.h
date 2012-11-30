@@ -5,6 +5,6 @@
 #define DSP_RINGSIZE 2048
 #define PA_FRAMES 64
 
-typedef float sample_t;
+typedef short sample_t;
 
 #endif

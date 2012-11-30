@@ -1,6 +1,6 @@
 #include "dsp.h"
 #include <cassert>
-#include "meterprocessor.h"
+
 
     DSP::DSP(uint8_t channels)
 :   _active(false), 
@@ -33,34 +33,31 @@ void DSP::setSize()
 }
 void DSP::defaultSetup()
 {
-    _signalChain.push_back(new MeterProcessor(2));
+    _processorChain.push_back(new MeterProcessor(2));
 }
 void DSP::run()
 {
     _active = true;
-    sample_t peaks[2];
     while(1)
     {
         _work.lock();
         while(_inbuffer.getFillLevel() < _blockSize) {
             _workCondition.wait(&_work);
+            if (!_active)
+                return;
         }
 
-        if (!_active)
-            return;
-
         // data available -> take a block & process it
-        uint32_t r = _inbuffer.read(_buffers[0], _blockSize);
+        _inbuffer.read(_buffers[0], _blockSize);
         _work.unlock();
 
         // process signal chain
-        SignalChain::iterator it = _signalChain.begin();
-        while(it != _signalChain.end()) {
+        ProcessorChain::iterator it = _processorChain.begin();
+        while(it != _processorChain.end()) {
             (*it)->process(_buffers[0],_buffers[1], _blockSize);
             if ((*it)->getType() == Processor::METER) {
                 MeterProcessor *p = static_cast<MeterProcessor*>(*it);
-
-                emit newPeaks(p->getPeak(0),p->getPeak(1));
+                emit newPeaks(p->getValues());
             }
             // now reuse/swap buffers for next processor
             //sample_t* tmp = _buffers[0];
@@ -74,8 +71,10 @@ void DSP::run()
 }
 void DSP::disable()
 {
-    _active = false;
-    _workCondition.wakeAll();
+    if(_active){
+        _active = false;
+        _workCondition.wakeAll();
+    }
 }
 void DSP::feed(const sample_t* buffer, unsigned long frames)
 {

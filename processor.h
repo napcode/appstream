@@ -11,7 +11,7 @@ class Processor
 public:
     enum ProcessorType
     {
-        DEFAULT,
+        INVALID,
         METER,
         EQ,
         LIMIT,
@@ -40,6 +40,6 @@ protected:
     ProcessorType _type;
 };
 
-typedef std::vector<Processor *> SignalChain;
+typedef std::vector<Processor *> ProcessorChain;
 
 #endif

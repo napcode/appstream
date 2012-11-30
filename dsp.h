@@ -7,7 +7,7 @@
 #include "ringbuffer.h"
 #include "config.h"
 #include "processor.h"
-
+#include "meterprocessor.h"
 class DSP : public QThread
 {
     Q_OBJECT
@@ -17,8 +17,8 @@ public:
 
     // add peaks and maybe more
     void defaultSetup();
-    SignalChain& getSignalChain() const;
-    void setSignalChain(SignalChain s);
+    ProcessorChain& getProcessorChain() const;
+    void setProcessorChain(ProcessorChain s);
 
     void feed(const sample_t* buffer, unsigned long frames);
     void run();
@@ -29,7 +29,7 @@ public:
     const RingBuffer<sample_t>& getBuffer() const { return _inbuffer; }
 signals:
     void stateChanged(QString s);
-    void newPeaks(sample_t l,sample_t r);
+    void newPeaks(MeterValues m);
 
 private:
     void setSize();
@@ -43,7 +43,7 @@ private:
     unsigned int _blockSize;
     uint8_t _numChannels;
     sample_t *_buffers[2];
-    SignalChain _signalChain;
+    ProcessorChain _processorChain;
 };
 
 #endif // DSP_H

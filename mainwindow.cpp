@@ -6,6 +6,7 @@
 
 #include "audiosystem.h"
 #include "dsp.h"
+#include "MeterProcessor.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -26,9 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&as, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)));
     qRegisterMetaType<uint32_t>("uint32_t");
     qRegisterMetaType<sample_t>("sample_t");
+    qRegisterMetaType<MeterValues>("MeterValues");
     connect(&as, SIGNAL(newAudioFrames(float, uint32_t)), this, SLOT(newAudioFrames(float, uint32_t)));    
     connect(_dsp, SIGNAL(stateChanged(QString)), this, SLOT(log(QString)), Qt::QueuedConnection);
-    connect(_dsp, SIGNAL(newPeaks(sample_t,sample_t)), ui->meterwidget, SLOT(setValues(sample_t,sample_t)));
+    connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
     
     _dsp->defaultSetup();
     _dsp->start();
@@ -39,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    if(_dsp->isRunning()){
+        _dsp->disable();
+        _dsp->wait();
+    }
     delete _dsp;
 }
 void MainWindow::toolbarTriggered(QAction *a)
