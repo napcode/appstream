@@ -122,7 +122,10 @@
      <normalon>:/new/prefix1/res/media-record_on.png</normalon>:/new/prefix1/res/media-record_off.png</iconset>
    </property>
    <property name="text">
-    <string>record</string>
+    <string>Recording</string>
+   </property>
+   <property name="toolTip">
+    <string>Recording</string>
    </property>
   </action>
  </widget>

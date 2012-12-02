@@ -23,7 +23,10 @@ SOURCES += main.cpp\
     meterprocessor.cpp \
     meterwidget.cpp \
     output.cpp \
-    encoder.cpp
+    encoder.cpp \
+    encoderlame.cpp \
+    outputfile.cpp \
+    logger.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -37,7 +40,10 @@ HEADERS  += mainwindow.h \
     meterwidget.h \
     config.h \
     output.h \
-    encoder.h
+    encoder.h \
+    encoderlame.h \
+    outputfile.h \
+    logger.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
@@ -58,3 +64,11 @@ else:unix: LIBS += -lportaudio
 win32::RC_FILE = w32app.rc
 RESOURCES += \
     icons.qrc
+
+unix|win32: LIBS += -L$$PWD/dep/lib/ -llibmp3lame
+
+INCLUDEPATH += $$PWD/dep/lame/include
+DEPENDPATH += $$PWD/dep/lame/include
+
+win32: PRE_TARGETDEPS += $$PWD/dep/lib/libmp3lame.lib
+else:unix: PRE_TARGETDEPS += $$PWD/dep/lib/liblibmp3lame.a

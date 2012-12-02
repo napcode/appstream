@@ -28,20 +28,21 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<sample_t>("sample_t");
     qRegisterMetaType<MeterValues>("MeterValues");
     // get audio system
-    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    //AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     // whenever there is a state change in the audio manager we'd like to log it
-    connect(&as, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
-    as.init();
+    //connect(&as, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    //as.init();
+    QSettings s;
+    s.beginGroup("record");
+    if(s.contains("enabled")) {
+        ui->actionRecord->setChecked(s.value("enabled").toBool());
+    }
+
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    if(_dsp && _dsp->isRunning()){
-        _dsp->disable();
-        _dsp->wait();
-    }
-    delete _dsp;
+    stopStream();
 }
 void MainWindow::toolbarTriggered(QAction *a)
 {
@@ -54,7 +55,13 @@ void MainWindow::toolbarTriggered(QAction *a)
         startStream();
     }
     else if (a == ui->actionStopStream) {
-
+        stopStream();
+    }
+    else if (a == ui->actionRecord) {
+        QSettings s;
+        s.beginGroup("record");
+        s.setValue("enabled",ui->actionRecord->isChecked());
+        s.endGroup();
     }
 }
 void MainWindow::startStream()
