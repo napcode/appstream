@@ -72,6 +72,8 @@
    <addaction name="actionStartStream"/>
    <addaction name="actionStopStream"/>
    <addaction name="separator"/>
+   <addaction name="actionRecord"/>
+   <addaction name="separator"/>
    <addaction name="actionSettings"/>
    <addaction name="separator"/>
   </widget>
@@ -108,6 +110,19 @@
    </property>
    <property name="toolTip">
     <string>Stop Streaming</string>
+   </property>
+  </action>
+  <action name="actionRecord">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/media-record_off.png</normaloff>
+     <normalon>:/new/prefix1/res/media-record_on.png</normalon>:/new/prefix1/res/media-record_off.png</iconset>
+   </property>
+   <property name="text">
+    <string>record</string>
    </property>
   </action>
  </widget>

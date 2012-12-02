@@ -6,8 +6,18 @@
 #include <QWaitCondition>
 #include "ringbuffer.h"
 #include "config.h"
+
+// processors
 #include "processor.h"
 #include "meterprocessor.h"
+
+// outputs 
+#include "output.h"
+#include "outputfile.h"
+
+// encoders
+#include "encoderlame.h"
+
 class DSP : public QThread
 {
     Q_OBJECT
@@ -20,7 +30,7 @@ public:
     ProcessorChain& getProcessorChain() const;
     void setProcessorChain(ProcessorChain s);
 
-    void feed(const sample_t* buffer, unsigned long frames);
+    void feed(const sample_t* buffer, uint32_t frames);
     void run();
     bool isActive() const { return _active; }
     void disable();
@@ -28,7 +38,7 @@ public:
     RingBuffer<sample_t>& getBuffer() { return _inbuffer; }
     const RingBuffer<sample_t>& getBuffer() const { return _inbuffer; }
 signals:
-    void stateChanged(QString s);
+    void message(QString s) const;
     void newPeaks(MeterValues m);
 
 private:
@@ -40,10 +50,11 @@ private:
     RingBuffer<sample_t> _inbuffer;
     QMutex _work;
     QWaitCondition _workCondition;
-    unsigned int _blockSize;
+    uint32_t _blockSize;
     uint8_t _numChannels;
     sample_t *_buffers[2];
     ProcessorChain _processorChain;
+    OutputChain _outputChain;
 };
 
 #endif // DSP_H

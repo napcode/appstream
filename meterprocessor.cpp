@@ -18,7 +18,7 @@ MeterProcessor::~MeterProcessor()
 {
 
 }
-void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
+void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
 {
    // initPeaks();
     for (uint8_t c = 0; c < _numChannels; ++c)
@@ -29,7 +29,7 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t frames)
         m = _reset[c] ? 0 : _v[c];
         _reset[c] = false;
         //n /= 4;
-        for (uint32_t s = c; s < frames; s += _numChannels)
+        for (uint32_t s = c; s < samples; s += _numChannels)
         {
         	sample_t *p = in + s;
             t2 = z2 / 2;

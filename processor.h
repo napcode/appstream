@@ -20,7 +20,7 @@ public:
 
     Processor(uint8_t channels);
     virtual ~Processor() {};
-    virtual void process(sample_t *in, sample_t *out, uint32_t frames) = 0;
+    virtual void process(sample_t *in, sample_t *out, uint32_t samples) = 0;
 
     uint8_t getChannels() const
     {

@@ -6,10 +6,12 @@
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QString>
 
 #include "config.h"
 #include "encoder.h"
 #include "ringbuffer.h"
+
 
 /**
  * @brief abstract output type
@@ -27,10 +29,13 @@ public:
     };
     Output();
 
-    virtual void init() = 0;
+    void disable();
+
+    virtual bool init() = 0;
 
     virtual ~Output();
 
+    virtual void output(const char* buffer, uint32_t bufferSize) = 0;
     OutputType getType() const
     {
         return _type;
@@ -46,17 +51,24 @@ public:
 
     void setEncoder(Encoder *e)
     {
-        if(_encoder)
-            delete _encoder;
+        delete _encoder;
         _encoder = e;
     }
-	void feed(const sample_t* buffer, unsigned long frames);
+    void feed(const sample_t* buffer, uint32_t frames);
     virtual void run();
+
+    const QString& getName() const { return _name; }
+    void setName(const QString& name) { _name = name; }
+signals:
+    void message(QString msg) const;
 protected:
+    QString _name;
     bool _active;
     OutputType _type;
     Encoder *_encoder;
+    uint32_t _blockSize;
 	RingBuffer<sample_t> _inbuffer;
+
 	QMutex _work;
     QWaitCondition _workCondition;
 };

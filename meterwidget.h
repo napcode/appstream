@@ -10,8 +10,12 @@ class MeterWidget : public QLabel
 {
     Q_OBJECT
 public:
-    MeterWidget(QWidget *parent, uint8_t channels = 2);
+    MeterWidget(QWidget *parent, uint8_t channels = 1);
     ~MeterWidget();
+
+    uint8_t getNumChannels() const { return _numChannels; }
+    void setNumChannels(uint8_t channels);
+    void reset();
 public slots:
     void setValues(MeterValues m);
 protected:

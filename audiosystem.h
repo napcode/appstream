@@ -42,8 +42,7 @@ public:
     const DSP* getDSP() const { return _dsp; }
     void setDSP(DSP *dsp) { _dsp = dsp; }
 signals:
-    void stateChanged(QString text) const;
-    void newAudioFrames(float timestamp, uint32_t frames);
+    void message(QString text) const;
 private:
     Manager();
     ~Manager();

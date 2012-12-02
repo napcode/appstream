@@ -45,7 +45,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -382,16 +382,16 @@
       <item row="2" column="1">
        <widget class="QComboBox" name="cbChannels">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <item>
          <property name="text">
-          <string>Mono</string>
+          <string>1</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Stereo</string>
+          <string>2</string>
          </property>
         </item>
        </widget>

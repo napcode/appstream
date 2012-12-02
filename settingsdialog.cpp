@@ -61,7 +61,6 @@ void SettingsDialog::applyAudioSettings()
     }
     if (s.contains("numChannels"))
     {
-	// FIXME don't use string to configure combobox
         int i = ui->cbChannels->findText(s.value("numChannels").toString());
         ui->cbChannels->setCurrentIndex(i);
     }
@@ -117,8 +116,6 @@ void SettingsDialog::accept()
         s.beginGroup("audio");
         s.setValue("sampleRate", ui->cbSampleRate->currentText());
         s.setValue("bitsPerSample", ui->cbBitsPerSample->currentText());
-	// FIXME don't use currentText here
-	// store channelCount in combobox
         s.setValue("numChannels", ui->cbChannels->currentText());
         s.setValue("deviceName", ui->cbInputDevices->currentText());
         s.endGroup();
@@ -150,12 +147,7 @@ void SettingsDialog::updateAudioDeviceList(int)
 
     m.sampleRate = ui->cbSampleRate->currentText().toInt();
     m.bitsPerSample = ui->cbBitsPerSample->currentText().toInt();
-    // FIXME don't use currentText here
-    // store channelCount in comboBox
-    if (ui->cbChannels->currentText() == QString("Mono"))
-        m.numChannels = 1;
-    else
-        m.numChannels = 2;
+    m.numChannels = ui->cbChannels->currentText().toInt();
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     AudioSystem::DeviceList dl = as.getDeviceList();
     AudioSystem::DeviceList::Iterator it = dl.begin();

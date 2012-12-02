@@ -32,11 +32,11 @@ bool Manager::init()
     PaError e;
     e = Pa_Initialize();
     if(e != paNoError) {
-	emit stateChanged(QString("PortAudio init failed"));
-	emit stateChanged(QString(Pa_GetErrorText(e)));        
+    emit message(QString("PortAudio init failed"));
+    emit message(QString(Pa_GetErrorText(e)));
     }
-    emit stateChanged(QString("Audio initialized"));
-    emit stateChanged(QString(Pa_GetVersionText()));
+    emit message(QString("Audio initialized"));
+    emit message(QString(Pa_GetVersionText()));
 
 
     return true;
@@ -48,13 +48,13 @@ DeviceList Manager::getDeviceList() const
     if (devcount < 0) {
 	QString msg("Error getting device list");
 	msg.append(Pa_GetErrorText(devcount));
-	emit stateChanged(msg);
+    emit message(msg);
     }
     for(int i = 0; i < devcount; ++i) {
 	const PaDeviceInfo *pdi = Pa_GetDeviceInfo(i);
 	if (pdi == 0) {
 	    QString msg("Error getting device info: " + i);
-	    emit stateChanged(msg);
+        emit message(msg);
 	    continue;
 	}
 	if (pdi->maxInputChannels <= 0)
@@ -116,12 +116,12 @@ bool Manager::openDeviceStream()
     if (!s.contains("deviceName") || !s.contains("sampleRate")
 	    || !s.contains("bitsPerSample") || !s.contains("numChannels"))
     {
-	emit stateChanged("Error: invalid device config found. Please reconfigure.");
+    emit message("Error: invalid device config found. Please reconfigure.");
 	return false;
     }
     Device d = getDeviceByName(s.value("deviceName").toString());
     if (d.second == -1) {
-	emit stateChanged("Error: configured device not found");
+    emit message("Error: configured device not found");
 	return false;
     }
 
@@ -151,6 +151,8 @@ bool Manager::openDeviceStream()
     // FIXME we'll set that for now to
     params.sampleFormat = paInt16;
     m.bitsPerSample = 16;
+    m.numChannels = 1;
+    // END FIXME
 
     params.device = d.second;
     params.channelCount = m.numChannels;
@@ -166,16 +168,15 @@ bool Manager::openDeviceStream()
 	    Manager::_PAcallback,
 	    this);
     if(err != paNoError) {
-    	emit stateChanged("Error opening device");
-    	emit stateChanged(QString(Pa_GetErrorText(err)));
+        emit message("Error opening device");
+        emit message(QString(Pa_GetErrorText(err)));
     	return false;
     }
     /* setup went well -> start device stream */
     _isDeviceStreaming = true;
     _streamingMode = m;
-    emit stateChanged("Stream started...");
-    emit stateChanged(s.value("deviceName").toString());
-    emit newAudioFrames(1.0f, 10);
+    emit message("Stream started...");
+    emit message(s.value("deviceName").toString());
     Pa_StartStream(_stream);
 
     return true;
@@ -187,7 +188,7 @@ bool Manager::closeDeviceStream()
 
     Pa_StopStream(_stream);
     Pa_CloseStream(_stream);
-    emit stateChanged("Stream stopped...");
+    emit message("Stream stopped...");
     _isDeviceStreaming = false;
     return true;
 }
@@ -205,6 +206,5 @@ int Manager::_PAcallback(const void* input,
     if(self->_dsp)
         self->_dsp->feed(in, frameCount);    
         
-    emit self->newAudioFrames((float)ti->inputBufferAdcTime, (uint32_t)frameCount);
     return paContinue;
 }
