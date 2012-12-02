@@ -1,4 +1,4 @@
-#include "OutputFile.h"
+#include "outputfile.h"
 #include "logger.h"
 
 #include <iostream>

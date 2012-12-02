@@ -7,7 +7,7 @@
 
 #include "audiosystem.h"
 #include "dsp.h"
-#include "MeterProcessor.h"
+#include "meterprocessor.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :

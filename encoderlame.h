@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#include <lame.h>
+#include <lame/lame.h>
 
 struct ConfigLame
 {
