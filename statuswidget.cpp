@@ -2,6 +2,7 @@
 #include <QBrush>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTextOption>
 
 StatusWidget::StatusWidget(QWidget *parent) :
     QFrame(parent)
@@ -15,4 +16,6 @@ void StatusWidget::paintEvent(QPaintEvent *event)
     QBrush b(Qt::red);
     painter.setBrush(b);
     painter.drawRect(r);
+    QTextOption t;
+    painter.drawTextItem(10,10, ti);
 }

@@ -80,7 +80,7 @@ border-color: rgb(0, 0, 0);</string>
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QStatusPAnel" name="frame">
+   <widget class="StatusWidget" name="frame">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -190,7 +190,7 @@ border-color: rgb(0, 0, 0);</string>
    <header location="global">meterwidget.h</header>
   </customwidget>
   <customwidget>
-   <class>QStatusPAnel</class>
+   <class>StatusWidget</class>
    <extends>QFrame</extends>
    <header>qstatuspanel.h</header>
    <container>1</container>
