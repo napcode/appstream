@@ -1,6 +1,9 @@
 #include "dsp.h"
 #include "logger.h"
+
 #include <cassert>
+
+#include <QSettings>
 
 DSP::DSP(uint8_t channels)
     :   _active(false),
@@ -58,13 +61,18 @@ void DSP::setSize()
 void DSP::defaultSetup()
 {
     _processorChain.push_back(new MeterProcessor(1));
-    OutputFile *f = new OutputFile;
-    EncoderLame *e = new EncoderLame;
+    QSettings s;
+    s.beginGroup("record");
+    if(s.value("enabled").toBool()) {
+        emit message("adding MP3 file recorder");
+        OutputFile *f = new OutputFile;
+        EncoderLame *e = new EncoderLame;
 
-    e->init();
-    f->setEncoder(e);
-    f->init();
-    _outputChain.push_back(f);
+        e->init();
+        f->setEncoder(e);
+        f->init();
+        _outputChain.push_back(f);
+    }
 }
 void DSP::run()
 {

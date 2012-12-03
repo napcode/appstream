@@ -36,14 +36,14 @@ void SettingsDialog::applySettings()
     QSettings s;
     s.beginGroup("general");
     if (s.contains("connectOnStart"))
-	ui->cbConnectAtStart->setChecked(s.value("connectOnStart").toBool());
+        ui->cbConnectAtStart->setChecked(s.value("connectOnStart").toBool());
     s.endGroup();
     /* trigger refresh */
     updateAudioDeviceList(-1);
     applyAudioSettings();
     applyRecordSettings();
     applyConnectionSettings();
-    applyStreamSettings();    
+    applyStreamSettings();
 }
 void SettingsDialog::applyAudioSettings()
 {
@@ -131,12 +131,12 @@ void SettingsDialog::accept()
         s.endGroup();
     }
     {
-	s.beginGroup("general");
-	s.setValue("connectOnStart", ui->cbConnectAtStart->isChecked());
-	s.endGroup();
+        s.beginGroup("general");
+        s.setValue("connectOnStart", ui->cbConnectAtStart->isChecked());
+        s.endGroup();
     }
     {
-	/* store record settings here */
+        /* store record settings here */
     }
     this->done(QDialog::Accepted);
 }
@@ -162,7 +162,8 @@ void SettingsDialog::addConnection()
 {
     ServerConnectionDialog scd;
     int ret = scd.exec();
-    if (ret == QDialog::Accepted) {
+    if (ret == QDialog::Accepted)
+    {
         applyConnectionSettings();
     }
 }
@@ -172,13 +173,13 @@ void SettingsDialog::editConnection()
         return;
     ServerConnectionDialog scd;
     scd.setConnection(ui->cbConnection->currentText());
-    scd.exec(); 
+    scd.exec();
 }
 void SettingsDialog::rmConnection()
 {
     if (ui->cbConnection->currentText().isNull() || ui->cbConnection->currentText().isEmpty())
         return;
-    QMessageBox m(QMessageBox::Warning, "Delete connection?","Delete the selected connection?", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox m(QMessageBox::Warning, "Delete connection?", "Delete the selected connection?", QMessageBox::Yes | QMessageBox::No );
     m.setDefaultButton(QMessageBox::No);
     int ret = m.exec();
     if (ret != QMessageBox::Yes)
@@ -197,7 +198,8 @@ void SettingsDialog::addStreamInfo()
 {
     StreamInfoDialog sid;
     int ret = sid.exec();
-    if (ret == QDialog::Accepted) {
+    if (ret == QDialog::Accepted)
+    {
         applyStreamSettings();
     }
 }
@@ -213,7 +215,7 @@ void SettingsDialog::rmStreamInfo()
 {
     if (ui->cbStreamInfo->currentText().isNull() || ui->cbStreamInfo->currentText().isEmpty())
         return;
-    QMessageBox m(QMessageBox::Warning, "Delete stream?","Delete the selected stream?", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox m(QMessageBox::Warning, "Delete stream?", "Delete the selected stream?", QMessageBox::Yes | QMessageBox::No );
     m.setDefaultButton(QMessageBox::No);
     int ret = m.exec();
     if (ret != QMessageBox::Yes)

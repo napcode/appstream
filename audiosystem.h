@@ -53,7 +53,7 @@ private:
                             const PaStreamCallbackTimeInfo* ti,
                             PaStreamCallbackFlags statusFlags,
                             void *user);
-
+    bool _initialized;
     static Manager* _instance;
     PaStream *_stream;
 

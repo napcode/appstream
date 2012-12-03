@@ -11,13 +11,15 @@
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    Logger(parent),
-    ui(new Ui::MainWindow)
+    Logger(parent),   
+    ui(new Ui::MainWindow), 
+    _dsp(0)
 {
     ui->setupUi(this);
     // needed for logger
     _instance = this;
-
+    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    as.init();
     // setup settings system
     QCoreApplication::setOrganizationName("apparatus");
     QCoreApplication::setOrganizationDomain("apparatus.de");
@@ -42,7 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    stopStream();
+    if(_dsp)
+        stopStream();
 }
 void MainWindow::toolbarTriggered(QAction *a)
 {
