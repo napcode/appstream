@@ -61,6 +61,22 @@
      <string>TextLabel</string>
     </property>
    </widget>
+   <widget class="QStatusPAnel" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>351</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -135,6 +151,12 @@
    <class>MeterWidget</class>
    <extends>QLabel</extends>
    <header location="global">meterwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QStatusPAnel</class>
+   <extends>QFrame</extends>
+   <header>qstatuspanel.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

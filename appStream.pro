@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     encoder.cpp \
     encoderlame.cpp \
     outputfile.cpp \
-    logger.cpp
+    logger.cpp \
+    statuswidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -44,16 +45,25 @@ HEADERS  += mainwindow.h \
     encoder.h \
     encoderlame.h \
     outputfile.h \
-    logger.h
+    logger.h \
+    statuswidget.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
     serverconnectiondialog.ui \
     streaminfodialog.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/dep/lib/ -lportaudio_x86
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/dep/lib/ -lportaudio_x86
-else:unix: LIBS += -lportaudio -lmp3lame
+win32:CONFIG(release, debug|release) {
+    LIBS += -L$$PWD/dep/lib/ -lportaudio_x86
+    LIBS += -L$$PWD/dep/lib/ -llibmp3lame
+}
+win32:CONFIG(debug, debug|release) {
+    LIBS += -L$$PWD/dep/lib/ -lportaudio_x86
+    LIBS += -L$$PWD/dep/lib/ -llibmp3lame
+}
+unix {
+    LIBS += -lportaudio -lmp3lame
+}
 
 INCLUDEPATH += $$PWD/dep/portaudio/include
 DEPENDPATH += $$PWD/dep/portaudio/include
