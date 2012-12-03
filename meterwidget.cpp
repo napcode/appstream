@@ -52,7 +52,5 @@ void MeterWidget::paintEvent(QPaintEvent *event)
 void MeterWidget::setValues(MeterValues m)
 {
     _v = m;
-    //_values[0] = clamp(l, 0.0f, 1.0f);
-   // _values[1] = clamp(r, 0.0f, 1.0f);
     update();
 }
