@@ -67,7 +67,6 @@ void DSP::defaultSetup()
         emit message("adding MP3 file recorder");
         OutputFile *f = new OutputFile;
         EncoderLame *e = new EncoderLame;
-
         e->init();
         f->setEncoder(e);
         f->init();

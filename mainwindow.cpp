@@ -65,6 +65,7 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.beginGroup("record");
         s.setValue("enabled",ui->actionRecord->isChecked());
         s.endGroup();
+        // FIXME notify running DSP?
     }
 }
 void MainWindow::startStream()

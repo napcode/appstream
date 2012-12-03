@@ -28,6 +28,7 @@ void MeterWidget::reset()
         *it = 0;
         it++;
     }
+    update();
 }
 
 void MeterWidget::paintEvent(QPaintEvent *event)
