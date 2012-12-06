@@ -8,7 +8,7 @@
 class OutputFile : public Output
 {
 public:
-    OutputFile();
+    OutputFile(QString path = QString(), QString filename = QString("output"));
     ~OutputFile();
 
     // reimplementation from Output
@@ -24,8 +24,13 @@ public:
         _filename = filename;
     }
 protected:
+	QString _path;
     QString _filename;
     QFile _file;
+
+private:
+	void parseFileName();
+	QString getDateString() const;
 };
 
 #endif // OUTPUTFILE_H

@@ -34,12 +34,12 @@ void MeterWidget::reset()
 void MeterWidget::paintEvent(QPaintEvent *event)
 {
     QRect r = event->rect();
-    int w = r.width() / _numChannels;
+    int w = r.width() / _v.size();
     int h = r.height();
     QRect rect;
     QColor color;
     QPainter painter(this);
-    for (uint8_t i=0; i < _numChannels; ++i) {
+    for (uint8_t i=0; i < _v.size(); ++i) {
         rect.setRect(i*w , h - h*_v[i], w-1, h*_v[i]);
         float col = _colorspan - (_colorspan * _v[i]);
 

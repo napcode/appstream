@@ -17,5 +17,5 @@ void StatusWidget::paintEvent(QPaintEvent *event)
     painter.setBrush(b);
     painter.drawRect(r);
     QTextOption t;
-    painter.drawTextItem(10,10, ti);
+    //painter.drawTextItem(10,10, ti);
 }

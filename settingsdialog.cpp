@@ -5,7 +5,9 @@
 #include "streaminfodialog.h"
 #include <QSettings>
 #include <QMessageBox>
+#include <QFileDialog>
 #include <iostream>
+
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,6 +25,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->addStreamInfo, SIGNAL(released()), this, SLOT(addStreamInfo()));
     connect(ui->editStreamInfo, SIGNAL(released()), this, SLOT(editStreamInfo()));
     connect(ui->rmStreamInfo, SIGNAL(released()), this, SLOT(rmStreamInfo()));
+	connect(ui->slEncoderBitrate, SIGNAL(sliderMoved(int)),this,SLOT(sliderMoved(int)));
+	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 
     /* load settings */
     applySettings();
@@ -73,6 +77,23 @@ void SettingsDialog::applyAudioSettings()
 }
 void SettingsDialog::applyRecordSettings()
 {
+	QSettings s;
+	s.beginGroup("record");
+	if(s.contains("encoder")) {
+		int i = ui->cbEncoder->findText(s.value("encoder").toString());
+		ui->cbEncoder->setCurrentIndex(i);
+	}
+	if(s.contains("encoderBitRate"))
+		ui->slEncoderBitrate->setValue(s.value("encoderBitRate").toInt());
+	if(s.contains("encoderSampleRate")) {
+		int i = ui->cbEncoderSamplerate->findText(s.value("encoderSampleRate").toString());
+		ui->cbEncoderSamplerate->setCurrentIndex(i);
+	}
+	if(s.contains("recordPath"))
+		ui->leRecordPath->setText(s.value("recordPath").toString());
+	if(s.contains("recordFileName"))
+		ui->leRecordFilename->setText(s.value("recordFileName").toString());
+	s.endGroup();
 }
 void SettingsDialog::applyConnectionSettings()
 {
@@ -137,6 +158,13 @@ void SettingsDialog::accept()
     }
     {
         /* store record settings here */
+		s.beginGroup("record");
+		s.setValue("encoder", ui->cbEncoder->currentText());
+		s.setValue("encoderBitRate", ui->slEncoderBitrate->value());
+		s.setValue("encoderSampleRate", ui->cbEncoderSamplerate->currentText());
+		s.setValue("recordPath", ui->leRecordPath->text());
+		s.setValue("recordFileName", ui->leRecordFilename->text());
+		s.endGroup();
     }
     this->done(QDialog::Accepted);
 }
@@ -229,4 +257,13 @@ void SettingsDialog::rmStreamInfo()
     s.endGroup();
     int i = ui->cbStreamInfo->currentIndex();
     ui->cbStreamInfo->removeItem(i);
+}
+void SettingsDialog::sliderMoved(int position)
+{
+	ui->slEncoderBitrate->setToolTip(QString::number(position));
+}
+void SettingsDialog::openFileDialog()
+{
+	QString dir = QFileDialog::getExistingDirectory(this,"Select Directory");
+	ui->leRecordPath->setText(dir);
 }

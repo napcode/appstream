@@ -160,7 +160,7 @@ bool Manager::openDeviceStream()
     // FIXME we'll set that for now to
     params.sampleFormat = paInt16;
     m.bitsPerSample = 16;
-    m.numChannels = 1;
+    //m.numChannels = 1;
     // END FIXME
 
     params.device = d.second;
@@ -214,7 +214,7 @@ int Manager::_PAcallback(const void *input,
 
     const sample_t *in = static_cast<const sample_t *>(input);
     if (self->_dsp)
-        self->_dsp->feed(in, frameCount);
+		self->_dsp->feed(in, frameCount*self->_streamingMode.numChannels);
 
     return paContinue;
 }

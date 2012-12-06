@@ -52,8 +52,8 @@ void StreamInfoDialog::accept()
     s.beginGroup("stream");
     s.beginGroup(ui->edName->text());
    	{
-        s.setValue("genre", ui->edGenre->text());
-        s.setValue("description", ui->edDescription->text());
+        s.setValue("genre", ui->edGenre->text());		
+        s.setValue("description", ui->edDescription->toPlainText());
    		s.setValue("url", ui->edUrl->text());
    		s.setValue("icq", ui->edIcq->text());
    		s.setValue("irc", ui->edIrc->text());

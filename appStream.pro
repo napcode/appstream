@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     encoderlame.cpp \
     outputfile.cpp \
     logger.cpp \
-    statuswidget.cpp
+    statuswidget.cpp \
+    encodervorbis.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     encoderlame.h \
     outputfile.h \
     logger.h \
-    statuswidget.h
+    statuswidget.h \
+    encodervorbis.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \

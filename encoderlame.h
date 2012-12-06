@@ -39,6 +39,11 @@ public:
 private:
 	bool handleRC(int rc);
 	void resize(uint32_t newSize);
+
+	static void lameError(const char* format, va_list ap);
+	static void lameDebug(const char* format, va_list ap);
+	static void lameMessage(const char* format, va_list ap);
+
 	ConfigLame _config;
 	lame_global_flags *_lgf;
 	uint32_t _allocedFrames;

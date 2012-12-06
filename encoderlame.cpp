@@ -20,10 +20,15 @@ bool EncoderLame::init()
 
 	int rc;
 	_lgf = lame_init();
+	lame_set_errorf(_lgf, EncoderLame::lameError);
+	lame_set_debugf(_lgf, EncoderLame::lameDebug);
+	lame_set_msgf(_lgf, EncoderLame::lameMessage);
+	/*
     emit message(QString::number(_config.numInChannels));
     emit message(QString::number(_config.sampleRateIn));
     emit message(QString::number(_config.sampleRateOut));
     emit message(QString::number(_config.bitRate));
+	*/
     lame_set_num_channels(_lgf, _config.numInChannels);
     lame_set_in_samplerate(_lgf, _config.sampleRateIn);
     lame_set_out_samplerate(_lgf, _config.sampleRateOut);
@@ -119,4 +124,16 @@ QString EncoderLame::getVersion() const
 	QString lame_version(get_lame_version());
 
     return lame_version;
+}
+void EncoderLame::lameError(const char *format, va_list ap)
+{
+	vfprintf(stdout, format, ap);
+}
+void EncoderLame::lameDebug(const char *format, va_list ap)
+{
+	vfprintf(stdout, format, ap);
+}
+void EncoderLame::lameMessage(const char *format, va_list ap)
+{
+	vfprintf(stdout, format, ap);
 }

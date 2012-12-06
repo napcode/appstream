@@ -13,10 +13,9 @@
 
 // outputs 
 #include "output.h"
-#include "outputfile.h"
 
 // encoders
-#include "encoderlame.h"
+#include "encoder.h"
 
 class DSP : public QThread
 {
@@ -40,6 +39,8 @@ public:
 signals:
     void message(QString s) const;
     void newPeaks(MeterValues m);
+public slots:
+	void addFileRecorder();
 
 private:
     void setSize();
@@ -49,6 +50,7 @@ private:
 	bool _active;
     RingBuffer<sample_t> _inbuffer;
     QMutex _work;
+	QMutex _outputLock;
     QWaitCondition _workCondition;
     uint32_t _blockSize;
     uint8_t _numChannels;

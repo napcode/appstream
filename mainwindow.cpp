@@ -65,7 +65,8 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.beginGroup("record");
         s.setValue("enabled",ui->actionRecord->isChecked());
         s.endGroup();
-        // FIXME notify running DSP?
+		if(_dsp)
+			_dsp->addFileRecorder();
     }
 }
 void MainWindow::startStream()
@@ -84,7 +85,6 @@ void MainWindow::startStream()
     
     _dsp = new DSP(channels);
     connect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)), Qt::QueuedConnection);
-
     ui->meterwidget->setNumChannels(channels);
     connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
     // start device stream
@@ -136,3 +136,4 @@ void MainWindow::newAudioFrames(float ts, uint32_t frames)
     //const sample_t *p = _dsp->getPeaks();
     //log(QString::number(ts) + QString("::") + QString::number(frames));
 }
+

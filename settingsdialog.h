@@ -23,6 +23,8 @@ public slots:
     void editStreamInfo();
     void rmStreamInfo();
     void accept();
+	void sliderMoved(int value);
+	void openFileDialog();
     
 private:
     void applySettings();
