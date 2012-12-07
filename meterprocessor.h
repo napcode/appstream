@@ -25,7 +25,10 @@ class MeterProcessor : public Processor
         MeterValues getValues();
 	private:
 		void initPeaks();
-
+		inline float clamp(float x, float a, float b)
+		{
+	    	return x < a ? a : (x > b ? b : x);
+		}
         MeterValues _v;
 		Vecf _z1;
 		Vecf _z2;

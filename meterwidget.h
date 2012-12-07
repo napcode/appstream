@@ -21,10 +21,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *event);
 private:
-	inline float clamp(sample_t x, sample_t a, sample_t b)
-	{
-	    return x < a ? a : (x > b ? b : x);
-	}
+
     uint8_t _numChannels;
     MeterValues _v;
     float _width;

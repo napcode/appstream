@@ -11,7 +11,7 @@ EncoderLame::~EncoderLame()
 		lame_close(_lgf);
     	_lgf = 0;
 	}
-	delete _buffer;
+	delete[] _buffer;
 }
 bool EncoderLame::init()
 {
@@ -108,7 +108,7 @@ bool EncoderLame::handleRC(int rc)
 }
 void EncoderLame::resize(uint32_t newSize)
 {
-	delete _buffer;
+	delete[] _buffer;
 	_allocedFrames = newSize;
 	// default output buffer size. see lame.h
 	_bufferSize = 1.25 * _allocedFrames + 7200;
