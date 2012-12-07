@@ -134,11 +134,12 @@ void DSP::run()
 				{
 					MeterProcessor *p = static_cast<MeterProcessor *>(*it);
 					emit newPeaks(p->getValues());
+				} else {
+					// now reuse/swap buffers for next processor
+					sample_t *tmp = _buffers[0];
+					_buffers[0] = _buffers[1];
+					_buffers[1] = tmp;
 				}
-				// now reuse/swap buffers for next processor
-				sample_t *tmp = _buffers[0];
-				_buffers[0] = _buffers[1];
-				_buffers[1] = tmp;
 				it++;
 			}
 		}

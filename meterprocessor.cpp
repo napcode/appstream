@@ -44,7 +44,7 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
             z2 += 4 * _w * (z1 - z2);
             if (z2 > m)
                 m = z2;
-            out[s + c] = in[s + c];
+            //out[s + c] = in[s + c];
         }
         _z1[c] = z1;
         _z2[c] = z2 + 1e-10f;
