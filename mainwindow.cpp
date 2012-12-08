@@ -102,7 +102,6 @@ void MainWindow::stopStream()
     as.closeDeviceStream();
     if(_dsp->isRunning()){
         _dsp->disable();
-        _dsp->wait();
     }
     as.setDSP(0);
     delete _dsp;

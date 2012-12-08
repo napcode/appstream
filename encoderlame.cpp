@@ -20,9 +20,11 @@ bool EncoderLame::init()
 
 	int rc;
 	_lgf = lame_init();
+    /*
 	lame_set_errorf(_lgf, EncoderLame::lameError);
 	lame_set_debugf(_lgf, EncoderLame::lameDebug);
 	lame_set_msgf(_lgf, EncoderLame::lameMessage);
+    */
 	/*
     emit message(QString::number(_config.numInChannels));
     emit message(QString::number(_config.sampleRateIn));

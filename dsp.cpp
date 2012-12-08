@@ -22,10 +22,7 @@ DSP::DSP(uint8_t channels)
 }
 DSP::~DSP()
 {
-	if (_active)
-	{
-		disable();
-	}
+	disable();
 	{
 		ProcessorChain::iterator it = _processorChain.begin();
 		while (it != _processorChain.end())
@@ -79,26 +76,26 @@ void DSP::addFileRecorder()
 	OutputFile *f = 0;
 	Encoder *e = 0;
 	if(!s.contains("recordPath") || !s.contains("recordFileName") ||
-	   !s.contains("encoder") || !s.contains("encoderBitRate") ||
-	   !s.contains("encoderSampleRate"))
+		!s.contains("encoder") || !s.contains("encoderBitRate") ||
+		!s.contains("encoderSampleRate"))
 	{
 		emit message("Error: missing recorder config");
 		return;
 	}
 	if(s.value("encoder").toString() == QString("Lame MP3")) {
-			ConfigLame c;
-			c.bitRate = s.contains("encoderBitRate") ? s.value("encoderBitRate").toInt() : 64;
-			c.sampleRateOut = s.contains("encoderSampleRate") ? s.value("encoderSampleRate").toInt() : 44100;
-			c.numInChannels = _numChannels;
-			e = new EncoderLame(c);
+		ConfigLame c;
+		c.bitRate = s.contains("encoderBitRate") ? s.value("encoderBitRate").toInt() : 64;
+		c.sampleRateOut = s.contains("encoderSampleRate") ? s.value("encoderSampleRate").toInt() : 44100;
+		c.numInChannels = _numChannels;
+		e = new EncoderLame(c);
 	}
 	else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
-			e = new EncoderVorbis;
+		e = new EncoderVorbis;
 	assert(e);
 	if(!e->init())
 		return;
 	f = new OutputFile(s.value("recordPath").toString(),
-					   s.value("recordFileName").toString());
+		s.value("recordFileName").toString());
 	f->setEncoder(e);
 	if(!f->init())
 		return;
@@ -136,9 +133,9 @@ void DSP::run()
 					emit newPeaks(p->getValues());
 				} else {
 					// now reuse/swap buffers for next processor
-					sample_t *tmp = _buffers[0];
-					_buffers[0] = _buffers[1];
-					_buffers[1] = tmp;
+					//sample_t *tmp = _buffers[0];
+					//_buffers[0] = _buffers[1];
+					//_buffers[1] = tmp;
 				}
 				it++;
 			}
@@ -167,6 +164,12 @@ void DSP::disable()
 		_active = false;
 		_workCondition.wakeAll();
 		wait();
+		OutputChain::iterator it = _outputChain.begin();
+		while (it != _outputChain.end())
+		{
+			(*it)->disable();
+			it++;
+		}
 	}
 }
 void DSP::feed(const sample_t *buffer, uint32_t frames)

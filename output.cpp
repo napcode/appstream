@@ -41,11 +41,6 @@ void Output::run()
         _work.unlock();
 
         if (_encoder) {
-            /*
-            for(uint16_t i = 0; i < 44100; i+=2 ) {
-                test[i] = 30000*sin((2*3.14*(440.0/44100.0)*(i/2.0f)));
-                test[i+1] = 30000*sin((2*3.14*(55.0/44100.0)*(i/2.0f)));
-            }*/
             _encoder->encode(buffer,512);
             output(_encoder->getBuffer(),_encoder->getBufferValid());
         }
