@@ -200,6 +200,7 @@ bool Manager::closeDeviceStream()
     Pa_CloseStream(_stream);
     emit message("Stream stopped...");
     _isDeviceStreaming = false;
+    fileclose();
     return true;
 }
 int Manager::_PAcallback(const void *input,
@@ -214,12 +215,16 @@ int Manager::_PAcallback(const void *input,
     static uint32_t k = 0;
     const sample_t *in = static_cast<const sample_t *>(input);
     if (self->_dsp) {
+        
         short *v = (short*)input;
-        for(uint16_t i = 0; i < frameCount*self->_streamingMode.numChannels; i+=2 ) {
-            v[i] = 30000*sin((2*3.14*(440.0/44100.0)*(k)));
-            v[i+1] = 30000*sin((2*3.14*(55.0/44100.0)*(k)));
+        uint8_t chan = self->_streamingMode.numChannels;
+        for(uint32_t i = 0; i < frameCount * chan; i+=chan ) {
+            for(uint8_t c = 0; c < chan; ++c) {
+                v[i+c] = 30000 * sin((2*3.14*((55.0*(c+1))/44100.0)*k));
+            }
             ++k;
         }
+        
 		self->_dsp->feed(in, frameCount*self->_streamingMode.numChannels);
     }
 

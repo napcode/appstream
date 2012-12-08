@@ -23,7 +23,7 @@ public:
     inline uint32_t getSpace() const { return _space; }
     inline uint32_t getFillLevel() const { return _size - _space; }
 
-    uint32_t read(T* dest, uint32_t num = 0);
+    uint32_t read(T* dest, uint32_t destsize, uint32_t num = 0);
 	uint32_t write(const T* src, uint32_t num, bool partialWrite = false);
 	uint32_t write(const void* src, uint32_t num, bool partialWrite = false);
 
@@ -91,7 +91,7 @@ bool RingBuffer<T>::isFull() const
 }
 
 template<typename T>
-unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
+unsigned int RingBuffer<T>::read(T* dest, uint32_t size, uint32_t num)
 {
 	// are the buffers valid?
 	if(!dest || !_buffer)
@@ -111,6 +111,7 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t num)
 	else
 		numElements = num;
 
+	numElements = (size >= numElements) ? numElements : size;
 	numBytes = numElements * sizeof(T);
 
 	// content is between begin & end

@@ -113,12 +113,14 @@ void DSP::run()
 		while (_inbuffer.getFillLevel() < _blockSize)
 		{
 			_workCondition.wait(&_work);
-			if (!_active)
+			if (!_active) {
+				_work.unlock();
 				return;
+			}
 		}
 
 		// data available -> take a block & process it
-		_inbuffer.read(_buffers[0], _blockSize);
+		uint32_t read = _inbuffer.read(_buffers[0], _blockSize);
 		_work.unlock();
 
 		// process signal chain
@@ -126,7 +128,7 @@ void DSP::run()
 			ProcessorChain::iterator it = _processorChain.begin();
 			while (it != _processorChain.end())
 			{
-				(*it)->process(_buffers[0], _buffers[1], _blockSize);
+				(*it)->process(_buffers[0], _buffers[1], read);
 				if ((*it)->getType() == Processor::METER)
 				{
 					MeterProcessor *p = static_cast<MeterProcessor *>(*it);
@@ -142,11 +144,12 @@ void DSP::run()
 		}
 		// send buffer to output
 		{
+
 			_outputLock.lock();
 			OutputChain::iterator it = _outputChain.begin();
 			while (it != _outputChain.end())
 			{
-				(*it)->feed(_buffers[0], _blockSize);
+				(*it)->feed(_buffers[0], read);
 				it++;
 			}
 			_outputLock.unlock();
@@ -174,10 +177,14 @@ void DSP::disable()
 }
 void DSP::feed(const sample_t *buffer, uint32_t frames)
 {
+	if(!_active)
+		return;
 	// FIXME waittime should be based on the current samplerate
 	if (_work.tryLock(5))
 	{
 		_inbuffer.write(buffer, frames);
+		filelog(buffer, frames, 2);
+
 		_work.unlock();
 		if (_inbuffer.getFillLevel() >= _blockSize)
 			_workCondition.wakeOne();
@@ -187,5 +194,3 @@ void DSP::feed(const sample_t *buffer, uint32_t frames)
 		emit message(QString("Dropping frames. DSP appears too busy."));
 	}
 }
-
-
