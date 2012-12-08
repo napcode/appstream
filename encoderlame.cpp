@@ -58,7 +58,7 @@ bool EncoderLame::encode(short *buffer, uint32_t samples)
 
     if(_allocedFrames < samples)
         resize(samples);
-    filelog(buffer, samples, 2);
+
     if(_config.numInChannels == 2) {
         rc = lame_encode_buffer_interleaved(_lgf, buffer, (samples>>1), reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
     }
