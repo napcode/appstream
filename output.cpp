@@ -61,11 +61,14 @@ void Output::feed(const sample_t *buffer, uint32_t frames)
     // FIXME waittime should be based on the current samplerate
     if (_work.tryLock(5))
     {
-
         _inbuffer.write(buffer, frames);
-        _work.unlock();
-        if (_inbuffer.getFillLevel() != 0)
+        if (_inbuffer.getFillLevel() != 0) {
+            _work.unlock();
             _workCondition.wakeOne();
+        }
+        else
+            _work.unlock();
+
     }
     else
     {

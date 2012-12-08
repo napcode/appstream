@@ -199,8 +199,7 @@ bool Manager::closeDeviceStream()
     Pa_StopStream(_stream);
     Pa_CloseStream(_stream);
     emit message("Stream stopped...");
-    _isDeviceStreaming = false;
-    fileclose();
+    _isDeviceStreaming = false;    
     return true;
 }
 int Manager::_PAcallback(const void *input,

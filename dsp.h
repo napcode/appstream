@@ -52,9 +52,10 @@ private:
     QMutex _work;
 	QMutex _outputLock;
     QWaitCondition _workCondition;
-    uint32_t _blockSize;
+
     uint8_t _numChannels;
-    sample_t *_buffers[2];
+    sample_t *_readbuffer;
+    sample_t *_writebuffer;
     ProcessorChain _processorChain;
     OutputChain _outputChain;
 };

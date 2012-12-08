@@ -9,6 +9,7 @@
 #include "dsp.h"
 #include "meterprocessor.h"
 #include "config.h"
+#include "filelogger.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     Logger(parent),   
@@ -46,6 +47,7 @@ MainWindow::~MainWindow()
 {
     if(_dsp)
         stopStream();
+    FileLogger::release();
 }
 void MainWindow::toolbarTriggered(QAction *a)
 {

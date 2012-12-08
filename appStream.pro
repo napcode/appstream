@@ -30,6 +30,7 @@ SOURCES += main.cpp\
     outputicecast.cpp \
     logger.cpp \
     statuswidget.cpp \
+    filelogger.cpp \
     encodervorbis.cpp
 
 HEADERS  += mainwindow.h \
@@ -50,6 +51,7 @@ HEADERS  += mainwindow.h \
     outputicecast.h \
     logger.h \
     statuswidget.h \
+    filelogger.h \
     encodervorbis.h
 
 FORMS    += mainwindow.ui \

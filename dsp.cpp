@@ -1,5 +1,6 @@
 #include "dsp.h"
 #include "logger.h"
+#include "filelogger.h"
 // encoders
 #include "encoderlame.h"
 #include "encodervorbis.h"
@@ -9,15 +10,15 @@
 #include <cassert>
 
 #include <QSettings>
+#include <QMutexLocker>
 
 DSP::DSP(uint8_t channels)
-	:   _active(false),
-	_blockSize(DSP_BLOCKSIZE),
+	:   _active(false),	
 	_numChannels(channels)
 {
 	_inbuffer.init(DSP_RINGSIZE);
-	_buffers[0] = 0;
-	_buffers[1] = 0;
+	_readbuffer = 0;
+	_writebuffer = 0;
 	setSize();
 }
 DSP::~DSP()
@@ -41,24 +42,24 @@ DSP::~DSP()
 		}
 		_outputChain.clear();
 	}
-	delete[] _buffers[0];
-	delete[] _buffers[1];
+	delete[] _readbuffer;
+	delete[] _writebuffer;
 }
 void DSP::setSize()
 {
-	if (_buffers[0])
+	if (_readbuffer)
 	{
-		delete[] _buffers[0];
-		_buffers[0] = 0;
+		delete[] _readbuffer;
+		_readbuffer = 0;
 	}
-	if (_buffers[1])
+	if (_writebuffer)
 	{
-		delete[] _buffers[1];
-		_buffers[1] = 0;
+		delete[] _writebuffer;
+		_writebuffer = 0;
 	}
-	_buffers[0] = new sample_t[_blockSize];
-	_buffers[1] = new sample_t[_blockSize];
-	assert(_buffers[0] && _buffers[1]);
+	_readbuffer = new sample_t[DSP_RINGSIZE];
+	_writebuffer = new sample_t[DSP_RINGSIZE];
+	assert(_readbuffer && _writebuffer);
 }
 void DSP::defaultSetup()
 {
@@ -110,7 +111,7 @@ void DSP::run()
 	while (1)
 	{
 		_work.lock();
-		while (_inbuffer.getFillLevel() < _blockSize)
+		while (_inbuffer.getFillLevel() < DSP_BLOCKSIZE)
 		{
 			_workCondition.wait(&_work);
 			if (!_active) {
@@ -120,7 +121,8 @@ void DSP::run()
 		}
 
 		// data available -> take a block & process it
-		uint32_t read = _inbuffer.read(_buffers[0], _blockSize);
+		uint32_t read = _inbuffer.read(_readbuffer, DSP_RINGSIZE);
+		assert(read!=0);
 		_work.unlock();
 
 		// process signal chain
@@ -128,32 +130,33 @@ void DSP::run()
 			ProcessorChain::iterator it = _processorChain.begin();
 			while (it != _processorChain.end())
 			{
-				(*it)->process(_buffers[0], _buffers[1], read);
+				(*it)->process(_readbuffer, _writebuffer, read);
 				if ((*it)->getType() == Processor::METER)
 				{
 					MeterProcessor *p = static_cast<MeterProcessor *>(*it);
 					emit newPeaks(p->getValues());
 				} else {
 					// now reuse/swap buffers for next processor
-					//sample_t *tmp = _buffers[0];
-					//_buffers[0] = _buffers[1];
-					//_buffers[1] = tmp;
+					//sample_t *tmp = _readbuffer;
+					//_readbuffer = _writebuffer;
+					//_writebuffer = tmp;
 				}
 				it++;
 			}
 		}
 		// send buffer to output
-		{
-
+		/*{
+			// outputs can be modified on runtime
 			_outputLock.lock();
 			OutputChain::iterator it = _outputChain.begin();
 			while (it != _outputChain.end())
 			{
-				(*it)->feed(_buffers[0], read);
+				(*it)->feed(_readbuffer, read);
 				it++;
 			}
 			_outputLock.unlock();
-		}
+		}*/
+		FileLogger::instance().log(_readbuffer, read, 2);
 		//sleep(1);
 		//std::cout << "dsp::run" << std::endl;
 		if (!_active)
@@ -183,11 +186,14 @@ void DSP::feed(const sample_t *buffer, uint32_t frames)
 	if (_work.tryLock(5))
 	{
 		_inbuffer.write(buffer, frames);
-		filelog(buffer, frames, 2);
-
-		_work.unlock();
-		if (_inbuffer.getFillLevel() >= _blockSize)
+				
+		if (_inbuffer.getFillLevel() >= DSP_BLOCKSIZE) {
+			_work.unlock();
 			_workCondition.wakeOne();
+		}
+		else 
+			_work.unlock();
+
 	}
 	else
 	{
