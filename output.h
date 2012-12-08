@@ -35,7 +35,9 @@ public:
 
     virtual ~Output();
 
-    virtual void output(const char* buffer, uint32_t bufferSize) = 0;
+    /* output can be everything. samples or bytes */
+    virtual void output(const char* buffer, uint32_t size) = 0;
+    
     OutputType getType() const
     {
         return _type;
@@ -54,7 +56,7 @@ public:
         delete _encoder;
         _encoder = e;
     }
-    void feed(const sample_t* buffer, uint32_t frames);
+    void feed(const sample_t* buffer, uint32_t samples);
     virtual void run();
 
     const QString& getName() const { return _name; }
@@ -66,7 +68,7 @@ protected:
     bool _active;
     OutputType _type;
     Encoder *_encoder;
-    uint32_t _blockSize;
+   // uint32_t _blockSize;
 	RingBuffer<sample_t> _inbuffer;
 
 	QMutex _work;

@@ -113,7 +113,8 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t size, uint32_t num)
 
 	numElements = (size >= numElements) ? numElements : size;
 	numBytes = numElements * sizeof(T);
-
+	
+	//std::cout << "NB: " << numElements << std::endl;
 	// content is between begin & end
 	if(_rptr + numElements <= endptr) {
 		memcpy(dest, _rptr, numBytes);
@@ -122,11 +123,11 @@ unsigned int RingBuffer<T>::read(T* dest, uint32_t size, uint32_t num)
 	// content wraps around
 	else {
 		uint32_t from_rptr = endptr - _rptr;
-		uint32_t from_begin = numBytes - from_rptr; 
-		memcpy(dest, _rptr, from_rptr);
-		dest += from_rptr/sizeof(T);
-		memcpy(dest, _buffer, from_begin);
-		_rptr = _buffer + (from_begin/sizeof(T));
+		uint32_t from_begin = numElements - from_rptr; 
+		memcpy(dest, _rptr, from_rptr*sizeof(T));
+		dest += from_rptr;
+		memcpy(dest, _buffer, from_begin*sizeof(T));
+		_rptr = _buffer + from_begin;
 	}
 	
 	_space += numElements;
@@ -174,11 +175,11 @@ uint32_t RingBuffer<T>::write(const T* src, uint32_t num, bool partialWrite)
 	} 
 	else {
 		uint32_t from_wptr = endptr - _wptr;
-		uint32_t from_begin = numBytes - from_wptr;
-		memcpy(_wptr, src, from_wptr);
-		src += from_wptr/sizeof(T);
-		memcpy(_buffer, src, from_begin);
-		_wptr = _buffer + (from_begin/sizeof(T));
+		uint32_t from_begin = numElements - from_wptr;
+		memcpy(_wptr, src, from_wptr*sizeof(T));
+		src += from_wptr;
+		memcpy(_buffer, src, from_begin*sizeof(T));
+		_wptr = _buffer + from_begin;
 	}
 
 	_space -= numElements;

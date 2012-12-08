@@ -3,8 +3,7 @@
 Output::Output()
     : _active(false),
       _type(INVALID),
-      _encoder(0),
-      _blockSize(512)
+      _encoder(0)
 {
     _inbuffer.init(OUTPUT_RINGSIZE);
 }
@@ -48,20 +47,20 @@ void Output::run()
 
         if (_encoder) {
             _encoder->encode(buffer,read);
-            output(_encoder->getBuffer(),_encoder->getBufferValid());
+            output(_encoder->getBuffer(), _encoder->getBufferValid());
         }
         //sleep(1);
         //std::cout << "output::run" << std::endl;
     }
 }
-void Output::feed(const sample_t *buffer, uint32_t frames)
+void Output::feed(const sample_t *buffer, uint32_t samples)
 {
     if(!_active)
         return;
     // FIXME waittime should be based on the current samplerate
     if (_work.tryLock(5))
     {
-        _inbuffer.write(buffer, frames);
+        _inbuffer.write(buffer, samples);
         if (_inbuffer.getFillLevel() != 0) {
             _work.unlock();
             _workCondition.wakeOne();

@@ -204,7 +204,7 @@ bool Manager::closeDeviceStream()
 }
 int Manager::_PAcallback(const void *input,
                          void *output,
-                         unsigned long frameCount,
+                         unsigned long frames,
                          const PaStreamCallbackTimeInfo *ti,
                          PaStreamCallbackFlags statusFlags,
                          void *user)
@@ -213,18 +213,16 @@ int Manager::_PAcallback(const void *input,
     Manager *self = static_cast<Manager *>(user);
     static uint32_t k = 0;
     const sample_t *in = static_cast<const sample_t *>(input);
-    if (self->_dsp) {
-        
+    if (self->_dsp) {        
         short *v = (short*)input;
-        uint8_t chan = self->_streamingMode.numChannels;
-        for(uint32_t i = 0; i < frameCount * chan; i+=chan ) {
-            for(uint8_t c = 0; c < chan; ++c) {
-                v[i+c] = 30000 * sin((2*3.14*((55.0*(c+1))/44100.0)*k));
+        uint8_t channels = self->_streamingMode.numChannels;
+        for(uint32_t i = 0; i < frames * channels; i += channels ) {
+            for(uint8_t c = 0; c < channels; ++c) {
+                v[i+c] = 30000 * sin((2*3.1415*((55.0*(c+1))/44100.0)*k));
             }
             ++k;
-        }
-        
-		self->_dsp->feed(in, frameCount*self->_streamingMode.numChannels);
+        }        
+		self->_dsp->feed(in, frames*channels);
     }
 
     return paContinue;

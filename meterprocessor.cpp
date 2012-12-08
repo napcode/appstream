@@ -29,7 +29,7 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
         m = _reset[c] ? 0 : _v[c];
         _reset[c] = false;
         //n /= 4;
-        for (uint32_t s = c; s < (samples-(_numChannels*3)); s += _numChannels)
+        for (uint32_t s = c; s < samples - (_numChannels*3); s += _numChannels)
         {
         	sample_t *p = in + s;
             t2 = z2 / 2;

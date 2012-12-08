@@ -108,7 +108,7 @@ void DSP::addFileRecorder()
 void DSP::run()
 {
 	_active = true;
-	while (1)
+	while (_active)
 	{
 		_work.lock();
 		while (_inbuffer.getFillLevel() < DSP_BLOCKSIZE)
@@ -122,9 +122,8 @@ void DSP::run()
 
 		// data available -> take a block & process it
 		uint32_t read = _inbuffer.read(_readbuffer, DSP_RINGSIZE);
-		assert(read!=0);
+		assert(read >= DSP_BLOCKSIZE);
 		_work.unlock();
-
 		// process signal chain
 		{
 			ProcessorChain::iterator it = _processorChain.begin();
@@ -145,7 +144,7 @@ void DSP::run()
 			}
 		}
 		// send buffer to output
-		/*{
+		{
 			// outputs can be modified on runtime
 			_outputLock.lock();
 			OutputChain::iterator it = _outputChain.begin();
@@ -155,12 +154,8 @@ void DSP::run()
 				it++;
 			}
 			_outputLock.unlock();
-		}*/
-		FileLogger::instance().log(_readbuffer, read, 2);
-		//sleep(1);
-		//std::cout << "dsp::run" << std::endl;
-		if (!_active)
-			return;
+		}
+		//FileLogger::instance().log(_readbuffer, read, _numChannels);
 	}
 }
 void DSP::disable()
@@ -178,14 +173,14 @@ void DSP::disable()
 		}
 	}
 }
-void DSP::feed(const sample_t *buffer, uint32_t frames)
+void DSP::feed(const sample_t *buffer, uint32_t samples)
 {
 	if(!_active)
 		return;
 	// FIXME waittime should be based on the current samplerate
 	if (_work.tryLock(5))
 	{
-		_inbuffer.write(buffer, frames);
+		_inbuffer.write(buffer, samples);
 				
 		if (_inbuffer.getFillLevel() >= DSP_BLOCKSIZE) {
 			_work.unlock();
@@ -193,7 +188,6 @@ void DSP::feed(const sample_t *buffer, uint32_t frames)
 		}
 		else 
 			_work.unlock();
-
 	}
 	else
 	{

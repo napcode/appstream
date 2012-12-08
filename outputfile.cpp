@@ -19,6 +19,8 @@ OutputFile::~OutputFile()
 	if(_file.isOpen()) {
 		_file.flush();
 		_file.close();
+		if(_file.size() == 0)
+			_file.remove();
 	}
 }
 bool OutputFile::init()
@@ -43,11 +45,11 @@ bool OutputFile::init()
 	start();
 	return true;
 }
-void OutputFile::output(const char *buffer, uint32_t bufferSize)
+void OutputFile::output(const char *buffer, uint32_t size)
 {    
     if(!_file.isOpen() || !_file.isWritable())
 		return;
-	_file.write(buffer, bufferSize);
+	_file.write(buffer, size);
 }
 void OutputFile::parseFileName()
 {

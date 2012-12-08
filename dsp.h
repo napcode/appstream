@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
+
 #include "ringbuffer.h"
 #include "config.h"
 
@@ -29,13 +30,11 @@ public:
     ProcessorChain& getProcessorChain() const;
     void setProcessorChain(ProcessorChain s);
 
-    void feed(const sample_t* buffer, uint32_t frames);
+    void feed(const sample_t* buffer, uint32_t samples);
     void run();
     bool isActive() const { return _active; }
     void disable();
 
-    RingBuffer<sample_t>& getBuffer() { return _inbuffer; }
-    const RingBuffer<sample_t>& getBuffer() const { return _inbuffer; }
 signals:
     void message(QString s) const;
     void newPeaks(MeterValues m);

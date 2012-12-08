@@ -20,7 +20,7 @@ class MeterProcessor : public Processor
 	public:
 		MeterProcessor(uint8_t channels);
 		~MeterProcessor();
-		void process(sample_t *in, sample_t *out, uint32_t frames);
+		void process(sample_t *in, sample_t *out, uint32_t samples);
 		
         MeterValues getValues();
 	private:
