@@ -77,6 +77,6 @@ protected:
     QWaitCondition _workCondition;
 };
 
-typedef std::vector<Output *> OutputChain;
+typedef std::vector<Output *> OutputList;
 
 #endif

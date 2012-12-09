@@ -19,16 +19,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void startStream();
-    void stopStream();
+    void start();
+    void stop();
 public slots:
     void toolbarTriggered(QAction *a);
-    void log(QString s);
+    void message(QString s);
     void warn(QString s);
     void error(QString s);
     void newAudioFrames(float timestamp, uint32_t frames);
+
     
 private:
+    void prepareFileRecorder(uint8_t channels);
+    void prepareDSP(uint8_t channels);
     Ui::MainWindow *ui;
     DSP *_dsp;
 };

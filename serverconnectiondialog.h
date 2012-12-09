@@ -19,6 +19,7 @@ public:
 
 public slots:
     void accept();
+    void typeChanged(QString);
     
 private:
     Ui::ServerConnectionDialog *ui;

@@ -14,7 +14,7 @@ public:
     {}
     static Logger* getInstance() { return _instance; }
 public slots:
-    virtual void log(QString msg) = 0;
+    virtual void message(QString msg) = 0;
     virtual void warn(QString msg) = 0;
     virtual void error(QString msg) = 0;
 protected:

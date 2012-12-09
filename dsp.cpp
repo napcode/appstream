@@ -2,33 +2,32 @@
 #include "logger.h"
 #include "filelogger.h"
 // encoders
-#include "encoderlame.h"
-#include "encodervorbis.h"
+#include "encoder.h"
+
 // outputs 
-#include "outputfile.h"
-#include "outputicecast.h"
+#include "output.h"
 
 #include <cassert>
 
 #include <QSettings>
 #include <QMutexLocker>
 
-DSP::DSP(uint8_t channels)
+DSP::DSP()
 	:   _active(false),	
-	_numChannels(channels)
+	_numChannels(0)
 {
-    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(message(QString)));
     connect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
     connect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
 
 	_inbuffer.init(DSP_RINGSIZE);
 	_readbuffer = 0;
 	_writebuffer = 0;
-	setSize();
+	allocBuffers();
 }
 DSP::~DSP()
 {
-    disconnect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    disconnect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(message(QString)));
     disconnect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
     disconnect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
 
@@ -43,18 +42,18 @@ DSP::~DSP()
 		_processorChain.clear();
 	}
 	{
-		OutputChain::iterator it = _outputChain.begin();
-		while (it != _outputChain.end())
+		OutputList::iterator it = _outputList.begin();
+		while (it != _outputList.end())
 		{
 			delete *it;
 			it++;
 		}
-		_outputChain.clear();
+		_outputList.clear();
 	}
 	delete[] _readbuffer;
 	delete[] _writebuffer;
 }
-void DSP::setSize()
+void DSP::allocBuffers()
 {
 	if (_readbuffer)
 	{
@@ -70,59 +69,15 @@ void DSP::setSize()
 	_writebuffer = new sample_t[DSP_RINGSIZE];
 	assert(_readbuffer && _writebuffer);
 }
-void DSP::defaultSetup()
+void DSP::addProcessor(Processor *p)
 {
-	_processorChain.push_back(new MeterProcessor(_numChannels));
-	QSettings s;
-	s.beginGroup("record");
-    if(1)
-    {
-    	OutputIceCast *oic = new OutputIceCast;
-    	//EncoderLame *e = new EncoderLame;
-    	//e->init();
-    	//oic->setEncoder(e);
-    	oic->init();
-    	emit message(QString("added stream ") + oic->getVersion());
-
-    }
-	if(s.value("enabled").toBool()) {
-		addFileRecorder();
-	}
+    QMutexLocker ml(&_processorLock);
+    _processorChain.push_back(p);
 }
-void DSP::addFileRecorder()
+void DSP::addOutput(Output *o)
 {
-	QSettings s;
-	s.beginGroup("record");
-	OutputFile *f = 0;
-	Encoder *e = 0;
-	if(!s.contains("recordPath") || !s.contains("recordFileName") ||
-		!s.contains("encoder") || !s.contains("encoderBitRate") ||
-		!s.contains("encoderSampleRate"))
-	{
-		emit message("Error: missing recorder config");
-		return;
-	}
-	if(s.value("encoder").toString() == QString("Lame MP3")) {
-		ConfigLame c;
-		c.bitRate = s.contains("encoderBitRate") ? s.value("encoderBitRate").toInt() : 64;
-		c.sampleRateOut = s.contains("encoderSampleRate") ? s.value("encoderSampleRate").toInt() : 44100;
-		c.numInChannels = _numChannels;
-		e = new EncoderLame(c);
-	}
-	else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
-		e = new EncoderVorbis;
-	assert(e);
-	if(!e->init())
-		return;
-	f = new OutputFile(s.value("recordPath").toString(),
-		s.value("recordFileName").toString());
-	f->setEncoder(e);
-	if(!f->init())
-		return;
-	emit message("adding file recorder");
-	_outputLock.lock();
-	_outputChain.push_back(f);
-	_outputLock.unlock();
+    QMutexLocker ml(&_outputLock);
+    _outputList.push_back(o);
 }
 void DSP::run()
 {
@@ -145,6 +100,7 @@ void DSP::run()
 		_work.unlock();
 		// process signal chain
 		{
+			QMutexLocker ml(&_processorLock);
 			ProcessorChain::iterator it = _processorChain.begin();
 			while (it != _processorChain.end())
 			{
@@ -165,14 +121,13 @@ void DSP::run()
 		// send buffer to output
 		{
 			// outputs can be modified on runtime
-			_outputLock.lock();
-			OutputChain::iterator it = _outputChain.begin();
-			while (it != _outputChain.end())
+			QMutexLocker ml(&_outputLock);
+			OutputList::iterator it = _outputList.begin();
+			while (it != _outputList.end())
 			{
 				(*it)->feed(_readbuffer, read);
 				it++;
 			}
-			_outputLock.unlock();
 		}
 		//FileLogger::instance().log(_readbuffer, read, _numChannels);
 	}
@@ -184,8 +139,8 @@ void DSP::disable()
 		_active = false;
 		_workCondition.wakeAll();
 		wait();
-		OutputChain::iterator it = _outputChain.begin();
-		while (it != _outputChain.end())
+		OutputList::iterator it = _outputList.begin();
+		while (it != _outputList.end())
 		{
 			(*it)->disable();
 			it++;

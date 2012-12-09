@@ -22,13 +22,17 @@ class DSP : public QThread
 {
     Q_OBJECT
 public:
-    DSP(uint8_t channels);
+    DSP();
     ~DSP();
 
     // add peaks and maybe more
-    void defaultSetup();
-    ProcessorChain& getProcessorChain() const;
-    void setProcessorChain(ProcessorChain s);
+    const ProcessorChain& getProcessorChain() const;
+    void addProcessor(Processor *p);
+    const OutputList& getOutputList() const;
+    void addOutput(Output *o);
+    
+    void setNumChannels(uint8_t channels);
+    uint8_t getNumChannels() const { return _numChannels; }
 
     void feed(const sample_t* buffer, uint32_t samples);
     void run();
@@ -40,25 +44,24 @@ signals:
     void warn(QString s) const;
     void error(QString s) const;
     void newPeaks(MeterValues m);
-public slots:
-	void addFileRecorder();
 
 private:
-    void setSize();
+    void allocBuffers();
     void initPeaks();
     void checkPeaks();
 
 	bool _active;
     RingBuffer<sample_t> _inbuffer;
     QMutex _work;
-	QMutex _outputLock;
+    QMutex _outputLock;
+    QMutex _processorLock;
     QWaitCondition _workCondition;
 
     uint8_t _numChannels;
     sample_t *_readbuffer;
     sample_t *_writebuffer;
     ProcessorChain _processorChain;
-    OutputChain _outputChain;
+    OutputList _outputList;
 };
 
 #endif // DSP_H

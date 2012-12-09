@@ -10,6 +10,10 @@
 #include "meterprocessor.h"
 #include "config.h"
 #include "filelogger.h"
+#include "encoderlame.h"
+#include "encodervorbis.h"
+#include "outputfile.h"
+#include "outputicecast.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     Logger(parent),   
@@ -30,23 +34,29 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<uint32_t>("uint32_t");
     qRegisterMetaType<sample_t>("sample_t");
     qRegisterMetaType<MeterValues>("MeterValues");
-    // get audio system
-    //AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
-    // whenever there is a state change in the audio manager we'd like to log it
-    //connect(&as, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
-    //as.init();
+
+    // create & start DSP
+    _dsp = new DSP();
+    as.setDSP(_dsp);
+    connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues))); 
+
     QSettings s;
     s.beginGroup("record");
     if(s.contains("enabled")) {
         ui->actionRecord->setChecked(s.value("enabled").toBool());
     }
-
+    s.endGroup();
+    s.beginGroup("general");
+    if(s.contains("connectOnStart") && s.value("connectOnStart").toBool()) {
+        start();
+    }
 }
 
 MainWindow::~MainWindow()
 {
-    if(_dsp)
-        stopStream();
+    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    if(as.getState() == AudioSystem::Manager::STREAMING)
+        stop();
     FileLogger::release();
 }
 void MainWindow::toolbarTriggered(QAction *a)
@@ -57,67 +67,54 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.exec();
     }
     else if (a == ui->actionStartStream) {
-        startStream();
+        start();
     }
     else if (a == ui->actionStopStream) {
-        stopStream();
+        stop();
     }
     else if (a == ui->actionRecord) {
         QSettings s;
         s.beginGroup("record");
         s.setValue("enabled",ui->actionRecord->isChecked());
         s.endGroup();
-		if(_dsp)
-			_dsp->addFileRecorder();
+        // FIXME
+		//prepareFileRecorder();
     }
 }
-void MainWindow::startStream()
+void MainWindow::start()
 {
-	if(_dsp)
+    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+	if(as.getState() != AudioSystem::Manager::INITIALIZED)
 		return;
-    // FIXME check for a valid config before doing anything
+
     QSettings s;
     s.beginGroup("audio");
     if (!s.contains("numChannels"))
     {
-        log("Error: please review the configuration.");
+        error("Configuration invalid");
         return;
     }
-    uint8_t channels = s.value("numChannels").toInt();
-    // get audio system
-    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
-    ui->meterwidget->setNumChannels(channels);
-  //  connect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)), Qt::QueuedConnection);
-   // connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
-        
-    _dsp = new DSP(channels);
-	_dsp->defaultSetup();
-	_dsp->start();
-	as.setDSP(_dsp);
-    if(as.openDeviceStream()) {	   
-	    // FIXME this should be based on settings
-	}
-    else {
-		as.setDSP(0);
-        delete _dsp;
-		_dsp = 0;
+
+    if(as.openDeviceStream()) {
+        uint8_t channels = s.value("numChannels").toInt();
+        prepareDSP(channels);
+        ui->meterwidget->setNumChannels(channels);
+        _dsp->start();
+        as.startDeviceStream();
 	}
 }
-void MainWindow::stopStream()
+void MainWindow::stop()
 {
-    if(!_dsp)
-        return;
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    if(as.getState() != AudioSystem::Manager::STREAMING)
+        return;
     as.closeDeviceStream();
+    as.stopDeviceStream();
     _dsp->disable();
-    //disconnect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
-    //disconnect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
-    as.setDSP(0);
-    delete _dsp;
-    _dsp = 0;
+      
     ui->meterwidget->reset();
 }
-void MainWindow::log(QString s)
+void MainWindow::message(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
     QString entry = current.toString(Qt::SystemLocaleShortDate);
@@ -128,14 +125,14 @@ void MainWindow::warn(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
     QString entry = current.toString(Qt::SystemLocaleShortDate);
-    entry += QString(": ") + s;
+    entry += QString("::Warn:: ") + s;
     ui->logLabel->appendPlainText(entry);
 }
 void MainWindow::error(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
     QString entry = current.toString(Qt::SystemLocaleShortDate);
-    entry += QString(": ") + s;
+    entry += QString("::Error:: ") + s;
     ui->logLabel->appendPlainText(entry);
 }
 void MainWindow::newAudioFrames(float ts, uint32_t frames)
@@ -145,3 +142,57 @@ void MainWindow::newAudioFrames(float ts, uint32_t frames)
     //log(QString::number(ts) + QString("::") + QString::number(frames));
 }
 
+void MainWindow::prepareFileRecorder(uint8_t channels)
+{
+    QSettings s;
+    s.beginGroup("record");
+    OutputFile *f = 0;
+    Encoder *e = 0;
+    if(!s.contains("recordPath") || !s.contains("recordFileName") ||
+        !s.contains("encoder") || !s.contains("encoderBitRate") ||
+        !s.contains("encoderSampleRate"))
+    {
+        error("missing recorder config");
+        return;
+    }
+    if(s.value("encoder").toString() == QString("Lame MP3")) {
+        ConfigLame c;
+        c.bitRate = s.contains("encoderBitRate") ? s.value("encoderBitRate").toInt() : 64;
+        c.sampleRateOut = s.contains("encoderSampleRate") ? s.value("encoderSampleRate").toInt() : 44100;
+        c.numInChannels = channels;
+        e = new EncoderLame(c);
+    }
+    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
+        e = new EncoderVorbis;
+    assert(e);
+    if(!e->init())
+        return;
+    f = new OutputFile(s.value("recordPath").toString(),
+        s.value("recordFileName").toString());
+    f->setEncoder(e);
+    if(!f->init())
+        return;
+    emit message("adding file recorder");
+    _dsp->addOutput(f);
+}
+void MainWindow::prepareDSP(uint8_t channels)
+{
+    MeterProcessor *mp = new MeterProcessor(channels);
+    _dsp->addProcessor(mp);
+    QSettings s;
+    s.beginGroup("record");
+    if(s.value("enabled").toBool()) {
+        prepareFileRecorder(channels);
+    }
+    if(1)
+    {
+        OutputIceCast *oic = new OutputIceCast;
+        //EncoderLame *e = new EncoderLame;
+        //e->init();
+        //oic->setEncoder(e);
+        oic->init();
+        emit message(QString("added stream ") + oic->getVersion());
+
+    }
+
+}

@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>481</width>
     <height>350</height>
    </rect>
   </property>
@@ -59,14 +59,14 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>10</y>
      <width>461</width>
      <height>291</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tabGeneral">
     <attribute name="title">
@@ -179,7 +179,7 @@
         <x>10</x>
         <y>20</y>
         <width>411</width>
-        <height>58</height>
+        <height>60</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3" columnminimumwidth="80,0,0,0">
@@ -304,7 +304,7 @@
        <x>10</x>
        <y>10</y>
        <width>431</width>
-       <height>112</height>
+       <height>120</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">

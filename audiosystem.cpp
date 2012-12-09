@@ -17,20 +17,24 @@ Manager &Manager::getInstance()
 }
 
 Manager::Manager()
-    :   _initialized(false), 
+    :   _state(INVALID), 
         _stream(0),
-        _isDeviceStreaming(false),
 		_dsp(0)
 {
-    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(message(QString)));
+    connect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    connect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
 }
 Manager::~Manager()
 {
-    if(_initialized) {
-        if (_isDeviceStreaming)
-            closeDeviceStream();
-        Pa_Terminate();
-    }
+    if(_state == STREAMING) 
+        stopDeviceStream();
+    if(_state == READY)
+        closeDeviceStream();
+    Pa_Terminate();  
+    disconnect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(message(QString)));
+    disconnect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    disconnect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));  
 }
 
 bool Manager::init()
@@ -45,20 +49,20 @@ bool Manager::init()
     }
     emit message(QString("Audio initialized"));
     emit message(QString(Pa_GetVersionText()));
-    _initialized = true;
+    _state = INITIALIZED;
     return true;
 }
 DeviceList Manager::getDeviceList() const
 {
     DeviceList l;
-    if(!_initialized)
+    if(_state != INITIALIZED)
         return l;
     int devcount = Pa_GetDeviceCount();
     if (devcount < 0)
     {
-        QString msg("Error getting device list");
+        QString msg("getting device list");
         msg.append(Pa_GetErrorText(devcount));
-        emit message(msg);
+        emit error(msg);
     }
     for (int i = 0; i < devcount; ++i)
     {
@@ -66,7 +70,7 @@ DeviceList Manager::getDeviceList() const
         if (pdi == 0)
         {
             QString msg("Error getting device info: " + i);
-            emit message(msg);
+            emit error(msg);
             continue;
         }
         if (pdi->maxInputChannels <= 0)
@@ -93,8 +97,9 @@ Device Manager::getDeviceByName(const QString &name)
 }
 bool Manager::checkModeSupported(const Device &d, const Mode &m) const
 {
-    if(!_initialized)
+    if(_state != INITIALIZED)
         return false;
+
     const PaDeviceInfo *pdi = Pa_GetDeviceInfo(d.second);
     PaStreamParameters params;
     params.device = d.second;
@@ -120,7 +125,7 @@ bool Manager::checkModeSupported(const Device &d, const Mode &m) const
 }
 bool Manager::openDeviceStream()
 {
-    if (!_initialized || _isDeviceStreaming)
+    if (_state != INITIALIZED)
         return false;
     PaError err;
     PaStreamParameters params;
@@ -130,13 +135,13 @@ bool Manager::openDeviceStream()
     if (!s.contains("deviceName") || !s.contains("sampleRate")
             || !s.contains("bitsPerSample") || !s.contains("numChannels"))
     {
-        emit message("Error: invalid device config found. Please reconfigure.");
+        emit error("invalid device config found. Please reconfigure.");
         return false;
     }
     Device d = getDeviceByName(s.value("deviceName").toString());
     if (d.second == -1)
     {
-        emit message("Error: configured device not found");
+        emit error("configured device not found");
         return false;
     }
 
@@ -168,7 +173,7 @@ bool Manager::openDeviceStream()
     params.channelCount = m.numChannels;
     params.suggestedLatency = Pa_GetDeviceInfo(params.device)->defaultLowInputLatency;
     params.hostApiSpecificStreamInfo = 0;
-
+    emit message("Opening device...");
     err = Pa_OpenStream(&_stream,
                         &params,
                         0,
@@ -179,28 +184,39 @@ bool Manager::openDeviceStream()
                         this);
     if (err != paNoError)
     {
-        emit message("Error opening device");
+        emit error("Unable to open device");
+        _state = INVALID;
         emit message(QString(Pa_GetErrorText(err)));
         return false;
     }
-    /* setup went well -> start device stream */
-    _isDeviceStreaming = true;
-    _streamingMode = m;
-    emit message("Stream started...");
-    emit message(s.value("deviceName").toString());
-    Pa_StartStream(_stream);
 
+    _streamingMode = m;
+    _state = READY;
     return true;
+}
+void Manager::startDeviceStream()
+{
+    if(_state != READY)
+        return;
+    emit message("Starting device stream...");
+    _state = STREAMING;
+    Pa_StartStream(_stream);  
+}
+void Manager::stopDeviceStream()
+{
+    if(_state != STREAMING)
+        return;
+    emit message("Stopping device stream...");
+    Pa_StopStream(_stream);
+    _state = READY;
 }
 bool Manager::closeDeviceStream()
 {
-    if (!_isDeviceStreaming)
+    if (_state != READY)
         return false;
-
-    Pa_StopStream(_stream);
+    emit message("Closing device...");
     Pa_CloseStream(_stream);
-    emit message("Stream stopped...");
-    _isDeviceStreaming = false;    
+  
     return true;
 }
 int Manager::_PAcallback(const void *input,

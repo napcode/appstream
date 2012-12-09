@@ -27,22 +27,36 @@ class Manager : public QObject
 {
     Q_OBJECT
 public:
+    enum State
+    {
+        INVALID,
+        INITIALIZED, 
+        READY, 
+        STREAMING
+    };
 
     static Manager& getInstance();
 
     bool init();
     DeviceList getDeviceList() const;
+    Device getDeviceByName(const QString &name);
 
     bool checkModeSupported(const Device &d, const Mode &m) const;
+
     bool openDeviceStream();
+    void startDeviceStream();
+    void stopDeviceStream();
     bool closeDeviceStream();
-    Device getDeviceByName(const QString &name);
 
     DSP* getDSP() { return _dsp; }
     const DSP* getDSP() const { return _dsp; }
     void setDSP(DSP *dsp) { _dsp = dsp; }
+
+    State getState() const { return _state; }
 signals:
     void message(QString text) const;
+    void error(QString text) const;
+    void warn(QString text) const;
 private:
     Manager();
     ~Manager();
@@ -53,11 +67,10 @@ private:
                             const PaStreamCallbackTimeInfo* ti,
                             PaStreamCallbackFlags statusFlags,
                             void *user);
-    bool _initialized;
+    State _state;
     static Manager* _instance;
     PaStream *_stream;
 
-    bool _isDeviceStreaming;
     Mode _streamingMode;
     DSP *_dsp;
 };
