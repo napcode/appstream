@@ -1,5 +1,4 @@
 #include "outputfile.h"
-#include "logger.h"
 
 #include <QDateTime>
 #include <QDate>
@@ -11,7 +10,6 @@ OutputFile::OutputFile(QString path, QString filename)
  :	_path(path),
 	_filename(filename)
 {
-    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));    
 	parseFileName();
 }
 OutputFile::~OutputFile()
@@ -34,11 +32,11 @@ bool OutputFile::init()
 	_file.setFileName(_path + _filename);
 	_file.open(QIODevice::WriteOnly);
 	if(!_file.isOpen()) {
-		emit message("Error: unable to open file " + _path + _filename);
+		emit error("unable to open file " + _path + _filename);
 		return false;
 	}
     if(!_file.isWritable()) {
-		emit message("Error: file " + _path + _filename + " is not writeable");
+		emit error("file " + _path + _filename + " is not writeable");
 		return false;
 	}
 	emit message("Recording to " + _path + _filename);

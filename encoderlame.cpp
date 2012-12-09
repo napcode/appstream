@@ -60,7 +60,7 @@ bool EncoderLame::encode(short *buffer, uint32_t samples)
         resize(samples);
 
     if(_config.numInChannels == 2) {
-        rc = lame_encode_buffer_interleaved(_lgf, buffer, (samples>>1), reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
+        rc = lame_encode_buffer_interleaved(_lgf, buffer, samples/_config.numInChannels, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
     }
     else {
         rc = lame_encode_buffer(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);

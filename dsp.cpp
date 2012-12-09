@@ -6,6 +6,7 @@
 #include "encodervorbis.h"
 // outputs 
 #include "outputfile.h"
+#include "outputicecast.h"
 
 #include <cassert>
 
@@ -16,6 +17,10 @@ DSP::DSP(uint8_t channels)
 	:   _active(false),	
 	_numChannels(channels)
 {
+    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    connect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    connect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
+
 	_inbuffer.init(DSP_RINGSIZE);
 	_readbuffer = 0;
 	_writebuffer = 0;
@@ -23,6 +28,10 @@ DSP::DSP(uint8_t channels)
 }
 DSP::~DSP()
 {
+    disconnect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    disconnect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    disconnect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
+
 	disable();
 	{
 		ProcessorChain::iterator it = _processorChain.begin();
@@ -66,6 +75,16 @@ void DSP::defaultSetup()
 	_processorChain.push_back(new MeterProcessor(_numChannels));
 	QSettings s;
 	s.beginGroup("record");
+    if(1)
+    {
+    	OutputIceCast *oic = new OutputIceCast;
+    	//EncoderLame *e = new EncoderLame;
+    	//e->init();
+    	//oic->setEncoder(e);
+    	oic->init();
+    	emit message(QString("added stream ") + oic->getVersion());
+
+    }
 	if(s.value("enabled").toBool()) {
 		addFileRecorder();
 	}

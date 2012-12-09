@@ -12,7 +12,7 @@ struct ConfigLame
 	ConfigLame() 
     :	sampleRateIn(44100),
         sampleRateOut(44100),
-        numInChannels(1),
+        numInChannels(2),
         bitRate(128)
 	{}
 	uint32_t sampleRateIn;

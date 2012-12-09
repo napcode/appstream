@@ -3,7 +3,7 @@
 
 #define DSP_BLOCKSIZE 256
 #define DSP_RINGSIZE 2048
-#define PA_FRAMES 64
+#define PA_FRAMES 256
 #define OUTPUT_RINGSIZE 2048
 
 typedef short sample_t;

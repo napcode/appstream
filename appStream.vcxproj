@@ -75,7 +75,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;portaudio_x86.lib;E:/Source/appStream/dep/lib/debug\libmp3lame.lib;libshout.lib;E:/Source/appStream/dep/lib/debug\libogg_static.lib;E:/Source/appStream/dep/lib/debug\libvorbis_static.lib;E:/Source/appStream/dep/lib/debug\pthreadVC2.lib;E:/Source/appStream/dep/lib/debug\pthreadVCE2.lib;E:/Source/appStream/dep/lib/debug\pthreadVSE2.lib;"D:/Windows Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";$(QTDIR)\lib\QtGuid4.lib;$(QTDIR)\lib\QtCored4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;E:/Source/appStream/dep/lib/debug\portaudio_x86.lib;E:/Source/appStream/dep/lib/debug\libmp3lame.lib;libshout.lib;E:/Source/appStream/dep/lib/debug\libogg_static.lib;E:/Source/appStream/dep/lib/debug\libvorbis_static.lib;E:/Source/appStream/dep/lib/debug\pthreadVC2.lib;E:/Source/appStream/dep/lib/debug\pthreadVCE2.lib;E:/Source/appStream/dep/lib/debug\pthreadVSE2.lib;"D:/Windows Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";$(QTDIR)\lib\QtGuid4.lib;$(QTDIR)\lib\QtCored4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;e:\Source\SDKs\Qt\4.8.3\lib;E:/Source/appStream/dep/lib/debug;"D:/Windows Kits/8.0/Lib/win8/um/x86/";E:/Source/appStream/dep/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -115,7 +115,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(QTDIR)\lib\qtmain.lib;portaudio_x86.lib;E:/Source/appStream/dep/lib/debug\libmp3lame.lib;libshout.lib;E:/Source/appStream/dep/lib/debug\libogg_static.lib;E:/Source/appStream/dep/lib/debug\libvorbis_static.lib;E:/Source/appStream/dep/lib/debug\pthreadVC2.lib;E:/Source/appStream/dep/lib/debug\pthreadVCE2.lib;E:/Source/appStream/dep/lib/debug\pthreadVSE2.lib;"D:/Windows Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";$(QTDIR)\lib\QtGui4.lib;$(QTDIR)\lib\QtCore4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(QTDIR)\lib\qtmain.lib;E:/Source/appStream/dep/lib/debug\portaudio_x86.lib;E:/Source/appStream/dep/lib/debug\libmp3lame.lib;libshout.lib;E:/Source/appStream/dep/lib/debug\libogg_static.lib;E:/Source/appStream/dep/lib/debug\libvorbis_static.lib;E:/Source/appStream/dep/lib/debug\pthreadVC2.lib;E:/Source/appStream/dep/lib/debug\pthreadVCE2.lib;E:/Source/appStream/dep/lib/debug\pthreadVSE2.lib;"D:/Windows Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";$(QTDIR)\lib\QtGui4.lib;$(QTDIR)\lib\QtCore4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;e:\Source\SDKs\Qt\4.8.3\lib;E:/Source/appStream/dep/lib/debug;"D:/Windows Kits/8.0/Lib/win8/um/x86/";E:/Source/appStream/dep/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -159,6 +159,9 @@
     <ClCompile Include="Debug\moc_output.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Debug\moc_outputicecast.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Debug\moc_serverconnectiondialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -175,6 +178,7 @@
     <ClCompile Include="encoder.cpp" />
     <ClCompile Include="encoderlame.cpp" />
     <ClCompile Include="encodervorbis.cpp" />
+    <ClCompile Include="filelogger.cpp" />
     <ClCompile Include="GeneratedFiles\qrc_icons.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -209,6 +213,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Release\moc_output.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_outputicecast.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Release\moc_serverconnectiondialog.cpp">
@@ -262,6 +269,7 @@
     </CustomBuild>
     <ClInclude Include="encoderlame.h" />
     <ClInclude Include="encodervorbis.h" />
+    <ClInclude Include="filelogger.h" />
     <CustomBuild Include="logger.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT  "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include" "-I.\dep\portaudio\include" "-I.\dep\lame\include" "-I.\dep\libshout\include" "-I$(QTDIR)\include\ActiveQt" "-I.\debug" "-I." "-I.\..\SDKs\Qt\4.8.3\mkspecs\default" "-I.\GeneratedFiles"</Command>
@@ -308,7 +316,16 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="outputfile.h" />
-    <ClInclude Include="outputicecast.h" />
+    <CustomBuild Include="outputicecast.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT  "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include" "-I.\dep\portaudio\include" "-I.\dep\lame\include" "-I.\dep\libshout\include" "-I$(QTDIR)\include\ActiveQt" "-I.\debug" "-I." "-I.\..\SDKs\Qt\4.8.3\mkspecs\default" "-I.\GeneratedFiles"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing outputicecast.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -DNDEBUG  "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include" "-I.\dep\portaudio\include" "-I.\dep\lame\include" "-I.\dep\libshout\include" "-I$(QTDIR)\include\ActiveQt" "-I.\release" "-I." "-I.\..\SDKs\Qt\4.8.3\mkspecs\default" "-I.\GeneratedFiles"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing outputicecast.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp;%(Outputs)</Outputs>
+    </CustomBuild>
     <ClInclude Include="processor.h" />
     <ClInclude Include="ringbuffer.h" />
     <CustomBuild Include="serverconnectiondialog.h">

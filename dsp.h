@@ -37,6 +37,8 @@ public:
 
 signals:
     void message(QString s) const;
+    void warn(QString s) const;
+    void error(QString s) const;
     void newPeaks(MeterValues m);
 public slots:
 	void addFileRecorder();

@@ -73,6 +73,8 @@ void MainWindow::toolbarTriggered(QAction *a)
 }
 void MainWindow::startStream()
 {
+	if(_dsp)
+		return;
     // FIXME check for a valid config before doing anything
     QSettings s;
     s.beginGroup("audio");
@@ -84,27 +86,32 @@ void MainWindow::startStream()
     uint8_t channels = s.value("numChannels").toInt();
     // get audio system
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
-    
-    _dsp = new DSP(channels);
-    connect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)), Qt::QueuedConnection);
     ui->meterwidget->setNumChannels(channels);
-    connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
-    // start device stream
-    
-    // FIXME this should be based on settings
-    _dsp->defaultSetup();
-    _dsp->start();
- 
-    as.setDSP(_dsp);
-    as.openDeviceStream();
+  //  connect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)), Qt::QueuedConnection);
+   // connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
+        
+    _dsp = new DSP(channels);
+	_dsp->defaultSetup();
+	_dsp->start();
+	as.setDSP(_dsp);
+    if(as.openDeviceStream()) {	   
+	    // FIXME this should be based on settings
+	}
+    else {
+		as.setDSP(0);
+        delete _dsp;
+		_dsp = 0;
+	}
 }
 void MainWindow::stopStream()
 {
+    if(!_dsp)
+        return;
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     as.closeDeviceStream();
-    if(_dsp->isRunning()){
-        _dsp->disable();
-    }
+    _dsp->disable();
+    //disconnect(_dsp, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    //disconnect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
     as.setDSP(0);
     delete _dsp;
     _dsp = 0;

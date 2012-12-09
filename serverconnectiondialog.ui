@@ -104,7 +104,7 @@
      <widget class="QLineEdit" name="edName"/>
     </item>
     <item row="3" column="2">
-     <widget class="QLineEdit" name="edAdress"/>
+     <widget class="QLineEdit" name="edAddress"/>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label_6">
@@ -133,7 +133,7 @@
  <tabstops>
   <tabstop>edName</tabstop>
   <tabstop>cbType</tabstop>
-  <tabstop>edAdress</tabstop>
+  <tabstop>edAddress</tabstop>
   <tabstop>sbPort</tabstop>
   <tabstop>edPassword</tabstop>
   <tabstop>edMountpoint</tabstop>

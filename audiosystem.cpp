@@ -19,7 +19,8 @@ Manager &Manager::getInstance()
 Manager::Manager()
     :   _initialized(false), 
         _stream(0),
-        _isDeviceStreaming(false)
+        _isDeviceStreaming(false),
+		_dsp(0)
 {
     connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
 }
@@ -213,15 +214,18 @@ int Manager::_PAcallback(const void *input,
     Manager *self = static_cast<Manager *>(user);
     static uint32_t k = 0;
     const sample_t *in = static_cast<const sample_t *>(input);
-    if (self->_dsp) {        
+    if(self->_dsp) {        
         short *v = (short*)input;
         uint8_t channels = self->_streamingMode.numChannels;
+        /*
         for(uint32_t i = 0; i < frames * channels; i += channels ) {
             for(uint8_t c = 0; c < channels; ++c) {
                 v[i+c] = 30000 * sin((2*3.1415*((55.0*(c+1))/44100.0)*k));
             }
             ++k;
-        }        
+        }
+
+        */       
 		self->_dsp->feed(in, frames*channels);
     }
 

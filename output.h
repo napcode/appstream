@@ -63,6 +63,8 @@ public:
     void setName(const QString& name) { _name = name; }
 signals:
     void message(QString msg) const;
+    void warn(QString msg) const;
+    void error(QString msg) const;
 protected:
     QString _name;
     bool _active;

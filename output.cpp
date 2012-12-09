@@ -1,17 +1,26 @@
 #include "output.h"
+#include "logger.h"
 
 Output::Output()
     : _active(false),
       _type(INVALID),
       _encoder(0)
 {
+    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    connect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    connect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
     _inbuffer.init(OUTPUT_RINGSIZE);
 }
 Output::~Output()
 {
+    disconnect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    disconnect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
+    disconnect(this, SIGNAL(error(QString)), Logger::getInstance(), SLOT(error(QString)));
+
     if(_active)
         disable();
     delete _encoder;
+
 }
 void Output::disable()
 {
