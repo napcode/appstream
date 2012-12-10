@@ -132,6 +132,7 @@ void MainWindow::stop()
     as.stopDeviceStream();
     as.closeDeviceStream();    
     _dsp->disable();
+    _dsp->reset();
     ui->meterwidget->setActive(false);
     ui->meterwidget->reset();
 }
@@ -262,4 +263,5 @@ void MainWindow::addStream()
     }
     emit message(QString("added stream"));
     oic->connect();
+    _dsp->addOutput(oic);
 }

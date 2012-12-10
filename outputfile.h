@@ -27,6 +27,7 @@ protected:
 	QString _path;
     QString _filename;
     QFile _file;
+    uint64_t _written;
 
 private:
 	void parseFileName();

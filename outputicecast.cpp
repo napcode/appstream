@@ -100,6 +100,7 @@ bool OutputIceCast::init()
     emit stateChanged(READY);
     emit message("libshout initialized");
     emit message("Version: " + getVersion());
+    start();
 	return true;
 }
 void OutputIceCast::applyStreamInfo()
@@ -168,7 +169,7 @@ void OutputIceCast::output(const char* buffer, uint32_t size)
 			emit stateChanged(DISCONNECTED);
 		}
 		shout_sync(_shout);
-	} 	
+	}
 }
 QString OutputIceCast::getVersion() const
 {

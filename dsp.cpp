@@ -53,6 +53,28 @@ DSP::~DSP()
 	delete[] _readbuffer;
 	delete[] _writebuffer;
 }
+void DSP::reset()
+{
+	disable();
+	{
+		ProcessorChain::iterator it = _processorChain.begin();
+		while (it != _processorChain.end())
+		{
+			delete *it;
+			it++;
+		}
+		_processorChain.clear();
+	}
+	{
+		OutputList::iterator it = _outputList.begin();
+		while (it != _outputList.end())
+		{
+			delete *it;
+			it++;
+		}
+		_outputList.clear();
+	}	
+}
 void DSP::allocBuffers()
 {
 	if (_readbuffer)

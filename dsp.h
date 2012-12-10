@@ -38,7 +38,7 @@ public:
     void run();
     bool isActive() const { return _active; }
     void disable();
-
+    void reset();
 signals:
     void message(QString s) const;
     void warn(QString s) const;

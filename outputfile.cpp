@@ -8,7 +8,8 @@
 
 OutputFile::OutputFile(QString path, QString filename)
  :	_path(path),
-	_filename(filename)
+	_filename(filename),
+	_written(0)
 {
 	parseFileName();
 }
@@ -47,7 +48,18 @@ void OutputFile::output(const char *buffer, uint32_t size)
 {    
     if(!_file.isOpen() || !_file.isWritable())
 		return;
-	_file.write(buffer, size);
+	qint64 written = _file.write(buffer, size);
+	_written += written;
+	if(_written > 1000000) {
+		// force write to disk
+		// in case of crashes we'd like to write regularly
+		_written = 0;
+		_file.flush();
+
+		// flush doesn't really force a write :(
+		_file.close();
+		_file.open(QIODevice::Append);
+	}
 }
 void OutputFile::parseFileName()
 {
