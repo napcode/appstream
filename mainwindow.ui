@@ -125,6 +125,7 @@ border-color: rgb(0, 0, 0);</string>
    <addaction name="actionStartStream"/>
    <addaction name="actionStopStream"/>
    <addaction name="separator"/>
+   <addaction name="actionStreaming"/>
    <addaction name="actionRecord"/>
    <addaction name="separator"/>
    <addaction name="actionSettings"/>
@@ -143,7 +144,8 @@ border-color: rgb(0, 0, 0);</string>
   <action name="actionStartStream">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/call-start.png</normaloff>:/new/prefix1/res/call-start.png</iconset>
+     <normaloff>:/new/prefix1/res/call-start.png</normaloff>
+     <normalon>:/new/prefix1/res/call-start.png</normalon>:/new/prefix1/res/call-start.png</iconset>
    </property>
    <property name="text">
     <string>Start Stream</string>
@@ -155,7 +157,8 @@ border-color: rgb(0, 0, 0);</string>
   <action name="actionStopStream">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/call-stop.png</normaloff>:/new/prefix1/res/call-stop.png</iconset>
+     <normaloff>:/new/prefix1/res/call-stop.png</normaloff>
+     <normalon>:/new/prefix1/res/call-stop.png</normalon>:/new/prefix1/res/call-stop.png</iconset>
    </property>
    <property name="text">
     <string>Stop Stream</string>
@@ -178,6 +181,22 @@ border-color: rgb(0, 0, 0);</string>
    </property>
    <property name="toolTip">
     <string>Recording</string>
+   </property>
+  </action>
+  <action name="actionStreaming">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/online-off.png</normaloff>
+     <normalon>:/new/prefix1/res/online-on.png</normalon>:/new/prefix1/res/online-off.png</iconset>
+   </property>
+   <property name="text">
+    <string>Streaming</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle streaming to selected server connection</string>
    </property>
   </action>
  </widget>

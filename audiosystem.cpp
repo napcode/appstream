@@ -216,7 +216,7 @@ bool Manager::closeDeviceStream()
         return false;
     emit message("Closing device...");
     Pa_CloseStream(_stream);
-  
+    _state = INITIALIZED;
     return true;
 }
 int Manager::_PAcallback(const void *input,

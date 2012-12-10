@@ -44,8 +44,12 @@ public:
     virtual QString getVersion() const = 0;
 
     virtual QString getFileExtension() const = 0;
+
 signals:
-    void message(QString s) const;
+    void message(QString msg) const;
+    void warn(QString msg) const;
+    void error(QString msg) const;
+
 protected:
 	QString _name;
 	bool _initialized;

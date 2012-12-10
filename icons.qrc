@@ -5,5 +5,9 @@
         <file>res/call-stop.png</file>
         <file>res/media-record_off.png</file>
         <file>res/media-record_on.png</file>
+        <file>res/call-start-off.png</file>
+        <file>res/call-stop-off.png</file>
+        <file>res/online-off.png</file>
+        <file>res/online-on.png</file>
     </qresource>
 </RCC>

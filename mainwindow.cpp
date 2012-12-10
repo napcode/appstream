@@ -15,12 +15,15 @@
 #include "outputfile.h"
 #include "outputicecast.h"
 
+#include <unistd.h>
+
 MainWindow::MainWindow(QWidget *parent) :
     Logger(parent),   
     ui(new Ui::MainWindow), 
     _dsp(0)
 {
     ui->setupUi(this);
+    ui->actionStopStream->setDisabled(true);
     // needed for logger
     _instance = this;
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
@@ -99,8 +102,12 @@ void MainWindow::start()
         uint8_t channels = s.value("numChannels").toInt();
         prepareDSP(channels);
         ui->meterwidget->setNumChannels(channels);
+
         _dsp->start();
         as.startDeviceStream();
+        ui->meterwidget->setActive(true);
+        ui->actionStopStream->setEnabled(true);
+        ui->actionStartStream->setDisabled(true);
 	}
 }
 void MainWindow::stop()
@@ -108,11 +115,14 @@ void MainWindow::stop()
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     if(as.getState() != AudioSystem::Manager::STREAMING)
         return;
-    as.closeDeviceStream();
+
     as.stopDeviceStream();
+    as.closeDeviceStream();    
     _dsp->disable();
-      
+    ui->meterwidget->setActive(false);
     ui->meterwidget->reset();
+    ui->actionStartStream->setEnabled(true);
+    ui->actionStopStream->setDisabled(true);
 }
 void MainWindow::message(QString s)
 {

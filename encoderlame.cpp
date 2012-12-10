@@ -1,9 +1,9 @@
 #include "encoderlame.h"
-#include "logger.h"
+
 EncoderLame::EncoderLame(ConfigLame c)
 : _config(c)
 {
-    connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(log(QString)));
+    
 }
 EncoderLame::~EncoderLame()
 {
@@ -37,7 +37,7 @@ bool EncoderLame::init()
     lame_set_brate(_lgf, _config.bitRate);
 
     if((rc = lame_init_params(_lgf)) < 0){
-        emit message("Error: unable to init lame");
+        emit error("unable to init lame");
         return false;
     }
     else {
@@ -62,9 +62,14 @@ bool EncoderLame::encode(short *buffer, uint32_t samples)
     if(_config.numInChannels == 2) {
         rc = lame_encode_buffer_interleaved(_lgf, buffer, samples/_config.numInChannels, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
     }
-    else {
+    else if (_config.numInChannels == 1) {
         rc = lame_encode_buffer(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
     }
+    else {
+        emit error("Lame can't handle more than 2 channels.");
+        assert(0);
+    }
+    
     if(rc >= 0)
         _bufferValid = rc;
     else
@@ -81,11 +86,16 @@ bool EncoderLame::encode(float *buffer, uint32_t samples)
 
     if(_allocedFrames < samples)
         resize(samples);
-    emit message("float encode");
+
     if(_config.numInChannels == 2)
         rc = lame_encode_buffer_interleaved_ieee_float(_lgf, buffer, (samples>>1), reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
-    else 
+    else if(_config.numInChannels == 1)
         rc = lame_encode_buffer_ieee_float(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
+    else {
+        emit error("Lame can't handle more than 2 channels.");
+        assert(0);
+    }
+
     if(rc >= 0)
         _bufferValid = rc;
     else
@@ -97,13 +107,13 @@ bool EncoderLame::handleRC(int rc)
 {
     switch(rc) {
     	case -1:
-    		emit message("Lame error: out buffer to small"); return false;
+    		emit error("Lame: out buffer to small"); return false;
     	case -2:
-    		emit message("Lame error: unable to allocate memory"); return false;
+    		emit error("Lame: unable to allocate memory"); return false;
     	case -3:
-    		emit message("Lame error: init not called. Should never happen."); return false;
+    		emit error("Lame: init not called. Should never happen."); return false;
     	case -4:
-    		emit message("Lame error: psycho acoustic problem occurred"); return false;
+    		emit error("Lame: psycho acoustic problem occurred"); return false;
     	default:
     		return true;
 	}	
@@ -120,7 +130,7 @@ QString EncoderLame::getVersion() const
 {
 	QString info;
 	if(!isInitialized()) {
-        emit message("Error: lame is not initialized. Can't get info log.");        
+        emit error("lame is not initialized. Can't get info log.");        
 		return info;
 	}
 	QString lame_version(get_lame_version());

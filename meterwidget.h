@@ -16,12 +16,14 @@ public:
     uint8_t getNumChannels() const { return _numChannels; }
     void setNumChannels(uint8_t channels);
     void reset();
+    bool isActive() const { return _isActive; }
+    void setActive(bool active) { _isActive = active; }
 public slots:
     void setValues(MeterValues m);
 protected:
     void paintEvent(QPaintEvent *event);
 private:
-
+    bool _isActive;
     uint8_t _numChannels;
     MeterValues _v;
     float _width;

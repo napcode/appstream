@@ -5,7 +5,8 @@
 #include <cmath>
 
 MeterWidget::MeterWidget(QWidget *parent, uint8_t channels)
-    : QLabel(parent)
+    : QLabel(parent), 
+    _isActive(true)
 {
     _colorspan = 120.0f/360.0f;
     setNumChannels(channels);
@@ -23,10 +24,8 @@ void MeterWidget::setNumChannels(uint8_t channels)
 }
 void MeterWidget::reset()
 {
-    MeterValues::iterator it = _v.begin();
-    while(it != _v.end()) {
-        *it = 0;
-        it++;
+    for (uint8_t i=0; i < _v.size(); ++i) {
+        _v[i] = 0;
     }
     update();
 }
@@ -51,6 +50,8 @@ void MeterWidget::paintEvent(QPaintEvent *event)
 }
 void MeterWidget::setValues(MeterValues m)
 {
-    _v = m;
-    update();
+    if(_isActive) {
+        _v = m;
+        update();
+    }
 }
