@@ -38,6 +38,10 @@ bool EncoderLame::init()
 
     if((rc = lame_init_params(_lgf)) < 0){
         emit error("unable to init lame");
+        emit error("Channels " + QString::number(_config.numInChannels));
+        emit error("RateIn " + QString::number(_config.sampleRateIn));
+        emit error("RateOut " + QString::number(_config.sampleRateOut));
+        emit error("BitRate " + QString::number(_config.bitRate));
         return false;
     }
     else {

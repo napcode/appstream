@@ -55,9 +55,12 @@ bool Manager::init()
 DeviceList Manager::getDeviceList() const
 {
     DeviceList l;
-    if(_state != INITIALIZED)
+    if(_state != INITIALIZED) {
+        emit warn("not init");
         return l;
+    }
     int devcount = Pa_GetDeviceCount();
+
     if (devcount < 0)
     {
         QString msg("getting device list");

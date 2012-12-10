@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     logger.cpp \
     statuswidget.cpp \
     filelogger.cpp \
-    encodervorbis.cpp
+    encodervorbis.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -52,12 +53,14 @@ HEADERS  += mainwindow.h \
     logger.h \
     statuswidget.h \
     filelogger.h \
-    encodervorbis.h
+    encodervorbis.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
     serverconnectiondialog.ui \
-    streaminfodialog.ui
+    streaminfodialog.ui \
+    aboutdialog.ui
 
 win32:CONFIG(release, debug|release) {
     LIBS += -L$$PWD/dep/lib/release -lportaudio_x86
@@ -66,8 +69,9 @@ win32:CONFIG(release, debug|release) {
     LIBS += -L"D:/Windows Kits/8.0/Lib/win8/um/x86/" -lWS2_32
 }
 win32:CONFIG(debug, debug|release) {
-    LIBS += -L$$PWD/dep/lib/debug -lportaudio_x86
-    LIBS += -llibmp3lame
+    LIBS += -L$$PWD/dep/lib/debug -lportaudio
+    LIBS += -llibmp3lame-static
+    LIBS += -llibmpghip-static
     LIBS += -llibshout
     LIBS += -llibogg_static
     LIBS += -llibvorbis_static
@@ -75,6 +79,7 @@ win32:CONFIG(debug, debug|release) {
     LIBS += -lpthreadVCE2
     LIBS += -lpthreadVSE2
     LIBS += -L"D:/Windows Kits/8.0/Lib/win8/um/x86/" -lWS2_32
+    LIBS += -lAdvAPI32
 }
 unix {
     LIBS += -lportaudio -lmp3lame -lshout
@@ -82,11 +87,6 @@ unix {
 
 INCLUDEPATH += $$PWD/dep/portaudio/include
 DEPENDPATH += $$PWD/dep/portaudio/include
-
-
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_x86.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/dep/lib/portaudio_x86.lib
-else:unix: LIBS += -lportaudio -lmp3lame
 
 win32::RC_FILE = w32app.rc
 RESOURCES += \

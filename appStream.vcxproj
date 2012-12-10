@@ -68,14 +68,15 @@
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_HAVE_MMX;QT_HAVE_3DNOW;QT_HAVE_SSE;QT_HAVE_MMXEXT;QT_HAVE_SSE2;QT_THREAD_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <WarningLevel>Level3</WarningLevel>
+      <BasicRuntimeChecks>StackFrameRuntimeCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;E:/Source/appStream/dep/lib/debug\portaudio_x86.lib;E:/Source/appStream/dep/lib/debug\libmp3lame.lib;libshout.lib;E:/Source/appStream/dep/lib/debug\libogg_static.lib;E:/Source/appStream/dep/lib/debug\libvorbis_static.lib;E:/Source/appStream/dep/lib/debug\pthreadVC2.lib;E:/Source/appStream/dep/lib/debug\pthreadVCE2.lib;E:/Source/appStream/dep/lib/debug\pthreadVSE2.lib;"D:/Windows Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";$(QTDIR)\lib\QtGuid4.lib;$(QTDIR)\lib\QtCored4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(QTDIR)\lib\qtmaind.lib;./dep/lib/debug\portaudio.lib;./dep/lib/debug\libmp3lame-static.lib;./dep/lib/debug\libmpghip-static.lib;./dep/lib/debug\libshout.lib;./dep/lib/debug\libogg_static.lib;./dep/lib/debug\libvorbis_static.lib;./dep/lib/debug\pthreadVC2.lib;./dep/lib/debug\pthreadVCE2.lib;./dep/lib/debug\pthreadVSE2.lib;"D:/Windows;Kits/8.0/Lib/win8/um/x86/\WS2_32.lib";"E:/Source/SDKs/Qt/4.8.3/lib/QtCored4.lib";"E:/Source/SDKs/Qt/4.8.3/lib/QtGuid4.lib";%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;e:\Source\SDKs\Qt\4.8.3\lib;E:/Source/appStream/dep/lib/debug;"D:/Windows Kits/8.0/Lib/win8/um/x86/";E:/Source/appStream/dep/lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -85,6 +86,8 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShowProgress>NotSet</ShowProgress>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -455,7 +458,7 @@
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties QtVersion_x0020_Win32="4.8.3" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" />
+      <UserProperties QtVersion_x0020_Win32="4.8.4" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

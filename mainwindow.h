@@ -30,8 +30,9 @@ public slots:
 
     
 private:
-    void prepareFileRecorder(uint8_t channels);
     void prepareDSP(uint8_t channels);
+    void addFileRecorder();
+    void addStream();
     Ui::MainWindow *ui;
     DSP *_dsp;
 };

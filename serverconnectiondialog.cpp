@@ -109,7 +109,7 @@ void ServerConnectionDialog::accept()
         s.setValue("type", ui->cbType->currentText());
         s.setValue("address", ui->edAddress->text());
         s.setValue("port", ui->sbPort->value());
-        s.setValue("usrt", ui->edUser->text());
+        s.setValue("user", ui->edUser->text());
         s.setValue("password", ui->edPassword->text());
         s.setValue("mountpoint", ui->edMountpoint->text());
         s.setValue("encoder", ui->cbEncoder->currentText());

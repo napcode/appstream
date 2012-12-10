@@ -19,17 +19,7 @@ void OutputIceCast::setConnection(const QString &name)
 {
     QSettings s;
     s.beginGroup("connection");
-    if(!s.contains(name)) {
-        emit error("connection " + name + " doesn't exist.");
-        return;
-    }
     s.beginGroup(name);
-    if( !s.contains("address") ||
-        !s.contains("password") ||
-        !s.contains("port") ||
-        !s.contains("mountpoint") ) {
-        emit error("connection " + name + " appears to be invalid");
-    }
 
     _c.address = s.value("address").toString();
     _c.port = s.value("port").toInt();
@@ -46,19 +36,7 @@ void OutputIceCast::setStreamInfo(const QString &name)
 {
     QSettings s;
     s.beginGroup("stream");
-    if(!s.contains(name)) {
-        emit error("stream " + name + " doesn't exist.");
-        return;
-    }
     s.beginGroup(name);
-    if( !s.contains("name") ||
-        !s.contains("description") ||
-        !s.contains("agent") ||
-        !s.contains("genre") ||
-        !s.contains("url") ||
-        !s.contains("isPublic") ) {
-        emit error("stream " + name + " appears to be invalid");
-    }
 
     _csi.name = s.value("name").toString();
     _csi.description = s.value("description").toInt();
@@ -120,6 +98,8 @@ bool OutputIceCast::init()
 
     _state = READY;
     emit stateChanged(READY);
+    emit message("libshout initialized");
+    emit message("Version: " + getVersion());
 	return true;
 }
 void OutputIceCast::applyStreamInfo()
@@ -165,6 +145,12 @@ void OutputIceCast::connect()
     }
     else {
         emit warn(shout_get_error(_shout));
+        emit warn("Address " + _c.address);
+        emit warn("Port " + QString::number(_c.port));
+        emit warn("Mounpoint " + _c.mountpoint);
+        emit warn("User " + _c.user);
+        emit warn("Pass " + _c.password);
+
     	_state = DISCONNECTED;
     	emit stateChanged(DISCONNECTED);	
     }
@@ -177,7 +163,7 @@ void OutputIceCast::output(const char* buffer, uint32_t size)
 	if(size != 0) {
         int r = shout_send(_shout, (const unsigned char*)buffer, size);
 		if(r != SHOUTERR_SUCCESS) {
-			emit warn(QString("send error: ") + shout_get_error(_shout));
+			emit warn(QString("send error: ") + shout_get_error(_shout));            
 			_state = DISCONNECTED;
 			emit stateChanged(DISCONNECTED);
 		}

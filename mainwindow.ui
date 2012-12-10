@@ -122,49 +122,38 @@ border-color: rgb(0, 0, 0);</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionStartStream"/>
-   <addaction name="actionStopStream"/>
+   <addaction name="actionRun"/>
    <addaction name="separator"/>
    <addaction name="actionStreaming"/>
    <addaction name="actionRecord"/>
    <addaction name="separator"/>
    <addaction name="actionSettings"/>
+   <addaction name="actionEdit_FX"/>
    <addaction name="separator"/>
+   <addaction name="actionAbout"/>
   </widget>
   <action name="actionSettings">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/preferences-system.png</normaloff>
-     <normalon>../../Downloads/oxygen/32x32/categories/applications-system.png</normalon>:/new/prefix1/res/preferences-system.png</iconset>
+     <normaloff>:/new/prefix1/res/preferences-system.png</normaloff>:/new/prefix1/res/preferences-system.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
    </property>
   </action>
-  <action name="actionStartStream">
+  <action name="actionRun">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/call-start.png</normaloff>
-     <normalon>:/new/prefix1/res/call-start.png</normalon>:/new/prefix1/res/call-start.png</iconset>
+     <normaloff>:/new/prefix1/res/media-playback-start.png</normaloff>:/new/prefix1/res/media-playback-start.png</iconset>
    </property>
    <property name="text">
-    <string>Start Stream</string>
+    <string>Run</string>
    </property>
    <property name="toolTip">
-    <string>Start Streaming</string>
-   </property>
-  </action>
-  <action name="actionStopStream">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/call-stop.png</normaloff>
-     <normalon>:/new/prefix1/res/call-stop.png</normalon>:/new/prefix1/res/call-stop.png</iconset>
-   </property>
-   <property name="text">
-    <string>Stop Stream</string>
-   </property>
-   <property name="toolTip">
-    <string>Stop Streaming</string>
+    <string>Start/Stop Streaming &amp; Recording</string>
    </property>
   </action>
   <action name="actionRecord">
@@ -173,14 +162,13 @@ border-color: rgb(0, 0, 0);</string>
    </property>
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/media-record_off.png</normaloff>
-     <normalon>:/new/prefix1/res/media-record_on.png</normalon>:/new/prefix1/res/media-record_off.png</iconset>
+     <normaloff>:/new/prefix1/res/media-record.png</normaloff>:/new/prefix1/res/media-record.png</iconset>
    </property>
    <property name="text">
-    <string>Recording</string>
+    <string>Record</string>
    </property>
    <property name="toolTip">
-    <string>Recording</string>
+    <string>Toggle Recording</string>
    </property>
   </action>
   <action name="actionStreaming">
@@ -189,14 +177,38 @@ border-color: rgb(0, 0, 0);</string>
    </property>
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/new/prefix1/res/online-off.png</normaloff>
-     <normalon>:/new/prefix1/res/online-on.png</normalon>:/new/prefix1/res/online-off.png</iconset>
+     <normaloff>:/new/prefix1/res/network-wireless.png</normaloff>
+     <normalon>:/new/prefix1/res/online-on.png</normalon>:/new/prefix1/res/network-wireless.png</iconset>
    </property>
    <property name="text">
-    <string>Streaming</string>
+    <string>Stream</string>
    </property>
    <property name="toolTip">
     <string>Toggle streaming to selected server connection</string>
+   </property>
+  </action>
+  <action name="actionEdit_FX">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/audio-card.png</normaloff>:/new/prefix1/res/audio-card.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit FX</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit insert effects</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/new/prefix1/res/help-browser.png</normaloff>:/new/prefix1/res/help-browser.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>Display about window</string>
    </property>
   </action>
  </widget>

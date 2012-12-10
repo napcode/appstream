@@ -31,7 +31,7 @@ public:
     const OutputList& getOutputList() const;
     void addOutput(Output *o);
     
-    void setNumChannels(uint8_t channels);
+    void setNumChannels(uint8_t channels) { _numChannels = channels; }
     uint8_t getNumChannels() const { return _numChannels; }
 
     void feed(const sample_t* buffer, uint32_t samples);

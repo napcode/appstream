@@ -1,13 +1,10 @@
 <RCC>
-    <qresource prefix="/new/prefix1">
-        <file>res/preferences-system.png</file>
-        <file>res/call-start.png</file>
-        <file>res/call-stop.png</file>
-        <file>res/media-record_off.png</file>
-        <file>res/media-record_on.png</file>
-        <file>res/call-start-off.png</file>
-        <file>res/call-stop-off.png</file>
-        <file>res/online-off.png</file>
-        <file>res/online-on.png</file>
-    </qresource>
+  <qresource prefix="/new/prefix1">
+    <file>res/help-browser.png</file>
+    <file>res/audio-card.png</file>
+    <file>res/media-playback-start.png</file>
+    <file>res/media-record.png</file>
+    <file>res/network-wireless.png</file>
+    <file>res/preferences-system.png</file>
+  </qresource>
 </RCC>

@@ -14,8 +14,7 @@
 #include "encodervorbis.h"
 #include "outputfile.h"
 #include "outputicecast.h"
-
-#include <unistd.h>
+#include "aboutdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     Logger(parent),   
@@ -23,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _dsp(0)
 {
     ui->setupUi(this);
-    ui->actionStopStream->setDisabled(true);
     // needed for logger
     _instance = this;
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
@@ -49,10 +47,16 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->actionRecord->setChecked(s.value("enabled").toBool());
     }
     s.endGroup();
+    s.beginGroup("connection");
+    if(s.contains("enabled")) {
+        ui->actionStreaming->setChecked(s.value("enabled").toBool());
+    }
+    s.endGroup();
     s.beginGroup("general");
     if(s.contains("connectOnStart") && s.value("connectOnStart").toBool()) {
         start();
     }
+    s.endGroup();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +64,7 @@ MainWindow::~MainWindow()
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     if(as.getState() == AudioSystem::Manager::STREAMING)
         stop();
+
     FileLogger::release();
 }
 void MainWindow::toolbarTriggered(QAction *a)
@@ -69,11 +74,11 @@ void MainWindow::toolbarTriggered(QAction *a)
         SettingsDialog s;
         s.exec();
     }
-    else if (a == ui->actionStartStream) {
-        start();
-    }
-    else if (a == ui->actionStopStream) {
-        stop();
+    else if (a == ui->actionRun) {
+        if(ui->actionRun->isChecked())
+            start();
+        else
+            stop();
     }
     else if (a == ui->actionRecord) {
         QSettings s;
@@ -82,6 +87,16 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.endGroup();
         // FIXME
 		//prepareFileRecorder();
+    }
+    else if (a == ui->actionStreaming) {
+        QSettings s;
+        s.beginGroup("connection");
+        s.setValue("enabled",ui->actionStreaming->isChecked());
+        s.endGroup();
+    }
+    else if (a == ui->actionAbout) {
+        AboutDialog a;
+        a.exec();
     }
 }
 void MainWindow::start()
@@ -106,8 +121,6 @@ void MainWindow::start()
         _dsp->start();
         as.startDeviceStream();
         ui->meterwidget->setActive(true);
-        ui->actionStopStream->setEnabled(true);
-        ui->actionStartStream->setDisabled(true);
 	}
 }
 void MainWindow::stop()
@@ -121,8 +134,6 @@ void MainWindow::stop()
     _dsp->disable();
     ui->meterwidget->setActive(false);
     ui->meterwidget->reset();
-    ui->actionStartStream->setEnabled(true);
-    ui->actionStopStream->setDisabled(true);
 }
 void MainWindow::message(QString s)
 {
@@ -135,14 +146,14 @@ void MainWindow::warn(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
     QString entry = current.toString(Qt::SystemLocaleShortDate);
-    entry += QString("::Warn:: ") + s;
+    entry += QString(": *Warn* ") + s;
     ui->logLabel->appendPlainText(entry);
 }
 void MainWindow::error(QString s)
 {
     QDateTime current = QDateTime::currentDateTime();
     QString entry = current.toString(Qt::SystemLocaleShortDate);
-    entry += QString("::Error:: ") + s;
+    entry += QString(": *Error* ") + s;
     ui->logLabel->appendPlainText(entry);
 }
 void MainWindow::newAudioFrames(float ts, uint32_t frames)
@@ -152,7 +163,7 @@ void MainWindow::newAudioFrames(float ts, uint32_t frames)
     //log(QString::number(ts) + QString("::") + QString::number(frames));
 }
 
-void MainWindow::prepareFileRecorder(uint8_t channels)
+void MainWindow::addFileRecorder()
 {
     QSettings s;
     s.beginGroup("record");
@@ -162,47 +173,93 @@ void MainWindow::prepareFileRecorder(uint8_t channels)
         !s.contains("encoder") || !s.contains("encoderBitRate") ||
         !s.contains("encoderSampleRate"))
     {
-        error("missing recorder config");
+        error("erroneous recorder config");
         return;
     }
     if(s.value("encoder").toString() == QString("Lame MP3")) {
         ConfigLame c;
-        c.bitRate = s.contains("encoderBitRate") ? s.value("encoderBitRate").toInt() : 64;
-        c.sampleRateOut = s.contains("encoderSampleRate") ? s.value("encoderSampleRate").toInt() : 44100;
-        c.numInChannels = channels;
+        c.bitRate = s.value("encoderBitRate").toInt();
+        c.sampleRateOut = s.value("encoderSampleRate").toInt();
+        c.numInChannels = _dsp->getNumChannels();
         e = new EncoderLame(c);
     }
     else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
         e = new EncoderVorbis;
     assert(e);
-    if(!e->init())
+    if(!e->init()) {
+        delete e;
         return;
+    }
     f = new OutputFile(s.value("recordPath").toString(),
         s.value("recordFileName").toString());
     f->setEncoder(e);
-    if(!f->init())
+    if(!f->init()) {
+        error("unable to init recorder");
+        delete e;
+        delete f;
         return;
+    }
     emit message("adding file recorder");
     _dsp->addOutput(f);
 }
 void MainWindow::prepareDSP(uint8_t channels)
 {
+    _dsp->setNumChannels(channels);
     MeterProcessor *mp = new MeterProcessor(channels);
     _dsp->addProcessor(mp);
+    if(ui->actionRecord->isChecked()) {
+        addFileRecorder();
+    }
+    if(ui->actionStreaming->isChecked()) {
+        addStream();
+    }
+}
+void MainWindow::addStream()
+{
     QSettings s;
-    s.beginGroup("record");
-    if(s.value("enabled").toBool()) {
-        prepareFileRecorder(channels);
+    s.beginGroup("connection");
+    if(!s.contains("selected")) {
+        emit warn("no valid connection selected");
+        return;
     }
-    if(1)
+    QString name = s.value("selected").toString();
+    s.beginGroup(name);
+
+    OutputIceCast *oic = 0;
+    Encoder *e = 0;
+    if(!s.contains("address") || !s.contains("port") ||
+        !s.contains("user") || !s.contains("password") ||
+        !s.contains("mountpoint") || !s.contains("encoder") ||
+        !s.contains("encoderBitRate") || !s.contains("encoderSampleRate") ||
+        !s.contains("encoderChannels") || !s.contains("type"))
     {
-        OutputIceCast *oic = new OutputIceCast;
-        //EncoderLame *e = new EncoderLame;
-        //e->init();
-        //oic->setEncoder(e);
-        oic->init();
-        emit message(QString("added stream ") + oic->getVersion());
-
+        error("erroneous stream config");
+        return;
     }
 
+    if(s.value("encoder").toString() == QString("Lame MP3")) {
+        ConfigLame c;
+        c.bitRate = s.value("encoderBitRate").toInt();
+        c.sampleRateOut = s.value("encoderSampleRate").toInt();
+        c.numInChannels = _dsp->getNumChannels();
+        e = new EncoderLame(c);
+    }
+    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
+        e = new EncoderVorbis;
+    assert(e);
+    if(!e->init()) {
+        delete e;
+        return;
+    }
+    oic = new OutputIceCast;
+    oic->setEncoder(e);
+    oic->setConnection(name);
+    if(!oic->init()) {
+        error("unable to init stream");
+        delete e;
+        delete oic;
+        return;
+    }
+    emit message(QString("added stream"));
+    oic->connect();
 }
