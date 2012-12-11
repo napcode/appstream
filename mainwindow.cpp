@@ -85,6 +85,10 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.beginGroup("record");
         s.setValue("enabled",ui->actionRecord->isChecked());
         s.endGroup();
+        if(ui->actionRecord->isChecked())
+            ui->statuswidget->startRecording();
+        else
+            ui->statuswidget->stopRecording();
         // FIXME
 		//prepareFileRecorder();
     }
@@ -93,6 +97,10 @@ void MainWindow::toolbarTriggered(QAction *a)
         s.beginGroup("connection");
         s.setValue("enabled",ui->actionStreaming->isChecked());
         s.endGroup();
+        if(ui->actionStreaming->isChecked())
+            ui->statuswidget->startStreaming();
+        else
+            ui->statuswidget->stopStreaming();
     }
     else if (a == ui->actionAbout) {
         AboutDialog a;

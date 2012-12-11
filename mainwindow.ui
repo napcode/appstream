@@ -80,20 +80,14 @@ border-color: rgb(0, 0, 0);</string>
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="StatusWidget" name="frame">
+   <widget class="StatusWidget" name="statuswidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
       <width>351</width>
-      <height>101</height>
+      <height>111</height>
      </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
     </property>
    </widget>
   </widget>
@@ -215,15 +209,15 @@ border-color: rgb(0, 0, 0);</string>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>StatusWidget</class>
+   <extends>QWidget</extends>
+   <header>statuswidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>MeterWidget</class>
    <extends>QLabel</extends>
    <header location="global">meterwidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StatusWidget</class>
-   <extends>QFrame</extends>
-   <header>statuswidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

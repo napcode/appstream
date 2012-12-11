@@ -1,10 +1,10 @@
 <RCC>
-  <qresource prefix="/new/prefix1">
-    <file>res/help-browser.png</file>
-    <file>res/audio-card.png</file>
-    <file>res/media-playback-start.png</file>
-    <file>res/media-record.png</file>
-    <file>res/network-wireless.png</file>
-    <file>res/preferences-system.png</file>
-  </qresource>
+    <qresource prefix="/new/prefix1">
+        <file>res/help-browser.png</file>
+        <file>res/audio-card.png</file>
+        <file>res/media-playback-start.png</file>
+        <file>res/media-record.png</file>
+        <file>res/network-wireless.png</file>
+        <file>res/preferences-system.png</file>
+    </qresource>
 </RCC>

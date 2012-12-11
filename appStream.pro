@@ -29,10 +29,10 @@ SOURCES += main.cpp\
     outputfile.cpp \
     outputicecast.cpp \
     logger.cpp \
-    statuswidget.cpp \
     filelogger.cpp \
     encodervorbis.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \  
+    statuswidget.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -51,16 +51,17 @@ HEADERS  += mainwindow.h \
     outputfile.h \
     outputicecast.h \
     logger.h \
-    statuswidget.h \
     filelogger.h \
     encodervorbis.h \
-    aboutdialog.h
+    aboutdialog.h \  
+    statuswidget.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
     serverconnectiondialog.ui \
     streaminfodialog.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    statuswidget.ui
 
 win32:CONFIG(release, debug|release) {
     LIBS += -L$$PWD/dep/lib/release -lportaudio_x86
