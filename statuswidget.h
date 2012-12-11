@@ -1,7 +1,7 @@
 #ifndef STATUSWIDGET_H
 #define STATUSWIDGET_H
 
-#include <QWidget>
+#include <QFrame>
 #include <QTimer>
 #include <QTime>
 
@@ -9,20 +9,21 @@ namespace Ui {
 class StatusWidget;
 }
 
-class StatusWidget : public QWidget
+class StatusWidget : public QFrame
 {
     Q_OBJECT
     
 public:
     explicit StatusWidget(QWidget *parent = 0);
     ~StatusWidget();
-
 public slots:
 	void startRecording();
 	void stopRecording();
 	void startStreaming();
 	void stopStreaming();
 	void updateTime();
+	void setStreamState(QString state);
+	void setRecorderState(QString state);
 private:
     Ui::StatusWidget *ui;
     QString msToString(int ms);

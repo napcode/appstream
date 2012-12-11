@@ -57,6 +57,9 @@
       <height>231</height>
      </rect>
     </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::ActionsContextMenu</enum>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
@@ -84,9 +87,19 @@ border-color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>10</x>
+      <y>40</y>
+      <width>351</width>
+      <height>81</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cbStreamInfo">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
       <y>10</y>
       <width>351</width>
-      <height>111</height>
+      <height>22</height>
      </rect>
     </property>
    </widget>

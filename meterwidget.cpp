@@ -1,6 +1,8 @@
 #include "meterwidget.h"
 #include <QPainter>
 #include <QPaintEvent>
+#include <QAction>
+#include <QMenu>
 #include <iostream>
 #include <cmath>
 
@@ -10,6 +12,10 @@ MeterWidget::MeterWidget(QWidget *parent, uint8_t channels)
 {
     _colorspan = 120.0f/360.0f;
     setNumChannels(channels);
+    QAction *act_p = new QAction( "Toggle Metering", this );
+    act_p->setCheckable(true);
+    connect(act_p,SIGNAL(toggled(bool)),this,SLOT(toggleActive(bool)));
+    this->addAction( act_p );
 }
 MeterWidget::~MeterWidget()
 {
@@ -32,12 +38,23 @@ void MeterWidget::reset()
 
 void MeterWidget::paintEvent(QPaintEvent *event)
 {
+    QPainter painter(this);
     QRect r = event->rect();
+    QColor color;
+    color.setRgb(0,0,0);
     int w = r.width() / _v.size();
     int h = r.height();
+    // draw outer frame
+    QBrush b(color);
+    QRect border(0,0,r.width()-1,r.height()-1);
+    painter.setBrush(b);
+    painter.drawRect(border);
+
+    if(!_isActive)
+        return;
+
     QRect rect;
-    QColor color;
-    QPainter painter(this);
+
     for (uint8_t i=0; i < _v.size(); ++i) {
         rect.setRect(i*w , h - h*_v[i], w-1, h*_v[i]);
         float col = _colorspan - (_colorspan * _v[i]);

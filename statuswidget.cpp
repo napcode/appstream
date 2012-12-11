@@ -2,7 +2,7 @@
 #include "ui_statuswidget.h"
 
 StatusWidget::StatusWidget(QWidget *parent) :
-    QWidget(parent),
+    QFrame(parent),
     ui(new Ui::StatusWidget),
     _timer(new QTimer(this)),
     _isRecording(false),
@@ -15,6 +15,8 @@ StatusWidget::StatusWidget(QWidget *parent) :
 	connect(_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
 	updateTime();
     _timer->start();
+    ui->lbRecord->setText("inactive");
+    ui->lbStream->setText("offline");
 }
 
 StatusWidget::~StatusWidget()
@@ -51,23 +53,35 @@ void StatusWidget::startRecording()
 {
 	_timeRec.start();
 	_isRecording = true;
+	//ui->lbRecord->setText("active");
 	update();
 }
 void StatusWidget::stopRecording()
 {
 	_isRecording = false;
+	//ui->lbRecord->setText("inactive");
 	update();
 }
 void StatusWidget::startStreaming()
 {
 	_timeStream.start();
 	_isStreaming = true;
+	//ui->lbStream->setText("online");
 	update();
 }
 void StatusWidget::stopStreaming()
 {
 	_isStreaming = false;
+	//ui->lbStream->setText("offline");
 	update();
+}
+void StatusWidget::setRecorderState(QString state)
+{
+	ui->lbRecord->setText(state);
+}
+void StatusWidget::setStreamState(QString state)
+{
+	ui->lbStream->setText(state);
 }
 QString StatusWidget::msToString(int ims)
 {

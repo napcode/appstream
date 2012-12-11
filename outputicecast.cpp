@@ -3,15 +3,22 @@
 
 #include <QSettings>
 
+
 OutputIceCast::OutputIceCast()
 :	_shout(0),
-	_state(INVALID)
+	_state(INVALID),
+    _timer(new QTimer(this))
 {
+    _timer->setInterval(5000);
+    _timer->setSingleShot(false);
+    connect(_timer, SIGNAL(timeout()), this, SLOT(connectStream()));
+    connect(this, SIGNAL(requestReconnect()), this, SLOT(reconnectStream()), Qt::QueuedConnection);
     shout_init();
 }
 OutputIceCast::~OutputIceCast()
 {
-	shout_close(_shout);
+    if(getState() == CONNECTED)
+        disconnectStream();
 	shout_free(_shout);
 	shout_shutdown();
 }
@@ -98,6 +105,7 @@ bool OutputIceCast::init()
 
     _state = READY;
     emit stateChanged(READY);
+    emit stateChanged("ready");
     emit message("libshout initialized");
     emit message("Version: " + getVersion());
     start();
@@ -133,28 +141,39 @@ void OutputIceCast::applyStreamInfo()
     // TODO set metadata
     //shout_set_metadata
 }
-void OutputIceCast::connect()
+void OutputIceCast::connectStream()
 {
-	if(getState() != READY)
+	if(getState() != READY && getState() != DISCONNECTED)
 		return;
-
+    emit stateChanged("connecting");
     int r = shout_open(_shout);
     if(r == SHOUTERR_SUCCESS) {
         emit message(QString("Connected to ") + _c.address);
     	_state = CONNECTED;
     	emit stateChanged(CONNECTED);
+        emit stateChanged("connected");
+        if(_timer->isActive())
+            _timer->stop();
     }
     else {
+        if(_timer->isActive()) {
+            ++_trial;
+            
+        }
         emit warn(shout_get_error(_shout));
-        emit warn("Address " + _c.address);
-        emit warn("Port " + QString::number(_c.port));
-        emit warn("Mounpoint " + _c.mountpoint);
-        emit warn("User " + _c.user);
-        emit warn("Pass " + _c.password);
-
     	_state = DISCONNECTED;
-    	emit stateChanged(DISCONNECTED);	
+    	emit stateChanged(DISCONNECTED);
+        emit stateChanged("disconnected");	
     }
+}
+void OutputIceCast::disconnectStream()
+{
+    shout_close(_shout);  
+    emit stateChanged("disconnected");
+}
+void OutputIceCast::reconnectStream()
+{
+    _timer->start();
 }
 void OutputIceCast::output(const char* buffer, uint32_t size)
 {
@@ -162,11 +181,14 @@ void OutputIceCast::output(const char* buffer, uint32_t size)
 		return;
 
 	if(size != 0) {
-        int r = shout_send(_shout, (const unsigned char*)buffer, size);
+        int r = shout_send(_shout, (const unsigned char*)buffer, size);        
 		if(r != SHOUTERR_SUCCESS) {
 			emit warn(QString("send error: ") + shout_get_error(_shout));            
 			_state = DISCONNECTED;
 			emit stateChanged(DISCONNECTED);
+            emit stateChanged("disconnected");
+            emit requestReconnect();
+            _trial = 0;
 		}
 		shout_sync(_shout);
 	}

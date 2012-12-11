@@ -3,6 +3,8 @@
 
 #include "output.h"
 
+#include <QTimer>
+
 #include <shout/shout.h>
 
 struct ConfigConnection
@@ -40,7 +42,6 @@ public:
 	~OutputIceCast();
 	bool init();
     void output(const char* buffer, uint32_t size);
-	void connect();
 
 	void setConnection(const QString &name);
 	void setConnection(const ConfigConnection &config);
@@ -50,8 +51,14 @@ public:
 	
 	State getState() const { return _state; }
 	QString getVersion() const;
+public slots:
+	void connectStream();
+	void disconnectStream();	
+	void reconnectStream();
 signals:
 	void stateChanged(State);
+	void stateChanged(QString);
+	void requestReconnect();
 private:
 	void applyStreamInfo();
 
@@ -59,6 +66,8 @@ private:
 	State _state;
     ConfigConnection _c;
     ConfigStreamInfo _csi;
+    QTimer *_timer;
+    int _trial;
 };
 
 #endif

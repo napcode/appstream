@@ -64,7 +64,7 @@ MeterValues MeterProcessor::getValues()
 {
     for(uint8_t i = 0; i < _numChannels; ++i) {
         _reset[i] = true;
-        _v[i] = clamp(fabs(_v[i] / 32768), 0.0f, 1.0f);
+        _v[i] = clamp(fabs((_g * _v[i]) / 32768), 0.0f, 1.0f);
     }
     return _v;
 }

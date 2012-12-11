@@ -31,7 +31,7 @@ SOURCES += main.cpp\
     logger.cpp \
     filelogger.cpp \
     encodervorbis.cpp \
-    aboutdialog.cpp \  
+    aboutdialog.cpp \   
     statuswidget.cpp
 
 HEADERS  += mainwindow.h \
@@ -53,7 +53,7 @@ HEADERS  += mainwindow.h \
     logger.h \
     filelogger.h \
     encodervorbis.h \
-    aboutdialog.h \  
+    aboutdialog.h \   
     statuswidget.h
 
 FORMS    += mainwindow.ui \

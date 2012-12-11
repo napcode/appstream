@@ -128,7 +128,7 @@ void MainWindow::start()
 
         _dsp->start();
         as.startDeviceStream();
-        ui->meterwidget->setActive(true);
+        ui->meterwidget->toggleActive(true);
 	}
 }
 void MainWindow::stop()
@@ -141,7 +141,7 @@ void MainWindow::stop()
     as.closeDeviceStream();    
     _dsp->disable();
     _dsp->reset();
-    ui->meterwidget->setActive(false);
+    ui->meterwidget->toggleActive(false);
     ui->meterwidget->reset();
 }
 void MainWindow::message(QString s)
@@ -270,6 +270,7 @@ void MainWindow::addStream()
         return;
     }
     emit message(QString("added stream"));
-    oic->connect();
+    connect(oic,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));
+    oic->connectStream();
     _dsp->addOutput(oic);
 }

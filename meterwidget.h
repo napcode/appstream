@@ -17,9 +17,10 @@ public:
     void setNumChannels(uint8_t channels);
     void reset();
     bool isActive() const { return _isActive; }
-    void setActive(bool active) { _isActive = active; }
+
 public slots:
     void setValues(MeterValues m);
+    void toggleActive(bool active) { _isActive = active; }
 protected:
     void paintEvent(QPaintEvent *event);
 private:
