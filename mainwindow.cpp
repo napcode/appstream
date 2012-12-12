@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings s;
     s.beginGroup("record");
     if(s.contains("enabled")) {
-        ui->actionRecord->setChecked(s.value("enabled").toBool());
+        ui->actionRecord->setChecked(s.value("enabled").toBool());        
     }
     s.endGroup();
     s.beginGroup("connection");
@@ -81,30 +81,69 @@ void MainWindow::toolbarTriggered(QAction *a)
             stop();
     }
     else if (a == ui->actionRecord) {
-        QSettings s;
-        s.beginGroup("record");
-        s.setValue("enabled",ui->actionRecord->isChecked());
-        s.endGroup();
-        if(ui->actionRecord->isChecked())
-            ui->statuswidget->startRecording();
-        else
-            ui->statuswidget->stopRecording();
-        // FIXME
-		//prepareFileRecorder();
+        toggleRecording();
+
     }
     else if (a == ui->actionStreaming) {
-        QSettings s;
-        s.beginGroup("connection");
-        s.setValue("enabled",ui->actionStreaming->isChecked());
-        s.endGroup();
-        if(ui->actionStreaming->isChecked())
-            ui->statuswidget->startStreaming();
-        else
-            ui->statuswidget->stopStreaming();
+        toggleStreaming();
+
     }
     else if (a == ui->actionAbout) {
         AboutDialog a;
         a.exec();
+    }
+}
+void MainWindow::toggleRecording()
+{
+    QSettings s;
+    s.beginGroup("record");
+    s.setValue("enabled",ui->actionRecord->isChecked());
+    s.endGroup();
+    if(_dsp->isActive()) {
+        if(ui->actionRecord->isChecked()) {
+            addFileRecorder();
+        }
+        else {
+            OutputList::iterator it = _dsp->getOutputList().begin();
+            while(it != _dsp->getOutputList().end()) {
+                if((*it)->getName() == "SELECTED_RECORDER") {
+                    Output *o = *it;
+                    o->disable();
+                    disconnect(o,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
+                    _dsp->removeOutput(*it);
+                    ui->statuswidget->stopRecording();
+                    break;
+                }
+                it++;
+            }
+        }
+    }
+}
+void MainWindow::toggleStreaming()
+{
+    QSettings s;
+    s.beginGroup("connection");
+    s.setValue("enabled",ui->actionStreaming->isChecked());
+    s.endGroup();
+
+    if(_dsp->isActive()) {
+        if(ui->actionStreaming->isChecked()) {
+            addStream();
+        }
+        else {
+            OutputList::iterator it = _dsp->getOutputList().begin();
+            while(it != _dsp->getOutputList().end()) {
+                if((*it)->getName() == "SELECTED_STREAM") {
+                    Output *o = *it;
+                    o->disable();
+                    disconnect(o,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));                    
+                    _dsp->removeOutput(o);
+                    ui->statuswidget->stopStreaming();                
+                    break;
+                }
+                it++;
+            }
+        }
     }
 }
 void MainWindow::start()
@@ -172,45 +211,6 @@ void MainWindow::newAudioFrames(float ts, uint32_t frames)
     //log(QString::number(ts) + QString("::") + QString::number(frames));
 }
 
-void MainWindow::addFileRecorder()
-{
-    QSettings s;
-    s.beginGroup("record");
-    OutputFile *f = 0;
-    Encoder *e = 0;
-    if(!s.contains("recordPath") || !s.contains("recordFileName") ||
-        !s.contains("encoder") || !s.contains("encoderBitRate") ||
-        !s.contains("encoderSampleRate"))
-    {
-        error("erroneous recorder config");
-        return;
-    }
-    if(s.value("encoder").toString() == QString("Lame MP3")) {
-        ConfigLame c;
-        c.bitRate = s.value("encoderBitRate").toInt();
-        c.sampleRateOut = s.value("encoderSampleRate").toInt();
-        c.numInChannels = _dsp->getNumChannels();
-        e = new EncoderLame(c);
-    }
-    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
-        e = new EncoderVorbis;
-    assert(e);
-    if(!e->init()) {
-        delete e;
-        return;
-    }
-    f = new OutputFile(s.value("recordPath").toString(),
-        s.value("recordFileName").toString());
-    f->setEncoder(e);
-    if(!f->init()) {
-        error("unable to init recorder");
-        delete e;
-        delete f;
-        return;
-    }
-    emit message("adding file recorder");
-    _dsp->addOutput(f);
-}
 void MainWindow::prepareDSP(uint8_t channels)
 {
     _dsp->setNumChannels(channels);
@@ -261,6 +261,7 @@ void MainWindow::addStream()
         return;
     }
     oic = new OutputIceCast;
+    oic->setName("SELECTED_STREAM");
     oic->setEncoder(e);
     oic->setConnection(name);
     if(!oic->init()) {
@@ -269,8 +270,49 @@ void MainWindow::addStream()
         delete oic;
         return;
     }
-    emit message(QString("added stream"));
     connect(oic,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));
+    ui->statuswidget->startStreaming();
     oic->connectStream();
     _dsp->addOutput(oic);
+}
+void MainWindow::addFileRecorder()
+{
+    QSettings s;
+    s.beginGroup("record");
+    OutputFile *f = 0;
+    Encoder *e = 0;
+    if(!s.contains("recordPath") || !s.contains("recordFileName") ||
+        !s.contains("encoder") || !s.contains("encoderBitRate") ||
+        !s.contains("encoderSampleRate"))
+    {
+        error("erroneous recorder config");
+        return;
+    }
+    if(s.value("encoder").toString() == QString("Lame MP3")) {
+        ConfigLame c;
+        c.bitRate = s.value("encoderBitRate").toInt();
+        c.sampleRateOut = s.value("encoderSampleRate").toInt();
+        c.numInChannels = _dsp->getNumChannels();
+        e = new EncoderLame(c);
+    }
+    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
+        e = new EncoderVorbis;
+    assert(e);
+    if(!e->init()) {
+        delete e;
+        return;
+    }
+    f = new OutputFile(s.value("recordPath").toString(),
+        s.value("recordFileName").toString());
+    f->setEncoder(e);
+    if(!f->init()) {
+        error("unable to init recorder");
+        delete e;
+        delete f;
+        return;
+    }
+    f->setName("SELECTED_RECORDER");
+    connect(f, SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
+    ui->statuswidget->startRecording();
+    _dsp->addOutput(f);
 }

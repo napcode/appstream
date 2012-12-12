@@ -7,11 +7,12 @@
 #include <iostream>
 
 OutputFile::OutputFile(QString path, QString filename)
- :	_path(path),
+ :	Output(), 
+ 	_path(path),
 	_filename(filename),
 	_written(0)
 {
-	parseFileName();
+
 }
 OutputFile::~OutputFile()
 {
@@ -24,13 +25,24 @@ OutputFile::~OutputFile()
 }
 bool OutputFile::init()
 {
+	parseFileName();
+	QString ext; 
 	if(_encoder) {
-		_filename.append(".");
-		_filename.append(_encoder->getFileExtension());		
+		ext.append(".");
+		ext.append(_encoder->getFileExtension());		
 	}
 	if(!_path.endsWith('/'))
 		_path.append('/');
-	_file.setFileName(_path + _filename);
+	
+	_file.setFileName(_path + _filename + ext);
+	int i = 0;
+	while (_file.exists()) {
+		if(i == 0)
+			emit warn("file already exists.");
+		++i;
+		_file.setFileName(_path + _filename + "-" + QString::number(i) + ext);
+	}
+
 	_file.open(QIODevice::WriteOnly);
 	if(!_file.isOpen()) {
 		emit error("unable to open file " + _path + _filename);

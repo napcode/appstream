@@ -1,7 +1,7 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-#include <vector>
+#include <list>
 #include <stdint.h>
 #include "config.h"
 
@@ -40,6 +40,6 @@ protected:
     ProcessorType _type;
 };
 
-typedef std::vector<Processor *> ProcessorChain;
+typedef std::list<Processor *> ProcessorChain;
 
 #endif

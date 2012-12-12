@@ -1,7 +1,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
-#include <vector>
+#include <list>
 
 #include <QThread>
 #include <QMutex>
@@ -29,7 +29,7 @@ public:
     };
     Output();
 
-    void disable();
+    virtual void disable();
 
     virtual bool init() = 0;
 
@@ -77,6 +77,6 @@ protected:
     QWaitCondition _workCondition;
 };
 
-typedef std::vector<Output *> OutputList;
+typedef std::list<Output *> OutputList;
 
 #endif

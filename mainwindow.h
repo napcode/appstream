@@ -33,6 +33,8 @@ private:
     void prepareDSP(uint8_t channels);
     void addFileRecorder();
     void addStream();
+    void toggleRecording();
+    void toggleStreaming();
     Ui::MainWindow *ui;
     DSP *_dsp;
 };

@@ -7,6 +7,7 @@
 
 class OutputFile : public Output
 {
+    Q_OBJECT
 public:
     OutputFile(QString path = QString(), QString filename = QString("output"));
     ~OutputFile();
@@ -23,6 +24,9 @@ public:
     {
         _filename = filename;
     }
+signals:
+    //void stateChanged(State);
+    void stateChanged(QString);
 protected:
 	QString _path;
     QString _filename;
