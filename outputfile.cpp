@@ -52,19 +52,34 @@ bool OutputFile::init()
 		emit error("file " + _path + _filename + " is not writeable");
 		return false;
 	}
-	emit message("Recording to " + _path + _filename);
+	emit message("Recording to " + _path + _filename + ext);
+	emit stateChanged("active");
 	start();
 	return true;
+}
+void OutputFile::disable()
+{
+	Output::disable();
+	emit stateChanged("inactive");	
 }
 void OutputFile::output(const char *buffer, uint32_t size)
 {    
     if(!_file.isOpen() || !_file.isWritable())
 		return;
 	qint64 written = _file.write(buffer, size);
+	emit message(QString::number(size)+QString("::")+QString::number(written));
+	if(_written == -1) {
+		emit error(_file.errorString());
+		emit stateChanged("error");
+		return;
+	}
+	else if(_written == 0) {
+		emit error("disk full?");
+	}
 	_written += written;
 	if(_written > 1000000) {
 		// force write to disk
-		// in case of crashes we'd like to write regularly
+		// in case of crashes or problems we'd like to write regularly
 		_written = 0;
 		_file.flush();
 

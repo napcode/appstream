@@ -20,7 +20,6 @@ Output::~Output()
     if(_active)
         disable();
     delete _encoder;
-
 }
 void Output::disable()
 {

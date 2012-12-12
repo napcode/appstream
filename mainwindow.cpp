@@ -266,7 +266,6 @@ void MainWindow::addStream()
     oic->setConnection(name);
     if(!oic->init()) {
         error("unable to init stream");
-        delete e;
         delete oic;
         return;
     }
@@ -295,8 +294,13 @@ void MainWindow::addFileRecorder()
         c.numInChannels = _dsp->getNumChannels();
         e = new EncoderLame(c);
     }
-    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
-        e = new EncoderVorbis;
+    else if(s.value("encoder").toString() == QString("Ogg Vorbis")) {
+        ConfigVorbis c;
+        c.bitRate = s.value("encoderBitRate").toInt();
+        c.sampleRateOut = s.value("encoderSampleRate").toInt();
+        c.numInChannels = _dsp->getNumChannels();
+        e = new EncoderVorbis(c);
+    }
     assert(e);
     if(!e->init()) {
         delete e;
@@ -305,14 +309,15 @@ void MainWindow::addFileRecorder()
     f = new OutputFile(s.value("recordPath").toString(),
         s.value("recordFileName").toString());
     f->setEncoder(e);
+    connect(f, SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
     if(!f->init()) {
         error("unable to init recorder");
-        delete e;
+        disconnect(f, SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
         delete f;
         return;
     }
     f->setName("SELECTED_RECORDER");
-    connect(f, SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
+    
     ui->statuswidget->startRecording();
     _dsp->addOutput(f);
 }

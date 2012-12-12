@@ -37,13 +37,10 @@ public:
     QString getVersion() const;
     QString getFileExtension() const { return QString("mp3"); }
 private:
-	bool handleRC(int rc);
+	bool handleRC(int rc) const;
 	void resize(uint32_t newSize);
 
-	static void lameError(const char* format, va_list ap);
-	static void lameDebug(const char* format, va_list ap);
-	static void lameMessage(const char* format, va_list ap);
-
+private:
 	ConfigLame _config;
 	lame_global_flags *_lgf;
 	uint32_t _allocedFrames;

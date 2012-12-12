@@ -14,6 +14,8 @@ public:
 
     // reimplementation from Output
     bool init();
+    void disable();
+    
     void output(const char *buffer, uint32_t size);
 
     const QString &getFileName() const

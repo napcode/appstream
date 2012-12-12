@@ -29,7 +29,7 @@ class Manager : public QObject
 public:
     enum State
     {
-        INVALID,
+        INVALID = 0,
         INITIALIZED, 
         READY, 
         STREAMING

@@ -104,5 +104,11 @@ DEPENDPATH += $$PWD/dep/lame/include
 INCLUDEPATH += $$PWD/dep/libshout/include
 DEPENDPATH += $$PWD/dep/libshout/include
 
+INCLUDEPATH += $$PWD/dep/libvorbis/include
+DEPENDPATH += $$PWD/dep/libvorbis/include
+
+INCLUDEPATH += $$PWD/dep/libogg/include
+DEPENDPATH += $$PWD/dep/libogg/include
+
 #win32: PRE_TARGETDEPS += $$PWD/dep/lib/libshout.lib
 #else:unix: PRE_TARGETDEPS += 

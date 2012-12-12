@@ -50,7 +50,7 @@ public:
     {
         return _encoder;
     }
-
+    /* transfers ownership to Output */
     void setEncoder(Encoder *e)
     {
         delete _encoder;
