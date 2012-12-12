@@ -301,7 +301,7 @@ void MainWindow::addFileRecorder()
         c.numInChannels = _dsp->getNumChannels();
         e = new EncoderVorbis(c);
     }
-    assert(e);
+    assert(e != 0);
     if(!e->init()) {
         delete e;
         return;
