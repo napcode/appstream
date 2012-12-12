@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>350</height>
+    <width>480</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,6 +18,18 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>390</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>480</width>
+    <height>390</height>
+   </size>
   </property>
   <property name="sizeIncrement">
    <size>
@@ -90,7 +102,7 @@
         <x>10</x>
         <y>20</y>
         <width>411</width>
-        <height>54</height>
+        <height>50</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2" columnminimumwidth="80,0,0,0">
@@ -167,7 +179,7 @@
        <x>10</x>
        <y>100</y>
        <width>431</width>
-       <height>81</height>
+       <height>91</height>
       </rect>
      </property>
      <property name="title">
@@ -179,7 +191,7 @@
         <x>10</x>
         <y>20</y>
         <width>411</width>
-        <height>60</height>
+        <height>70</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3" columnminimumwidth="80,0,0,0">
@@ -269,7 +281,7 @@
         <x>10</x>
         <y>20</y>
         <width>411</width>
-        <height>22</height>
+        <height>23</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
