@@ -26,8 +26,12 @@ public:
 	EncoderVorbis(ConfigVorbis c = ConfigVorbis());
 	~EncoderVorbis(void);
     bool init();
-    bool encode(short *buffer, uint32_t samples);
-    bool encode(float *buffer, uint32_t samples);
+
+    void setup();
+    void encode(short *buffer, uint32_t samples);
+    void encode(float *buffer, uint32_t samples);
+    void finalize();
+
     QString getVersion() const;
     QString getFileExtension() const;
 private:
@@ -43,7 +47,6 @@ private:
 	vorbis_comment _vc;
 	vorbis_block _vb;
 	vorbis_dsp_state _vdsp; 
-	bool _wroteHeader;
 };
 
 #endif

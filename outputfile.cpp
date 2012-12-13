@@ -64,16 +64,13 @@ void OutputFile::disable()
 }
 void OutputFile::output(const char *buffer, uint32_t size)
 {    
-    if(!_file.isOpen() || !_file.isWritable())
+    if(size == 0 || !_file.isOpen() || !_file.isWritable())
 		return;
 	qint64 written = _file.write(buffer, size);
 	if(_written == -1) {
 		emit error(_file.errorString());
 		emit stateChanged("error");
 		return;
-	}
-	else if(_written == 0) {
-		emit error("disk full?");
 	}
 	_written += written;
 	if(_written > 1000000) {

@@ -273,6 +273,7 @@ void MainWindow::addStream()
     ui->statuswidget->startStreaming();
     oic->connectStream();
     _dsp->addOutput(oic);
+    oic->start();
 }
 void MainWindow::addFileRecorder()
 {
@@ -320,4 +321,5 @@ void MainWindow::addFileRecorder()
     
     ui->statuswidget->startRecording();
     _dsp->addOutput(f);
+    f->start();
 }

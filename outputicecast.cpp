@@ -116,7 +116,6 @@ bool OutputIceCast::init()
     emit stateChanged("ready");
     emit message("libshout initialized");
     emit message("Version: " + getVersion());
-    start();
 	return true;
 }
 void OutputIceCast::applyStreamInfo()

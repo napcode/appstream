@@ -30,14 +30,16 @@ public:
     // reimplemented from Encoder    
     bool init();
     // reimplemented from Encoder
-    bool encode(short *buffer, uint32_t samples);
-    bool encode(float *buffer, uint32_t samples);
+    void setup();
+    void encode(short *buffer, uint32_t samples);
+    void encode(float *buffer, uint32_t samples);
+    void finalize();
 
 	// reimplemented from Encoder
     QString getVersion() const;
     QString getFileExtension() const { return QString("mp3"); }
 private:
-	bool handleRC(int rc) const;
+	void handleRC(int rc) const;
 	void resize(uint32_t newSize);
 
 private:
