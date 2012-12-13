@@ -67,7 +67,6 @@ void OutputFile::output(const char *buffer, uint32_t size)
     if(!_file.isOpen() || !_file.isWritable())
 		return;
 	qint64 written = _file.write(buffer, size);
-	emit message(QString::number(size)+QString("::")+QString::number(written));
 	if(_written == -1) {
 		emit error(_file.errorString());
 		emit stateChanged("error");

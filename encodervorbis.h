@@ -42,7 +42,8 @@ private:
 	vorbis_info _vi;
 	vorbis_comment _vc;
 	vorbis_block _vb;
-	vorbis_dsp_state _vdsp;
+	vorbis_dsp_state _vdsp; 
+	bool _wroteHeader;
 };
 
 #endif

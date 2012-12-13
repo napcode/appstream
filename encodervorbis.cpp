@@ -1,8 +1,11 @@
 #include "encodervorbis.h"
 
 EncoderVorbis::EncoderVorbis(ConfigVorbis c)
-	:	_c(c)
+	:	_c(c), 
+		_wroteHeader(false)
 {
+	// 5k seems to be a good value for std settings
+	resize(5000);
 }
 
 
@@ -31,11 +34,11 @@ bool EncoderVorbis::init()
 		handleRC(ret);
 		return false;
 	} 
-
-	vorbis_comment_init(&_vc);
-	vorbis_comment_add_tag(&_vc, "ENCODER", "1.0");
 	vorbis_analysis_init(&_vdsp, &_vi);
+	vorbis_comment_init(&_vc);
+	vorbis_comment_add_tag(&_vc, "ENCODER", "appStream");
 	vorbis_block_init(&_vdsp, &_vb);
+
 	emit message("Vorbis initialized");
 	emit message("Version: " + getVersion());
 	return true;
@@ -54,28 +57,32 @@ void EncoderVorbis::writeHeader()
 	ogg_stream_packetin(&_oss, &header);
 	ogg_stream_packetin(&_oss, &header_comm);
 	ogg_stream_packetin(&_oss, &header_code);
+
+	while(1)
+	{
+		int res = ogg_stream_flush(&_oss, &_opg);
+		if(res == 0)
+			break;
+		if(_bufferSize < (_bufferValid + _opg.header_len + _opg.body_len))
+			resize(_bufferValid + _opg.header_len + _opg.body_len);
+		memcpy(_buffer + _bufferValid, _opg.header, _opg.header_len);
+		_bufferValid += _opg.header_len;
+		memcpy(_buffer + _bufferValid, _opg.body, _opg.body_len);
+		_bufferValid += _opg.body_len;
+	}
+	_wroteHeader = true;
 }
 bool EncoderVorbis::encode(short *buffer, uint32_t samples)
 {
-	assert(samples != 0);
+	_bufferValid = 0;
+	if(!_wroteHeader)
+		writeHeader();
+
 	int eos = 0;
-	uint32_t w = 0;
 	int res;
 	uint32_t i;
 	float **vbuffer;
 
-	while(!eos)
-	{
-		res = ogg_stream_flush(&_oss, &_opg);
-		if(res == 0)
-			break;
-		if(_bufferSize < (w + _opg.header_len + _opg.body_len))
-			resize(w + _opg.header_len + _opg.body_len);
-		memcpy(_buffer + w, _opg.header, _opg.header_len);
-		w += _opg.header_len;
-		memcpy(_buffer + w, _opg.body, _opg.body_len);
-		w += _opg.body_len;
-	}
 	vbuffer = vorbis_analysis_buffer(&_vdsp, samples);
 	if(_c.numInChannels == 1) {
 		for(i = 0; i < samples; ++i) 
@@ -83,11 +90,11 @@ bool EncoderVorbis::encode(short *buffer, uint32_t samples)
 	}
 	else {
 		for(i = 0; i < samples; ++i) {
-			vbuffer[0][i] = buffer[(i>>1)]/32768.0f;
-			vbuffer[1][i] = buffer[(i>>1)+1]/32768.0f;
+			vbuffer[0][i] = buffer[i<<1]/32768.0f;
+			vbuffer[1][i] = buffer[(i<<1)+1]/32768.0f;
 		}
 	}
-	vorbis_analysis_wrote(&_vdsp, samples);
+	vorbis_analysis_wrote(&_vdsp, i);
 
 	while(vorbis_analysis_blockout(&_vdsp, &_vb)) {
 		vorbis_analysis(&_vb, &_opk);
@@ -98,12 +105,12 @@ bool EncoderVorbis::encode(short *buffer, uint32_t samples)
 				res = ogg_stream_pageout(&_oss, &_opg);
 				if(res == 0)
 					break;
-				if(_bufferSize < (w + _opg.header_len + _opg.body_len))
-					resize(w + _opg.header_len + _opg.body_len);
-				memcpy(_buffer + w, _opg.header, _opg.header_len);
-				w += _opg.header_len;
-				memcpy(_buffer + w, _opg.body, _opg.body_len);
-				w += _opg.body_len;
+				if(_bufferSize < (_bufferValid + _opg.header_len + _opg.body_len))
+					resize(_bufferValid + _opg.header_len + _opg.body_len);
+				memcpy(_buffer + _bufferValid, _opg.header, _opg.header_len);
+				_bufferValid += _opg.header_len;
+				memcpy(_buffer + _bufferValid, _opg.body, _opg.body_len);
+				_bufferValid += _opg.body_len;
 				if(ogg_page_eos(&_opg))
 					eos = 1;
 			}
@@ -147,7 +154,8 @@ void EncoderVorbis::resize(uint32_t newSize)
 		return;	
 	char *buffer = new char[newSize];
 	assert(buffer);
-	memcpy(buffer, _buffer, _bufferSize);
+	memcpy(buffer, _buffer, _bufferSize);	
 	delete[] _buffer;
 	_bufferSize = newSize;
+	_buffer = buffer;
 }

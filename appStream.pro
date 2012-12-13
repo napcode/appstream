@@ -83,7 +83,7 @@ win32:CONFIG(debug, debug|release) {
     LIBS += -lAdvAPI32
 }
 unix {
-    LIBS += -lportaudio -lmp3lame -lshout
+    LIBS += -lportaudio -lmp3lame -lshout -lvorbisenc -lvorbis -logg
 }
 
 INCLUDEPATH += $$PWD/dep/portaudio/include

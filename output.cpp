@@ -48,7 +48,7 @@ void Output::run()
         }
         // FIXME ringbuffer read amount unclear
         read = _inbuffer.read(buffer, OUTPUT_RINGSIZE);
-        //assert(read!=0);
+        assert(read!=0);
         //filelog(buffer, read, 2);
 
         _work.unlock();
@@ -75,7 +75,6 @@ void Output::feed(const sample_t *buffer, uint32_t samples)
         }
         else
             _work.unlock();
-
     }
     else
     {
