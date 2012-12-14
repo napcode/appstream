@@ -247,7 +247,7 @@ void MainWindow::addStream()
     if(!s.contains("address") || !s.contains("port") ||
         !s.contains("user") || !s.contains("password") ||
         !s.contains("mountpoint") || !s.contains("encoder") ||
-        !s.contains("encoderBitRate") || !s.contains("encoderSampleRate") ||
+        !s.contains("encoderQuality") || !s.contains("encoderSampleRate") ||
         !s.contains("encoderChannels") || !s.contains("type"))
     {
         error("erroneous stream config");

@@ -39,7 +39,6 @@ bool EncoderVorbis::init()
                             _config.numInChannels,
                             _config.sampleRateIn,
                             _config.quality);
-        std::cout << "vbr" << std::endl;
     }
     if (ret != 0)
     {

@@ -20,6 +20,9 @@ public:
 public slots:
     void accept();
     void typeChanged(QString);
+    void updateEncoderMode(int);
+    void qualitySpinBoxChanged(int);
+    void qualitySliderChanged(int);
     
 private:
     Ui::ServerConnectionDialog *ui;
