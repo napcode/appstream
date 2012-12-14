@@ -3,7 +3,6 @@
 #include "ui_mainwindow.h"
 #include <QAction>
 #include <QDateTime>
-#include <QSettings>
 
 #include "audiosystem.h"
 #include "dsp.h"
@@ -56,6 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
     if(s.contains("connectOnStart") && s.value("connectOnStart").toBool()) {
         start();
     }
+    if(s.contains("windowpos_x") && s.contains("windowpos_y")) {
+        this->move(s.value("windowpos_x").toInt(), s.value("windowpos_y").toInt());
+    }
     s.endGroup();
 }
 
@@ -64,7 +66,11 @@ MainWindow::~MainWindow()
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     if(as.getState() == AudioSystem::Manager::STREAMING)
         stop();
-
+    QSettings s;
+    s.beginGroup("general");
+    s.setValue("windowpos_x", this->x()); 
+    s.setValue("windowpos_y", this->y()); 
+    s.endGroup();
     FileLogger::release();
 }
 void MainWindow::toolbarTriggered(QAction *a)
@@ -138,7 +144,7 @@ void MainWindow::toggleStreaming()
                     o->disable();
                     disconnect(o,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));                    
                     _dsp->removeOutput(o);
-                    ui->statuswidget->stopStreaming();                
+                    ui->statuswidget->stopStreaming();
                     break;
                 }
                 it++;
@@ -168,6 +174,7 @@ void MainWindow::start()
         _dsp->start();
         as.startDeviceStream();
         ui->meterwidget->toggleActive(true);
+
 	}
 }
 void MainWindow::stop()
@@ -182,6 +189,7 @@ void MainWindow::stop()
     _dsp->reset();
     ui->meterwidget->toggleActive(false);
     ui->meterwidget->reset();
+    ui->statuswidget->stopRecording();
 }
 void MainWindow::message(QString s)
 {
@@ -246,20 +254,10 @@ void MainWindow::addStream()
         return;
     }
 
-    if(s.value("encoder").toString() == QString("Lame MP3")) {
-        ConfigLame c;
-        c.bitRate = s.value("encoderBitRate").toInt();
-        c.sampleRateOut = s.value("encoderSampleRate").toInt();
-        c.numInChannels = _dsp->getNumChannels();
-        e = new EncoderLame(c);
-    }
-    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
-        e = new EncoderVorbis;
-    assert(e);
-    if(!e->init()) {
-        delete e;
+    e = constructEncoder(s);
+    if(!e)
         return;
-    }
+
     oic = new OutputIceCast;
     oic->setName("SELECTED_STREAM");
     oic->setEncoder(e);
@@ -282,31 +280,17 @@ void MainWindow::addFileRecorder()
     OutputFile *f = 0;
     Encoder *e = 0;
     if(!s.contains("recordPath") || !s.contains("recordFileName") ||
-        !s.contains("encoder") || !s.contains("encoderBitRate") ||
+        !s.contains("encoder") || !s.contains("encoderQuality") ||
         !s.contains("encoderSampleRate"))
     {
         error("erroneous recorder config");
         return;
     }
-    if(s.value("encoder").toString() == QString("Lame MP3")) {
-        ConfigLame c;
-        c.bitRate = s.value("encoderBitRate").toInt();
-        c.sampleRateOut = s.value("encoderSampleRate").toInt();
-        c.numInChannels = _dsp->getNumChannels();
-        e = new EncoderLame(c);
-    }
-    else if(s.value("encoder").toString() == QString("Ogg Vorbis")) {
-        ConfigVorbis c;
-        c.bitRate = s.value("encoderBitRate").toInt();
-        c.sampleRateOut = s.value("encoderSampleRate").toInt();
-        c.numInChannels = _dsp->getNumChannels();
-        e = new EncoderVorbis(c);
-    }
-    assert(e != 0);
-    if(!e->init()) {
-        delete e;
+    
+    e = constructEncoder(s);
+    if(!e)
         return;
-    }
+ 
     f = new OutputFile(s.value("recordPath").toString(),
         s.value("recordFileName").toString());
     f->setEncoder(e);
@@ -322,4 +306,34 @@ void MainWindow::addFileRecorder()
     ui->statuswidget->startRecording();
     _dsp->addOutput(f);
     f->start();
+}
+Encoder* MainWindow::constructEncoder(const QSettings &s) const
+{   
+    Encoder *e;
+    EncoderConfig c;
+    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    c.sampleRateOut = s.value("encoderSampleRate").toInt();
+    c.numInChannels = _dsp->getNumChannels();
+    c.sampleRateIn = as.getCurrentMode().sampleRate;
+    QString mode = s.value("encoderMode").toString();
+    if(mode == "CBR")
+        c.mode = EncoderConfig::CBR;
+    else if (mode == "VBR")
+        c.mode = EncoderConfig::VBR;
+    else
+        c.mode = EncoderConfig::CBR;
+
+    c.quality = s.value("encoderQuality").toFloat();
+ 
+    if(s.value("encoder").toString() == QString("Lame MP3")) 
+        e = new EncoderLame(c);
+    else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
+        e = new EncoderVorbis(c);
+
+    assert(e);
+    if(!e->init()) {
+        delete e;
+        return 0;
+    }
+    return e;
 }

@@ -23,7 +23,6 @@ public slots:
     void editStreamInfo();
     void rmStreamInfo();
     void accept();
-	void sliderMoved(int value);
 	void openFileDialog();
     
 private:
@@ -36,7 +35,10 @@ private:
     Ui::SettingsDialog *ui;
 
 private slots:
-    void updateAudioDeviceList(int dummy);
+    void updateAudioDeviceList(int);
+    void updateEncoderMode(int);
+    void qualitySpinBoxChanged(int);
+    void qualitySliderChanged(int);
 };
 
 #endif // SETTINGSDIALOG_H

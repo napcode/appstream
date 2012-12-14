@@ -1,7 +1,7 @@
 #include "encoderlame.h"
 
-EncoderLame::EncoderLame(ConfigLame c)
-    : _config(c)
+EncoderLame::EncoderLame(EncoderConfig c)
+    : Encoder(c)
 {
 
 }
@@ -30,7 +30,12 @@ bool EncoderLame::init()
     lame_set_num_channels(_lgf, _config.numInChannels);
     lame_set_in_samplerate(_lgf, _config.sampleRateIn);
     lame_set_out_samplerate(_lgf, _config.sampleRateOut);
-    lame_set_brate(_lgf, _config.bitRate);
+    if(_config.mode == EncoderConfig::CBR)
+        lame_set_brate(_lgf, _config.quality);
+    else if (_config.mode == EncoderConfig::VBR) {
+        lame_set_VBR(_lgf,  vbr_mtrh);
+        lame_set_VBR_quality(_lgf, 10.0 - 10*_config.quality);        
+    }
 
     if ((rc = lame_init_params(_lgf)) < 0)
     {
@@ -38,7 +43,7 @@ bool EncoderLame::init()
         emit error("Channels " + QString::number(_config.numInChannels));
         emit error("RateIn " + QString::number(_config.sampleRateIn));
         emit error("RateOut " + QString::number(_config.sampleRateOut));
-        emit error("BitRate " + QString::number(_config.bitRate));
+        emit error("BitRate " + QString::number(_config.quality));
         return false;
     }
     else

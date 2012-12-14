@@ -113,7 +113,9 @@ void ServerConnectionDialog::accept()
         s.setValue("password", ui->edPassword->text());
         s.setValue("mountpoint", ui->edMountpoint->text());
         s.setValue("encoder", ui->cbEncoder->currentText());
+        s.setValue("encoderMode", ui->cbEncoderMode->currentText());
         s.setValue("encoderBitRate", ui->slEncoderBitRate->value());
+        s.setValue("encoderQuality", ui->slEncoderBitRate->value());
         s.setValue("encoderSampleRate", ui->cbEncoderSampleRate->currentText());
         s.setValue("encoderChannels", ui->cbEncoderChannels->currentText());
     }

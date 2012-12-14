@@ -7,11 +7,32 @@
 #include "config.h"
 #include "ringbuffer.h"
 
+struct EncoderConfig
+{
+    enum Mode
+    {
+        CBR,            /* 64 - 320 */
+        VBR             /* 0.0 - 1.0 */
+    };
+    EncoderConfig()
+    :   sampleRateIn(44100),
+        sampleRateOut(44100),
+        numInChannels(2),
+        mode(CBR), 
+        quality(128)
+    {}
+    uint32_t sampleRateIn;
+    uint32_t sampleRateOut;
+    uint8_t numInChannels;
+    Mode mode;
+    float quality;
+};
+
 class Encoder : public QObject
 {
     Q_OBJECT
 public:
-    Encoder();
+    Encoder(EncoderConfig c = EncoderConfig());
     virtual ~Encoder() ;
 
     virtual bool init() = 0;
@@ -61,6 +82,7 @@ signals:
     void error(QString msg) const;
 
 protected:
+    EncoderConfig _config;    
 	QString _name;
 	bool _initialized;
     char* _buffer;

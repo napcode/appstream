@@ -7,24 +7,10 @@
 
 #include <lame/lame.h>
 
-struct ConfigLame
-{
-	ConfigLame() 
-    :	sampleRateIn(44100),
-        sampleRateOut(44100),
-        numInChannels(2),
-        bitRate(128)
-	{}
-	uint32_t sampleRateIn;
-	uint32_t sampleRateOut;
-	uint8_t numInChannels;
-	uint16_t bitRate;
-};
-
 class EncoderLame : public Encoder
 {
 public:
-    EncoderLame(ConfigLame c = ConfigLame());
+    EncoderLame(EncoderConfig c = EncoderConfig());
     ~EncoderLame();
 
     // reimplemented from Encoder    
@@ -43,7 +29,6 @@ private:
 	void resize(uint32_t newSize);
 
 private:
-	ConfigLame _config;
 	lame_global_flags *_lgf;
 	uint32_t _allocedFrames;
 };

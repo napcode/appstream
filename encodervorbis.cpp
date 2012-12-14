@@ -1,7 +1,7 @@
 #include "encodervorbis.h"
 
-EncoderVorbis::EncoderVorbis(ConfigVorbis c)
-    :   _c(c)
+EncoderVorbis::EncoderVorbis(EncoderConfig c)
+    :   Encoder(c)
 {
     // 5k seems to be a good value for std settings
     resize(5000);
@@ -26,16 +26,21 @@ bool EncoderVorbis::init()
     int ret;
 
     vorbis_info_init(&_vi);
-    // ret = vorbis_encode_init(&_vi,
-    //                          _c.numInChannels,
-    //                          _c.sampleRateIn,
-    //                          _c.bitRate * 800,
-    //                          _c.bitRate * 1000,
-    //                          _c.bitRate * 1200);
-    ret = vorbis_encode_init_vbr(&_vi,
-                        _c.numInChannels,
-                        _c.sampleRateIn,
-                        0.5);
+    if(_config.mode == EncoderConfig::CBR) {
+        ret = vorbis_encode_init(&_vi,
+                                  _config.numInChannels,
+                                  _config.sampleRateIn,
+                                  _config.quality * 1000,
+                                  _config.quality * 1000,
+                                  _config.quality * 1000);
+    }
+    else if (_config.mode == EncoderConfig::VBR) {
+        ret = vorbis_encode_init_vbr(&_vi,
+                            _config.numInChannels,
+                            _config.sampleRateIn,
+                            _config.quality);
+        std::cout << "vbr" << std::endl;
+    }
     if (ret != 0)
     {
         handleRC(ret);
@@ -89,7 +94,7 @@ void EncoderVorbis::encode(short *buffer, uint32_t samples)
     float **vbuffer;
 
     vbuffer = vorbis_analysis_buffer(&_vdsp, samples);
-    if (_c.numInChannels == 1)
+    if (_config.numInChannels == 1)
     {
         for (i = 0; i < samples; ++i)
             vbuffer[0][i] = buffer[i] / 32768.0f;
