@@ -55,7 +55,7 @@ bool Manager::init()
 DeviceList Manager::getDeviceList() const
 {
     DeviceList l;
-    if(_state != INITIALIZED) {
+    if(_state < INITIALIZED) {
         emit warn("not init");
         return l;
     }
@@ -100,7 +100,7 @@ Device Manager::getDeviceByName(const QString &name)
 }
 bool Manager::checkModeSupported(const Device &d, const Mode &m) const
 {
-    if(_state != INITIALIZED)
+    if(_state < INITIALIZED)
         return false;
 
     const PaDeviceInfo *pdi = Pa_GetDeviceInfo(d.second);

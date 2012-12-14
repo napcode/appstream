@@ -7,11 +7,12 @@
 #include <iostream>
 
 OutputFile::OutputFile(QString path, QString filename)
- :	_path(path),
+ :	Output(), 
+ 	_path(path),
 	_filename(filename),
 	_written(0)
 {
-	parseFileName();
+
 }
 OutputFile::~OutputFile()
 {
@@ -24,13 +25,24 @@ OutputFile::~OutputFile()
 }
 bool OutputFile::init()
 {
+	parseFileName();
+	QString ext; 
 	if(_encoder) {
-		_filename.append(".");
-		_filename.append(_encoder->getFileExtension());		
+		ext.append(".");
+		ext.append(_encoder->getFileExtension());		
 	}
 	if(!_path.endsWith('/'))
 		_path.append('/');
-	_file.setFileName(_path + _filename);
+	
+	_file.setFileName(_path + _filename + ext);
+	int i = 0;
+	while (_file.exists()) {
+		if(i == 0)
+			emit warn("file already exists.");
+		++i;
+		_file.setFileName(_path + _filename + "-" + QString::number(i) + ext);
+	}
+
 	_file.open(QIODevice::WriteOnly);
 	if(!_file.isOpen()) {
 		emit error("unable to open file " + _path + _filename);
@@ -40,19 +52,30 @@ bool OutputFile::init()
 		emit error("file " + _path + _filename + " is not writeable");
 		return false;
 	}
-	emit message("Recording to " + _path + _filename);
+	emit message("Recording to " + _path + _filename + ext);
+	emit stateChanged("active");
 	start();
 	return true;
 }
+void OutputFile::disable()
+{
+	Output::disable();
+	emit stateChanged("inactive");	
+}
 void OutputFile::output(const char *buffer, uint32_t size)
 {    
-    if(!_file.isOpen() || !_file.isWritable())
+    if(size == 0 || !_file.isOpen() || !_file.isWritable())
 		return;
 	qint64 written = _file.write(buffer, size);
+	if(_written == -1) {
+		emit error(_file.errorString());
+		emit stateChanged("error");
+		return;
+	}
 	_written += written;
 	if(_written > 1000000) {
 		// force write to disk
-		// in case of crashes we'd like to write regularly
+		// in case of crashes or problems we'd like to write regularly
 		_written = 0;
 		_file.flush();
 

@@ -29,7 +29,7 @@ class Manager : public QObject
 public:
     enum State
     {
-        INVALID,
+        INVALID = 0,
         INITIALIZED, 
         READY, 
         STREAMING
@@ -52,7 +52,8 @@ public:
     const DSP* getDSP() const { return _dsp; }
     void setDSP(DSP *dsp) { _dsp = dsp; }
 
-    State getState() const { return _state; }
+    Mode& getCurrentMode() { return _streamingMode; }
+    State getState() const  { return _state; }
 signals:
     void message(QString text) const;
     void error(QString text) const;

@@ -41,6 +41,7 @@ public:
 	OutputIceCast();
 	~OutputIceCast();
 	bool init();
+	void disable();
     void output(const char* buffer, uint32_t size);
 
 	void setConnection(const QString &name);

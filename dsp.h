@@ -26,10 +26,15 @@ public:
     ~DSP();
 
     // add peaks and maybe more
-    const ProcessorChain& getProcessorChain() const;
-    void addProcessor(Processor *p);
-    const OutputList& getOutputList() const;
+    ProcessorChain& getProcessorChain() { return _processorChain; }
+    const ProcessorChain& getProcessorChain() const { return _processorChain; }
+    void addProcessor(Processor *p); 
+    void removeProcessor(Processor *p);
+
+    OutputList& getOutputList() { return _outputList; }
+    const OutputList& getOutputList() const { return _outputList; }
     void addOutput(Output *o);
+    void removeOutput(Output *o);
     
     void setNumChannels(uint8_t channels) { _numChannels = channels; }
     uint8_t getNumChannels() const { return _numChannels; }

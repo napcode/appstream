@@ -20,7 +20,6 @@ Output::~Output()
     if(_active)
         disable();
     delete _encoder;
-
 }
 void Output::disable()
 {
@@ -36,6 +35,11 @@ void Output::run()
     _active = true;
     uint32_t read;
     sample_t buffer[OUTPUT_RINGSIZE];
+    if(_encoder) {
+        _encoder->setup();
+        output(_encoder->getBuffer(), _encoder->getBufferValid());
+    }
+
     while (_active)
     {
         _work.lock();
@@ -47,10 +51,8 @@ void Output::run()
                 return;
             }
         }
-        // FIXME ringbuffer read amount unclear
         read = _inbuffer.read(buffer, OUTPUT_RINGSIZE);
-        //assert(read!=0);
-        //filelog(buffer, read, 2);
+        assert(read!=0);
 
         _work.unlock();
 
@@ -58,8 +60,10 @@ void Output::run()
             _encoder->encode(buffer,read);
             output(_encoder->getBuffer(), _encoder->getBufferValid());
         }
-        //sleep(1);
-        //std::cout << "output::run" << std::endl;
+    }
+    if(_encoder) {
+        _encoder->finalize();
+        output(_encoder->getBuffer(), _encoder->getBufferValid());
     }
 }
 void Output::feed(const sample_t *buffer, uint32_t samples)
@@ -76,7 +80,6 @@ void Output::feed(const sample_t *buffer, uint32_t samples)
         }
         else
             _work.unlock();
-
     }
     else
     {

@@ -9,6 +9,10 @@ ServerConnectionDialog::ServerConnectionDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->cbType, SIGNAL(currentIndexChanged(QString)), this, SLOT(typeChanged(QString)));
+    connect(ui->cbEncoderMode, SIGNAL(currentIndexChanged(int)), this, SLOT(updateEncoderMode(int)));
+    connect(ui->sbEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySpinBoxChanged(int)));
+    connect(ui->slEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySliderChanged(int)));
+ 
 }
 
 ServerConnectionDialog::~ServerConnectionDialog()
@@ -68,9 +72,16 @@ void ServerConnectionDialog::setConnection(const QString &name)
         int i = ui->cbEncoder->findText(s.value("encoder").toString());
         ui->cbEncoder->setCurrentIndex(i);
     }
-    if (s.contains("encoderBitRate"))
-    {
-        ui->slEncoderBitRate->setValue(s.value("encoderBitRate").toInt());
+    if(s.contains("encoderMode")) {
+        int i = ui->cbEncoderMode->findText(s.value("encoderMode").toString());
+        ui->cbEncoderMode->setCurrentIndex(i);
+    }
+    updateEncoderMode(0);
+    if(s.contains("encoderQuality")) {
+        if(ui->cbEncoderMode->currentText() == "CBR")
+            ui->slEncoderQuality->setValue(s.value("encoderQuality").toInt());
+        else if(ui->cbEncoderMode->currentText() == "VBR")
+            ui->slEncoderQuality->setValue(s.value("encoderQuality").toFloat()*10);
     }
     if (s.contains("encoderSampleRate"))
     {
@@ -113,11 +124,49 @@ void ServerConnectionDialog::accept()
         s.setValue("password", ui->edPassword->text());
         s.setValue("mountpoint", ui->edMountpoint->text());
         s.setValue("encoder", ui->cbEncoder->currentText());
-        s.setValue("encoderBitRate", ui->slEncoderBitRate->value());
+        s.setValue("encoderMode", ui->cbEncoderMode->currentText());
+        if(ui->cbEncoderMode->currentText() == "CBR")        
+            s.setValue("encoderQuality", ui->slEncoderQuality->value());
+        else if(ui->cbEncoderMode->currentText() == "VBR")
+            s.setValue("encoderQuality", ui->slEncoderQuality->value()/10.0f);
         s.setValue("encoderSampleRate", ui->cbEncoderSampleRate->currentText());
         s.setValue("encoderChannels", ui->cbEncoderChannels->currentText());
     }
     s.endGroup();
     s.endGroup();
     this->done(QDialog::Accepted);
+}
+void ServerConnectionDialog::updateEncoderMode(int)
+{
+    if(ui->cbEncoderMode->currentText() == "CBR") {
+        ui->slEncoderQuality->setMinimum(64);
+        ui->slEncoderQuality->setMaximum(320);
+        ui->slEncoderQuality->setSingleStep(32);
+        ui->slEncoderQuality->setPageStep(32);
+        ui->slEncoderQuality->setTickInterval(32);
+        ui->sbEncoderQuality->setMinimum(64);        
+        ui->sbEncoderQuality->setMaximum(320);
+        ui->sbEncoderQuality->setSingleStep(32);
+        ui->slEncoderQuality->setValue(128);
+        //ui->slEncoderQuality->
+    }
+    else if (ui->cbEncoderMode->currentText() == "VBR" ) {
+        ui->slEncoderQuality->setMinimum(0);
+        ui->slEncoderQuality->setMaximum(10);
+        ui->slEncoderQuality->setSingleStep(1);
+        ui->slEncoderQuality->setPageStep(1);
+        ui->slEncoderQuality->setTickInterval(1);
+        ui->sbEncoderQuality->setMinimum(0);
+        ui->sbEncoderQuality->setMaximum(10);
+        ui->sbEncoderQuality->setSingleStep(1);
+        ui->slEncoderQuality->setValue(5);
+    }
+}
+void ServerConnectionDialog::qualitySliderChanged(int value)
+{
+    ui->sbEncoderQuality->setValue(value);
+}
+void ServerConnectionDialog::qualitySpinBoxChanged(int value)
+{
+    ui->slEncoderQuality->setValue(value);
 }

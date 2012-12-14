@@ -96,10 +96,22 @@ void DSP::addProcessor(Processor *p)
     QMutexLocker ml(&_processorLock);
     _processorChain.push_back(p);
 }
+void DSP::removeProcessor(Processor *p)
+{
+    QMutexLocker ml(&_processorLock);
+    _processorChain.remove(p);
+    delete p;
+}
 void DSP::addOutput(Output *o)
 {
     QMutexLocker ml(&_outputLock);
     _outputList.push_back(o);
+}
+void DSP::removeOutput(Output *o)
+{
+    QMutexLocker ml(&_outputLock);
+    _outputList.remove(o);
+    delete o;
 }
 void DSP::run()
 {

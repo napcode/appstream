@@ -115,10 +115,16 @@
        <item row="1" column="2">
         <widget class="QToolButton" name="editConnection">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>18</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Edit Selected</string>
@@ -131,10 +137,16 @@
        <item row="1" column="1">
         <widget class="QToolButton" name="rmConnection">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>18</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Remove Selected</string>
@@ -147,10 +159,16 @@
        <item row="1" column="3">
         <widget class="QToolButton" name="addConnection">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>18</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Add New</string>
@@ -168,7 +186,26 @@
         </widget>
        </item>
        <item row="0" column="1" colspan="3">
-        <widget class="QComboBox" name="cbConnection"/>
+        <widget class="QComboBox" name="cbConnection">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -198,20 +235,44 @@
        <item row="0" column="1" colspan="3">
         <widget class="QComboBox" name="cbStreamInfo">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QToolButton" name="rmStreamInfo">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>17</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Remove Selected</string>
@@ -224,10 +285,22 @@
        <item row="1" column="3">
         <widget class="QToolButton" name="addStreamInfo">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>17</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Add New</string>
@@ -247,10 +320,22 @@
        <item row="1" column="2">
         <widget class="QPushButton" name="editStreamInfo">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>17</height>
+          </size>
          </property>
          <property name="toolTip">
           <string>Edit Selected</string>
@@ -313,9 +398,9 @@
     <widget class="QWidget" name="layoutWidget4">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>9</x>
        <y>10</y>
-       <width>431</width>
+       <width>441</width>
        <height>120</height>
       </rect>
      </property>
@@ -449,67 +534,70 @@
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>7</x>
        <y>10</y>
-       <width>431</width>
-       <height>159</height>
+       <width>441</width>
+       <height>205</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>Samplerate</string>
+         <string>Samplerate:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Encoder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Path</string>
+         <string>Encoder:</string>
         </property>
        </widget>
       </item>
       <item row="4" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Path:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
        <widget class="QLabel" name="label_12">
         <property name="text">
-         <string>Filename</string>
+         <string>Filename:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Bitrate</string>
+         <string>Bitrate:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QSlider" name="slEncoderBitrate">
+      <item row="2" column="1" colspan="2">
+       <widget class="QSlider" name="slEncoderQuality">
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <number>64</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>320</number>
+         <number>100</number>
         </property>
         <property name="singleStep">
-         <number>32</number>
+         <number>1</number>
         </property>
         <property name="pageStep">
-         <number>32</number>
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>50</number>
         </property>
         <property name="sliderPosition">
-         <number>128</number>
+         <number>50</number>
         </property>
         <property name="tracking">
          <bool>false</bool>
@@ -521,12 +609,12 @@
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>32</number>
+         <number>25</number>
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
-       <widget class="QSpinBox" name="spinBox">
+      <item row="2" column="3">
+       <widget class="QSpinBox" name="sbEncoderQuality">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -534,20 +622,20 @@
          </sizepolicy>
         </property>
         <property name="minimum">
-         <number>64</number>
+         <number>1</number>
         </property>
         <property name="maximum">
-         <number>320</number>
+         <number>1</number>
         </property>
         <property name="singleStep">
-         <number>32</number>
+         <number>1</number>
         </property>
         <property name="value">
-         <number>128</number>
+         <number>1</number>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="3">
+      <item row="3" column="1" colspan="3">
        <widget class="QComboBox" name="cbEncoderSamplerate">
         <property name="currentIndex">
          <number>1</number>
@@ -588,7 +676,7 @@
         </item>
        </widget>
       </item>
-      <item row="3" column="1" colspan="2">
+      <item row="4" column="1" colspan="2">
        <widget class="QLineEdit" name="leRecordPath">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -598,7 +686,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="3">
+      <item row="4" column="3">
        <widget class="QToolButton" name="toolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -620,7 +708,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1" colspan="3">
+      <item row="5" column="1" colspan="3">
        <widget class="QLineEdit" name="leRecordFilename">
         <property name="text">
          <string>%date%-%streamname%</string>
@@ -631,6 +719,27 @@
         <property name="readOnly">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QComboBox" name="cbEncoderMode">
+        <item>
+         <property name="text">
+          <string>CBR</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>VBR</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -686,54 +795,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slEncoderBitrate</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>spinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>198</x>
-     <y>87</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>92</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slEncoderBitrate</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>413</x>
-     <y>83</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>311</x>
-     <y>77</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slEncoderBitrate</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>229</x>
-     <y>86</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>404</x>
-     <y>94</y>
     </hint>
    </hints>
   </connection>

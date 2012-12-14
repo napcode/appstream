@@ -1,7 +1,8 @@
 #include "encoder.h"
 #include "logger.h"
-Encoder::Encoder()
-: 	_initialized(false),
+Encoder::Encoder(EncoderConfig c)
+: 	_config(c), 
+	_initialized(false),
 	_buffer(0),
     _bufferSize(0),
     _bufferValid(0)

@@ -22,6 +22,14 @@ OutputIceCast::~OutputIceCast()
 	shout_free(_shout);
 	shout_shutdown();
 }
+void OutputIceCast::disable()
+{
+    Output::disable();
+    if(getState() == CONNECTED)
+        disconnectStream();
+    if(_timer->isActive())
+        _timer->stop();
+}
 void OutputIceCast::setConnection(const QString &name)
 {
     QSettings s;
@@ -108,7 +116,6 @@ bool OutputIceCast::init()
     emit stateChanged("ready");
     emit message("libshout initialized");
     emit message("Version: " + getVersion());
-    start();
 	return true;
 }
 void OutputIceCast::applyStreamInfo()
@@ -148,10 +155,10 @@ void OutputIceCast::connectStream()
     emit stateChanged("connecting");
     int r = shout_open(_shout);
     if(r == SHOUTERR_SUCCESS) {
-        emit message(QString("Connected to ") + _c.address);
     	_state = CONNECTED;
     	emit stateChanged(CONNECTED);
         emit stateChanged("connected");
+        emit message(QString("Connected to ") + _c.address);
         if(_timer->isActive())
             _timer->stop();
     }
@@ -163,13 +170,16 @@ void OutputIceCast::connectStream()
         emit warn(shout_get_error(_shout));
     	_state = DISCONNECTED;
     	emit stateChanged(DISCONNECTED);
-        emit stateChanged("disconnected");	
+        emit stateChanged("disconnected");        
     }
 }
 void OutputIceCast::disconnectStream()
 {
-    shout_close(_shout);  
+    shout_close(_shout);
+    _state = DISCONNECTED;
+    emit stateChanged(DISCONNECTED);
     emit stateChanged("disconnected");
+    emit message(QString("Disconnected from ") + _c.address);
 }
 void OutputIceCast::reconnectStream()
 {

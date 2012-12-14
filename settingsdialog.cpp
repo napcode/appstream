@@ -25,9 +25,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->addStreamInfo, SIGNAL(released()), this, SLOT(addStreamInfo()));
     connect(ui->editStreamInfo, SIGNAL(released()), this, SLOT(editStreamInfo()));
     connect(ui->rmStreamInfo, SIGNAL(released()), this, SLOT(rmStreamInfo()));
-	connect(ui->slEncoderBitrate, SIGNAL(sliderMoved(int)),this,SLOT(sliderMoved(int)));
 	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
-
+    connect(ui->cbEncoderMode, SIGNAL(currentIndexChanged(int)), this, SLOT(updateEncoderMode(int)));
+    connect(ui->sbEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySpinBoxChanged(int)));
+    connect(ui->slEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySliderChanged(int)));
     /* load settings */
     applySettings();
 }
@@ -81,10 +82,20 @@ void SettingsDialog::applyRecordSettings()
 	s.beginGroup("record");
 	if(s.contains("encoder")) {
 		int i = ui->cbEncoder->findText(s.value("encoder").toString());
-		ui->cbEncoder->setCurrentIndex(i);
+		ui->cbEncoder->setCurrentIndex(i);        
 	}
-	if(s.contains("encoderBitRate"))
-		ui->slEncoderBitrate->setValue(s.value("encoderBitRate").toInt());
+    if(s.contains("encoderMode")) {
+        int i = ui->cbEncoderMode->findText(s.value("encoderMode").toString());
+        ui->cbEncoderMode->setCurrentIndex(i);
+    }
+    updateEncoderMode(0);
+	if(s.contains("encoderQuality")) {
+        if(ui->cbEncoderMode->currentText() == "CBR")
+		    ui->slEncoderQuality->setValue(s.value("encoderQuality").toInt());
+        else if(ui->cbEncoderMode->currentText() == "VBR")
+            ui->slEncoderQuality->setValue(s.value("encoderQuality").toFloat()*10);
+    }
+
 	if(s.contains("encoderSampleRate")) {
 		int i = ui->cbEncoderSamplerate->findText(s.value("encoderSampleRate").toString());
 		ui->cbEncoderSamplerate->setCurrentIndex(i);
@@ -160,7 +171,11 @@ void SettingsDialog::accept()
         /* store record settings here */
 		s.beginGroup("record");
 		s.setValue("encoder", ui->cbEncoder->currentText());
-		s.setValue("encoderBitRate", ui->slEncoderBitrate->value());
+        s.setValue("encoderMode", ui->cbEncoderMode->currentText());
+        if(ui->cbEncoderMode->currentText() == "CBR")        
+            s.setValue("encoderQuality", ui->slEncoderQuality->value());
+        else if(ui->cbEncoderMode->currentText() == "VBR")
+            s.setValue("encoderQuality", ui->slEncoderQuality->value()/10.0f);
 		s.setValue("encoderSampleRate", ui->cbEncoderSamplerate->currentText());
 		s.setValue("recordPath", ui->leRecordPath->text());
 		s.setValue("recordFileName", ui->leRecordFilename->text());
@@ -185,6 +200,40 @@ void SettingsDialog::updateAudioDeviceList(int)
             ui->cbInputDevices->addItem(it->first);
         ++it;
     }
+}
+void SettingsDialog::updateEncoderMode(int)
+{
+    if(ui->cbEncoderMode->currentText() == "CBR") {
+        ui->slEncoderQuality->setMinimum(64);
+        ui->slEncoderQuality->setMaximum(320);
+        ui->slEncoderQuality->setSingleStep(32);
+        ui->slEncoderQuality->setPageStep(32);
+        ui->slEncoderQuality->setTickInterval(32);
+        ui->sbEncoderQuality->setMinimum(64);        
+        ui->sbEncoderQuality->setMaximum(320);
+        ui->sbEncoderQuality->setSingleStep(32);
+        ui->slEncoderQuality->setValue(128);
+        //ui->slEncoderQuality->
+    }
+    else if (ui->cbEncoderMode->currentText() == "VBR" ) {
+        ui->slEncoderQuality->setMinimum(0);
+        ui->slEncoderQuality->setMaximum(10);
+        ui->slEncoderQuality->setSingleStep(1);
+        ui->slEncoderQuality->setPageStep(1);
+        ui->slEncoderQuality->setTickInterval(1);
+        ui->sbEncoderQuality->setMinimum(0);
+        ui->sbEncoderQuality->setMaximum(10);
+        ui->sbEncoderQuality->setSingleStep(1);
+        ui->slEncoderQuality->setValue(5);
+    }
+}
+void SettingsDialog::qualitySliderChanged(int value)
+{
+    ui->sbEncoderQuality->setValue(value);
+}
+void SettingsDialog::qualitySpinBoxChanged(int value)
+{
+    ui->slEncoderQuality->setValue(value);
 }
 void SettingsDialog::addConnection()
 {
@@ -257,10 +306,6 @@ void SettingsDialog::rmStreamInfo()
     s.endGroup();
     int i = ui->cbStreamInfo->currentIndex();
     ui->cbStreamInfo->removeItem(i);
-}
-void SettingsDialog::sliderMoved(int position)
-{
-	ui->slEncoderBitrate->setToolTip(QString::number(position));
 }
 void SettingsDialog::openFileDialog()
 {

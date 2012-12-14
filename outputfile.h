@@ -7,12 +7,15 @@
 
 class OutputFile : public Output
 {
+    Q_OBJECT
 public:
     OutputFile(QString path = QString(), QString filename = QString("output"));
     ~OutputFile();
 
     // reimplementation from Output
     bool init();
+    void disable();
+    
     void output(const char *buffer, uint32_t size);
 
     const QString &getFileName() const
@@ -23,6 +26,9 @@ public:
     {
         _filename = filename;
     }
+signals:
+    //void stateChanged(State);
+    void stateChanged(QString);
 protected:
 	QString _path;
     QString _filename;
