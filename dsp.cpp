@@ -1,6 +1,6 @@
 #include "dsp.h"
 #include "logger.h"
-#include "filelogger.h"
+
 // encoders
 #include "encoder.h"
 

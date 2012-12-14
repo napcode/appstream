@@ -1,5 +1,6 @@
 #include "streaminfodialog.h"
 #include "ui_streaminfodialog.h"
+#include "config.h"
 #include <QSettings>
 #include <QMessageBox>
 
@@ -57,6 +58,7 @@ void StreamInfoDialog::accept()
    		s.setValue("url", ui->edUrl->text());
    		s.setValue("icq", ui->edIcq->text());
    		s.setValue("irc", ui->edIrc->text());
+   		s.setValue("agent", QString(PROJECT_NAME));
    	}
     s.endGroup();
     s.endGroup();

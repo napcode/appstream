@@ -109,6 +109,7 @@
  <tabstops>
   <tabstop>edName</tabstop>
   <tabstop>edGenre</tabstop>
+  <tabstop>edDescription</tabstop>
   <tabstop>edUrl</tabstop>
   <tabstop>edIcq</tabstop>
   <tabstop>edIrc</tabstop>

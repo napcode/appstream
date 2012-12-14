@@ -9,6 +9,7 @@
 
 struct ConfigConnection
 {
+	QString protocol;
 	QString address;
 	QString user;
 	QString password;
@@ -46,8 +47,7 @@ public:
 
 	void setConnection(const QString &name);
 	void setConnection(const ConfigConnection &config);
-	void setStreamInfo(const QString &name);
-	void setStreamInfo(const ConfigStreamInfo &config);
+
 	void setMetaData();
 	
 	State getState() const { return _state; }
@@ -56,12 +56,15 @@ public slots:
 	void connectStream();
 	void disconnectStream();	
 	void reconnectStream();
+	void setStreamInfo(const QString &name);
+	void setStreamInfo(const ConfigStreamInfo &config);
 signals:
 	void stateChanged(State);
 	void stateChanged(QString);
 	void requestReconnect();
 private:
 	void applyStreamInfo();
+	bool applyConnection();
 
 	shout_t *_shout;
 	State _state;

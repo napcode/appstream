@@ -29,6 +29,7 @@ public slots:
     void warn(QString s);
     void error(QString s);
     void newAudioFrames(float timestamp, uint32_t frames);
+    void setStreamInfo(QString);
     
 private:
     void prepareDSP(uint8_t channels);
@@ -37,6 +38,8 @@ private:
     Encoder* constructEncoder(const QSettings &s) const;
     void toggleRecording();
     void toggleStreaming();
+    void updateStreamSettings();
+
     Ui::MainWindow *ui;
     DSP *_dsp;
 };

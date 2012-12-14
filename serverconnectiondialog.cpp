@@ -23,7 +23,7 @@ void ServerConnectionDialog::typeChanged(QString current)
 {
     QSettings s;
     s.beginGroup("connection");
-    if (current == "Icecast")
+    if (current == "Icecast 1" || current == "Icecast 2")
     {
         ui->edUser->setEnabled(true);
         ui->edMountpoint->setEnabled(true);
@@ -38,6 +38,8 @@ void ServerConnectionDialog::typeChanged(QString current)
         ui->edUser->setText("source");
         ui->edMountpoint->setEnabled(false);
         ui->edMountpoint->setText("/stream");
+        int i = ui->cbEncoder->findText("Lame MP3");
+        ui->cbEncoder->setCurrentIndex(i);
     }
 }
 void ServerConnectionDialog::setConnection(const QString &name)
@@ -93,9 +95,9 @@ void ServerConnectionDialog::setConnection(const QString &name)
         int i = ui->cbEncoderChannels->findText(s.value("encoderChannels").toString());
         ui->cbEncoderChannels->setCurrentIndex(i);
     }
-    if (s.contains("type"))
+    if (s.contains("protocol"))
     {
-        int i = ui->cbType->findText(s.value("type").toString());
+        int i = ui->cbType->findText(s.value("protocol").toString());
         ui->cbType->setCurrentIndex(i);
         typeChanged(ui->cbType->currentText());
     }
@@ -117,7 +119,7 @@ void ServerConnectionDialog::accept()
     s.beginGroup("connection");
     s.beginGroup(ui->edName->text());
     {
-        s.setValue("type", ui->cbType->currentText());
+        s.setValue("protocol", ui->cbType->currentText());
         s.setValue("address", ui->edAddress->text());
         s.setValue("port", ui->sbPort->value());
         s.setValue("user", ui->edUser->text());

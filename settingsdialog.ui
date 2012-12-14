@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>390</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>480</width>
-    <height>390</height>
+    <height>340</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>480</width>
-    <height>390</height>
+    <height>340</height>
    </size>
   </property>
   <property name="sizeIncrement">
@@ -56,7 +56,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>310</y>
+     <y>304</y>
      <width>461</width>
      <height>32</height>
     </rect>
@@ -228,7 +228,7 @@
         <x>10</x>
         <y>20</y>
         <width>411</width>
-        <height>70</height>
+        <height>61</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3" columnminimumwidth="80,0,0,0">
@@ -408,14 +408,14 @@
       <item row="0" column="1">
        <widget class="QComboBox" name="cbSampleRate">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>320</width>
           <height>0</height>
          </size>
         </property>
@@ -451,6 +451,12 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Bits per Sample:</string>
         </property>
@@ -458,6 +464,12 @@
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Samplerate:</string>
         </property>
@@ -465,6 +477,18 @@
       </item>
       <item row="1" column="1">
        <widget class="QComboBox" name="cbBitsPerSample">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>320</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="currentIndex">
          <number>1</number>
         </property>
@@ -492,6 +516,12 @@
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Channels:</string>
         </property>
@@ -499,8 +529,20 @@
       </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="cbChannels">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>320</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <item>
          <property name="text">
@@ -516,13 +558,32 @@
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Device: </string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QComboBox" name="cbInputDevices"/>
+       <widget class="QComboBox" name="cbInputDevices">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>320</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -762,6 +823,14 @@
   <tabstop>cbBitsPerSample</tabstop>
   <tabstop>cbChannels</tabstop>
   <tabstop>cbInputDevices</tabstop>
+  <tabstop>cbEncoder</tabstop>
+  <tabstop>cbEncoderMode</tabstop>
+  <tabstop>slEncoderQuality</tabstop>
+  <tabstop>sbEncoderQuality</tabstop>
+  <tabstop>cbEncoderSamplerate</tabstop>
+  <tabstop>leRecordPath</tabstop>
+  <tabstop>toolButton</tabstop>
+  <tabstop>leRecordFilename</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

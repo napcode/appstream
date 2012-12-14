@@ -37,6 +37,7 @@ void OutputIceCast::setConnection(const QString &name)
     s.beginGroup(name);
 
     _c.address = s.value("address").toString();
+    _c.protocol = s.value("protocol").toString();
     _c.port = s.value("port").toInt();
     _c.user = s.value("user").toString();
     _c.password = s.value("password").toString();
@@ -53,12 +54,13 @@ void OutputIceCast::setStreamInfo(const QString &name)
     s.beginGroup("stream");
     s.beginGroup(name);
 
-    _csi.name = s.value("name").toString();
-    _csi.description = s.value("description").toInt();
+    _csi.name = name;
+    _csi.description = s.value("description").toString();
     _csi.agent = s.value("agent").toString();
     _csi.genre = s.value("genre").toString();
     _csi.url = s.value("url").toString();
     _csi.isPublic = s.value("isPublic").toBool();
+    applyStreamInfo();
 }
 void OutputIceCast::setStreamInfo(const ConfigStreamInfo &config)
 {
@@ -70,53 +72,62 @@ bool OutputIceCast::init()
 	_shout = shout_new();
 	if(!_shout)
 		return false;
-
-	int r;
-    r = shout_set_host(_shout, _c.address.toStdString().c_str());
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set hostname: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    r = shout_set_protocol(_shout, SHOUT_PROTOCOL_HTTP);
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set protocol: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    r = shout_set_port(_shout, _c.port);
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set port: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    r = shout_set_mount(_shout, _c.mountpoint.toStdString().c_str());
-    if(r != SHOUTERR_SUCCESS) {
-       emit error(QString("unable to set mountpoint: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    r = shout_set_user(_shout, _c.user.toStdString().c_str());
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set user: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    r = shout_set_password(_shout, _c.password.toStdString().c_str());
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set password: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-    if(_c.encoder == QString("Lame MP3"))
-    	r = shout_set_format(_shout, SHOUT_FORMAT_MP3);
-    else if(_c.encoder == QString("Ogg Vorbis"))
-    	r = shout_set_format(_shout, SHOUT_FORMAT_OGG);
-    if(r != SHOUTERR_SUCCESS) {
-        emit error(QString("unable to set protocol: ") + shout_get_error(_shout));
-    	return false;    	
-    }
-
+    if(!applyConnection())
+        return false;
     _state = READY;
     emit stateChanged(READY);
     emit stateChanged("ready");
     emit message("libshout initialized");
     emit message("Version: " + getVersion());
 	return true;
+}
+bool OutputIceCast::applyConnection()
+{
+    int r;
+    r = shout_set_host(_shout, _c.address.toStdString().c_str());
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set hostname: ") + shout_get_error(_shout));
+        return false;       
+    }
+    if(_c.protocol == "Icecast 1")
+        r = shout_set_protocol(_shout, SHOUT_PROTOCOL_XAUDIOCAST);
+    else if(_c.protocol == "Icecast 2")
+        r = shout_set_protocol(_shout, SHOUT_PROTOCOL_HTTP);
+    else if(_c.protocol == "Shoutcast")
+        r = shout_set_protocol(_shout, SHOUT_PROTOCOL_ICY);
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set protocol: ") + shout_get_error(_shout));
+        return false;       
+    }
+    r = shout_set_port(_shout, _c.port);
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set port: ") + shout_get_error(_shout));
+        return false;       
+    }
+    r = shout_set_mount(_shout, _c.mountpoint.toStdString().c_str());
+    if(r != SHOUTERR_SUCCESS) {
+       emit error(QString("unable to set mountpoint: ") + shout_get_error(_shout));
+        return false;       
+    }
+    r = shout_set_user(_shout, _c.user.toStdString().c_str());
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set user: ") + shout_get_error(_shout));
+        return false;       
+    }
+    r = shout_set_password(_shout, _c.password.toStdString().c_str());
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set password: ") + shout_get_error(_shout));
+        return false;       
+    }
+    if(_c.encoder == QString("Lame MP3"))
+        r = shout_set_format(_shout, SHOUT_FORMAT_MP3);
+    else if(_c.encoder == QString("Ogg Vorbis"))
+        r = shout_set_format(_shout, SHOUT_FORMAT_OGG);
+    if(r != SHOUTERR_SUCCESS) {
+        emit error(QString("unable to set protocol: ") + shout_get_error(_shout));
+        return false;       
+    }
+    return true;
 }
 void OutputIceCast::applyStreamInfo()
 {
@@ -152,25 +163,29 @@ void OutputIceCast::connectStream()
 {
 	if(getState() != READY && getState() != DISCONNECTED)
 		return;
+    
+   // if(_shout)
+        shout_close(_shout);
+
     emit stateChanged("connecting");
     int r = shout_open(_shout);
+    usleep(1000);
     if(r == SHOUTERR_SUCCESS) {
     	_state = CONNECTED;
     	emit stateChanged(CONNECTED);
-        emit stateChanged("connected");
+        emit stateChanged("online");
         emit message(QString("Connected to ") + _c.address);
         if(_timer->isActive())
             _timer->stop();
     }
     else {
         if(_timer->isActive()) {
-            ++_trial;
-            
+            ++_trial;            
         }
         emit warn(shout_get_error(_shout));
     	_state = DISCONNECTED;
     	emit stateChanged(DISCONNECTED);
-        emit stateChanged("disconnected");        
+        emit stateChanged("offline");
     }
 }
 void OutputIceCast::disconnectStream()
@@ -178,11 +193,13 @@ void OutputIceCast::disconnectStream()
     shout_close(_shout);
     _state = DISCONNECTED;
     emit stateChanged(DISCONNECTED);
-    emit stateChanged("disconnected");
+    emit stateChanged("offline");
     emit message(QString("Disconnected from ") + _c.address);
 }
 void OutputIceCast::reconnectStream()
 {
+    shout_close(_shout);
+    applyConnection();
     _timer->start();
 }
 void OutputIceCast::output(const char* buffer, uint32_t size)
@@ -196,7 +213,7 @@ void OutputIceCast::output(const char* buffer, uint32_t size)
 			emit warn(QString("send error: ") + shout_get_error(_shout));            
 			_state = DISCONNECTED;
 			emit stateChanged(DISCONNECTED);
-            emit stateChanged("disconnected");
+            emit stateChanged("offline");
             emit requestReconnect();
             _trial = 0;
 		}

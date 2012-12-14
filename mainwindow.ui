@@ -233,6 +233,10 @@ border-color: rgb(0, 0, 0);</string>
    <header location="global">meterwidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>cbStreamInfo</tabstop>
+  <tabstop>logLabel</tabstop>
+ </tabstops>
  <resources>
   <include location="icons.qrc"/>
  </resources>

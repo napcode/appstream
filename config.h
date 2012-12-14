@@ -5,6 +5,7 @@
 #define DSP_RINGSIZE 2048
 #define PA_FRAMES 256
 #define OUTPUT_RINGSIZE 2048
+#define PROJECT_NAME "appStream"
 
 typedef short sample_t;
 

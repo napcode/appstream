@@ -8,7 +8,6 @@
 #include "dsp.h"
 #include "meterprocessor.h"
 #include "config.h"
-#include "filelogger.h"
 #include "encoderlame.h"
 #include "encodervorbis.h"
 #include "outputfile.h"
@@ -59,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
         this->move(s.value("windowpos_x").toInt(), s.value("windowpos_y").toInt());
     }
     s.endGroup();
+    updateStreamSettings();
+    connect(ui->cbStreamInfo, SIGNAL(currentIndexChanged(QString)), this, SLOT(setStreamInfo(QString)));    
 }
 
 MainWindow::~MainWindow()
@@ -71,7 +72,6 @@ MainWindow::~MainWindow()
     s.setValue("windowpos_x", this->x()); 
     s.setValue("windowpos_y", this->y()); 
     s.endGroup();
-    FileLogger::release();
 }
 void MainWindow::toolbarTriggered(QAction *a)
 {
@@ -79,6 +79,7 @@ void MainWindow::toolbarTriggered(QAction *a)
     if(a == ui->actionSettings) {
         SettingsDialog s;
         s.exec();
+        updateStreamSettings();
     }
     else if (a == ui->actionRun) {
         if(ui->actionRun->isChecked())
@@ -96,7 +97,7 @@ void MainWindow::toolbarTriggered(QAction *a)
     }
     else if (a == ui->actionAbout) {
         AboutDialog a;
-        a.exec();
+        a.exec();        
     }
 }
 void MainWindow::toggleRecording()
@@ -142,9 +143,10 @@ void MainWindow::toggleStreaming()
                 if((*it)->getName() == "SELECTED_STREAM") {
                     Output *o = *it;
                     o->disable();
-                    disconnect(o,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));                    
+                    disconnect(o,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));
                     _dsp->removeOutput(o);
                     ui->statuswidget->stopStreaming();
+                    ui->cbStreamInfo->setEnabled(true);
                     break;
                 }
                 it++;
@@ -190,6 +192,8 @@ void MainWindow::stop()
     ui->meterwidget->toggleActive(false);
     ui->meterwidget->reset();
     ui->statuswidget->stopRecording();
+    ui->statuswidget->stopStreaming();
+    ui->cbStreamInfo->setEnabled(true);
 }
 void MainWindow::message(QString s)
 {
@@ -248,7 +252,7 @@ void MainWindow::addStream()
         !s.contains("user") || !s.contains("password") ||
         !s.contains("mountpoint") || !s.contains("encoder") ||
         !s.contains("encoderQuality") || !s.contains("encoderSampleRate") ||
-        !s.contains("encoderChannels") || !s.contains("type"))
+        !s.contains("encoderChannels") || !s.contains("protocol"))
     {
         error("erroneous stream config");
         return;
@@ -268,9 +272,17 @@ void MainWindow::addStream()
         return;
     }
     connect(oic,SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setStreamState(QString)));
+    {
+        QSettings s;
+        s.beginGroup("stream");
+        if(s.contains("selected"))
+            oic->setStreamInfo(s.value("selected").toString());
+    }
+    
     ui->statuswidget->startStreaming();
+    ui->cbStreamInfo->setDisabled(true);
     oic->connectStream();
-    _dsp->addOutput(oic);
+    _dsp->addOutput(oic);    
     oic->start();
 }
 void MainWindow::addFileRecorder()
@@ -334,6 +346,31 @@ Encoder* MainWindow::constructEncoder(const QSettings &s) const
     if(!e->init()) {
         delete e;
         return 0;
-    }
+    }    
     return e;
+}
+void MainWindow::updateStreamSettings()
+{
+    ui->cbStreamInfo->clear();
+    QSettings s;
+    s.beginGroup("stream");
+    QStringList connections = s.childGroups();
+    QStringListIterator it(connections);
+    while (it.hasNext())
+    {
+        ui->cbStreamInfo->addItem(it.next());
+    }
+    // is there a selected entry?
+    if (s.contains("selected"))
+    {
+        int i = ui->cbStreamInfo->findText(s.value("selected").toString());
+        ui->cbStreamInfo->setCurrentIndex(i);
+    }
+}
+void MainWindow::setStreamInfo(QString name)
+{
+    QSettings s;
+    s.beginGroup("stream");
+    s.setValue("selected", name);
+    s.endGroup();    
 }

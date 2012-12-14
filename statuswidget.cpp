@@ -5,6 +5,7 @@ StatusWidget::StatusWidget(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::StatusWidget),
     _timer(new QTimer(this)),
+    _blinkTimer(new QTimer(this)),
     _isRecording(false),
     _isStreaming(false),
     _timeFormat("hh:mm:ss")
@@ -12,11 +13,19 @@ StatusWidget::StatusWidget(QWidget *parent) :
     ui->setupUi(this);
     _timer->setSingleShot(false);
 	_timer->setInterval(1000);		
-	connect(_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+    connect(_timer, SIGNAL(timeout()), this, SLOT(updateTime()));
+	connect(_blinkTimer, SIGNAL(timeout()), this, SLOT(blink()));
 	updateTime();
     _timer->start();
     ui->lbRecord->setText("inactive");
     ui->lbStream->setText("offline");
+
+    _styleNormal.append("QLabel { background-color : red; color : white; }");
+    _styleHightlight.append("QLabel { background-color : rgb(85, 85, 255); color : white; }");
+    QFrame::setStyleSheet("QFrame { background-color : rgb(85, 85, 255); color : white; }");
+    // test
+    _blinkTimer->setSingleShot(false);
+    _blinkTimer->setInterval(1000);
 }
 
 StatusWidget::~StatusWidget()
@@ -49,6 +58,16 @@ void StatusWidget::updateTime()
     }
     update();
 }
+void StatusWidget::blink()
+{
+    if(_blinkState) {
+        ui->lbStream->setStyleSheet(_styleHightlight);        
+    }
+    else {
+        ui->lbStream->setStyleSheet(_styleNormal);
+    }
+    _blinkState = !_blinkState;
+}
 void StatusWidget::startRecording()
 {
 	_timeRec.start();
@@ -72,6 +91,10 @@ void StatusWidget::startStreaming()
 void StatusWidget::stopStreaming()
 {
 	_isStreaming = false;
+    if (_blinkTimer->isActive()) {
+        _blinkTimer->stop();
+        ui->lbStream->setStyleSheet(_styleNormal);
+    }
 	//ui->lbStream->setText("offline");
 	update();
 }
@@ -82,6 +105,16 @@ void StatusWidget::setRecorderState(QString state)
 void StatusWidget::setStreamState(QString state)
 {
 	ui->lbStream->setText(state);
+    if(_isStreaming) {
+        if (!_blinkTimer->isActive() && state == "offline") {
+            _blinkState = true;
+            _blinkTimer->start();
+        }
+        else if (_blinkTimer->isActive() && state == "online") {
+            _blinkTimer->stop();
+            ui->lbStream->setStyleSheet(_styleNormal);
+        }
+    }
 }
 QString StatusWidget::msToString(int ims)
 {

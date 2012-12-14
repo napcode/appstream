@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = appStream
 TEMPLATE = app
-CONFIG += debug
+CONFIG += debug_and_release
 
 
 SOURCES += main.cpp\
@@ -29,7 +29,6 @@ SOURCES += main.cpp\
     outputfile.cpp \
     outputicecast.cpp \
     logger.cpp \
-    filelogger.cpp \
     encodervorbis.cpp \
     aboutdialog.cpp \   
     statuswidget.cpp
@@ -51,7 +50,6 @@ HEADERS  += mainwindow.h \
     outputfile.h \
     outputicecast.h \
     logger.h \
-    filelogger.h \
     encodervorbis.h \
     aboutdialog.h \   
     statuswidget.h
@@ -64,10 +62,17 @@ FORMS    += mainwindow.ui \
     statuswidget.ui
 
 win32:CONFIG(release, debug|release) {
-    LIBS += -L$$PWD/dep/lib/release -lportaudio_x86
-    LIBS += -L$$PWD/dep/lib/release -llibmp3lame
-    LIBS += -L$$PWD/dep/lib/release -llibshout    
+    LIBS += -L$$PWD/dep/lib/release -lportaudio
+    LIBS += -llibmp3lame-static
+    LIBS += -llibmpghip-static
+    LIBS += -llibshout
+    LIBS += -llibogg_static
+    LIBS += -llibvorbis_static
+    LIBS += -lpthreadVC2
+    LIBS += -lpthreadVCE2
+    LIBS += -lpthreadVSE2
     LIBS += -L"D:/Windows Kits/8.0/Lib/win8/um/x86/" -lWS2_32
+    LIBS += -lAdvAPI32
 }
 win32:CONFIG(debug, debug|release) {
     LIBS += -L$$PWD/dep/lib/debug -lportaudio
