@@ -7,6 +7,7 @@
 #include "audiosystem.h"
 #include "dsp.h"
 #include "meterprocessor.h"
+#include "compressorprocessor.h"
 #include "config.h"
 #include "encoderlame.h"
 #include "encodervorbis.h"
@@ -33,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<uint32_t>("uint32_t");
     qRegisterMetaType<sample_t>("sample_t");
     qRegisterMetaType<MeterValues>("MeterValues");
-
+    _fxeditor = new FXEditor(this);
+    _fxeditor->setShown(false);
     // create & start DSP
     _dsp = new DSP();
     as.setDSP(_dsp);
@@ -89,15 +91,17 @@ void MainWindow::toolbarTriggered(QAction *a)
     }
     else if (a == ui->actionRecord) {
         toggleRecording();
-
     }
     else if (a == ui->actionStreaming) {
         toggleStreaming();
-
+    }
+    else if (a == ui->actionEdit_FX) {
+        _fxeditor->setFloating(true);
+        _fxeditor->show();
     }
     else if (a == ui->actionAbout) {
         AboutDialog a;
-        a.exec();        
+        a.exec();
     }
 }
 void MainWindow::toggleRecording()
@@ -169,14 +173,13 @@ void MainWindow::start()
     }
 
     if(as.openDeviceStream()) {
-        uint8_t channels = s.value("numChannels").toInt();
-        prepareDSP(channels);
-        ui->meterwidget->setNumChannels(channels);
+        prepareDSP(as.getCurrentMode().numChannels, as.getCurrentMode().sampleRate);
+        ui->meterwidget->setNumChannels(as.getCurrentMode().numChannels);
 
         _dsp->start();
         as.startDeviceStream();
         ui->meterwidget->toggleActive(true);
-
+        ui->actionRun->setChecked(true);
 	}
 }
 void MainWindow::stop()
@@ -223,10 +226,14 @@ void MainWindow::newAudioFrames(float ts, uint32_t frames)
     //log(QString::number(ts) + QString("::") + QString::number(frames));
 }
 
-void MainWindow::prepareDSP(uint8_t channels)
+void MainWindow::prepareDSP(uint8_t channels, uint32_t samplerate)
 {
     _dsp->setNumChannels(channels);
-    MeterProcessor *mp = new MeterProcessor(channels);
+    MeterProcessor *mp = new MeterProcessor(channels, samplerate);
+
+    CompressorProcessor *cp = new CompressorProcessor(channels, samplerate);
+    _fxeditor->connectWithProcessor(*cp);
+    _dsp->addProcessor(cp);
     _dsp->addProcessor(mp);
     if(ui->actionRecord->isChecked()) {
         addFileRecorder();

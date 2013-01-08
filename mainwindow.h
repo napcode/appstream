@@ -5,6 +5,7 @@
 #include <QSettings>
 #include <stdint.h>
 #include "logger.h"
+#include "fxeditor.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,7 +33,7 @@ public slots:
     void setStreamInfo(QString);
     
 private:
-    void prepareDSP(uint8_t channels);
+    void prepareDSP(uint8_t channels, uint32_t samplerate);
     void addFileRecorder();
     void addStream();
     Encoder* constructEncoder(const QSettings &s) const;
@@ -42,6 +43,7 @@ private:
 
     Ui::MainWindow *ui;
     DSP *_dsp;
+    FXEditor *_fxeditor;
 };
 
 #endif // MAINWINDOW_H

@@ -18,7 +18,7 @@ typedef std::vector<float> MeterValues;
 class MeterProcessor : public Processor
 {
 	public:
-		MeterProcessor(uint8_t channels);
+		MeterProcessor(uint8_t channels, uint32_t samplerate);
 		~MeterProcessor();
 		void process(sample_t *in, sample_t *out, uint32_t samples);
 		

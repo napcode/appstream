@@ -135,7 +135,7 @@ border-color: rgb(0, 0, 0);</string>
    <addaction name="actionRecord"/>
    <addaction name="separator"/>
    <addaction name="actionSettings"/>
-   <addaction name="actionEdit_FX"/>
+   <addaction name="actionEditFX"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
@@ -194,7 +194,7 @@ border-color: rgb(0, 0, 0);</string>
     <string>Toggle streaming to selected server connection</string>
    </property>
   </action>
-  <action name="actionEdit_FX">
+  <action name="actionEditFX">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/new/prefix1/res/audio-card.png</normaloff>:/new/prefix1/res/audio-card.png</iconset>

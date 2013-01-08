@@ -3,8 +3,8 @@
 #include <cstring>
 #include <iostream>
 
-MeterProcessor::MeterProcessor(uint8_t channels)
-    : Processor(channels)
+MeterProcessor::MeterProcessor(uint8_t channels, uint32_t samplerate)
+    : Processor(channels, samplerate)
 {
     _v.resize(channels);
     _z1.resize(_numChannels);

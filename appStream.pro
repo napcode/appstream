@@ -23,6 +23,7 @@ SOURCES += main.cpp\
     processor.cpp \
     meterprocessor.cpp \
     meterwidget.cpp \
+    compressorprocessor.cpp \
     output.cpp \
     encoder.cpp \
     encoderlame.cpp \
@@ -31,7 +32,8 @@ SOURCES += main.cpp\
     logger.cpp \
     encodervorbis.cpp \
     aboutdialog.cpp \   
-    statuswidget.cpp
+    statuswidget.cpp \
+    fxeditor.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
@@ -43,6 +45,7 @@ HEADERS  += mainwindow.h \
     processor.h \
     meterprocessor.h \
     meterwidget.h \
+    compressorprocessor.h \
     config.h \
     output.h \
     encoder.h \
@@ -52,14 +55,16 @@ HEADERS  += mainwindow.h \
     logger.h \
     encodervorbis.h \
     aboutdialog.h \   
-    statuswidget.h
+    statuswidget.h \
+    fxeditor.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
     serverconnectiondialog.ui \
     streaminfodialog.ui \
     aboutdialog.ui \
-    statuswidget.ui
+    statuswidget.ui \
+    fxeditor.ui
 
 win32:CONFIG(release, debug|release) {
     LIBS += -L$$PWD/dep/lib/release -lportaudio

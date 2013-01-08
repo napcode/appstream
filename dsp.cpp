@@ -145,9 +145,9 @@ void DSP::run()
 					emit newPeaks(p->getValues());
 				} else {
 					// now reuse/swap buffers for next processor
-					//sample_t *tmp = _readbuffer;
-					//_readbuffer = _writebuffer;
-					//_writebuffer = tmp;
+					sample_t *tmp = _readbuffer;
+					_readbuffer = _writebuffer;
+					_writebuffer = tmp;
 				}
 				it++;
 			}
