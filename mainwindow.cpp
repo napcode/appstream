@@ -16,8 +16,8 @@
 #include "aboutdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    Logger(parent),   
-    ui(new Ui::MainWindow), 
+    Logger(parent),
+    ui(new Ui::MainWindow),
     _dsp(0)
 {
     ui->setupUi(this);
@@ -39,12 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // create & start DSP
     _dsp = new DSP();
     as.setDSP(_dsp);
-    connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues))); 
+    connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
 
     QSettings s;
     s.beginGroup("record");
     if(s.contains("enabled")) {
-        ui->actionRecord->setChecked(s.value("enabled").toBool());        
+        ui->actionRecord->setChecked(s.value("enabled").toBool());
     }
     s.endGroup();
     s.beginGroup("connection");
@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     s.endGroup();
     updateStreamSettings();
-    connect(ui->cbStreamInfo, SIGNAL(currentIndexChanged(QString)), this, SLOT(setStreamInfo(QString)));    
+    connect(ui->cbStreamInfo, SIGNAL(currentIndexChanged(QString)), this, SLOT(setStreamInfo(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -71,8 +71,8 @@ MainWindow::~MainWindow()
         stop();
     QSettings s;
     s.beginGroup("general");
-    s.setValue("windowpos_x", this->x()); 
-    s.setValue("windowpos_y", this->y()); 
+    s.setValue("windowpos_x", this->x());
+    s.setValue("windowpos_y", this->y());
     s.endGroup();
 }
 void MainWindow::toolbarTriggered(QAction *a)
@@ -82,24 +82,19 @@ void MainWindow::toolbarTriggered(QAction *a)
         SettingsDialog s;
         s.exec();
         updateStreamSettings();
-    }
-    else if (a == ui->actionRun) {
+    } else if (a == ui->actionRun) {
         if(ui->actionRun->isChecked())
             start();
         else
             stop();
-    }
-    else if (a == ui->actionRecord) {
+    } else if (a == ui->actionRecord) {
         toggleRecording();
-    }
-    else if (a == ui->actionStreaming) {
+    } else if (a == ui->actionStreaming) {
         toggleStreaming();
-    }
-    else if (a == ui->actionEdit_FX) {
+    } else if (a == ui->actionEditFX) {
         _fxeditor->setFloating(true);
         _fxeditor->show();
-    }
-    else if (a == ui->actionAbout) {
+    } else if (a == ui->actionAbout) {
         AboutDialog a;
         a.exec();
     }
@@ -113,8 +108,7 @@ void MainWindow::toggleRecording()
     if(_dsp->isActive()) {
         if(ui->actionRecord->isChecked()) {
             addFileRecorder();
-        }
-        else {
+        } else {
             OutputList::iterator it = _dsp->getOutputList().begin();
             while(it != _dsp->getOutputList().end()) {
                 if((*it)->getName() == "SELECTED_RECORDER") {
@@ -140,8 +134,7 @@ void MainWindow::toggleStreaming()
     if(_dsp->isActive()) {
         if(ui->actionStreaming->isChecked()) {
             addStream();
-        }
-        else {
+        } else {
             OutputList::iterator it = _dsp->getOutputList().begin();
             while(it != _dsp->getOutputList().end()) {
                 if((*it)->getName() == "SELECTED_STREAM") {
@@ -161,13 +154,12 @@ void MainWindow::toggleStreaming()
 void MainWindow::start()
 {
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
-	if(as.getState() != AudioSystem::Manager::INITIALIZED)
-		return;
+    if(as.getState() != AudioSystem::Manager::INITIALIZED)
+        return;
 
     QSettings s;
     s.beginGroup("audio");
-    if (!s.contains("numChannels"))
-    {
+    if (!s.contains("numChannels")) {
         error("Configuration invalid");
         return;
     }
@@ -180,7 +172,7 @@ void MainWindow::start()
         as.startDeviceStream();
         ui->meterwidget->toggleActive(true);
         ui->actionRun->setChecked(true);
-	}
+    }
 }
 void MainWindow::stop()
 {
@@ -189,7 +181,7 @@ void MainWindow::stop()
         return;
 
     as.stopDeviceStream();
-    as.closeDeviceStream();    
+    as.closeDeviceStream();
     _dsp->disable();
     _dsp->reset();
     ui->meterwidget->toggleActive(false);
@@ -256,11 +248,10 @@ void MainWindow::addStream()
     OutputIceCast *oic = 0;
     Encoder *e = 0;
     if(!s.contains("address") || !s.contains("port") ||
-        !s.contains("user") || !s.contains("password") ||
-        !s.contains("mountpoint") || !s.contains("encoder") ||
-        !s.contains("encoderQuality") || !s.contains("encoderSampleRate") ||
-        !s.contains("encoderChannels") || !s.contains("protocol"))
-    {
+            !s.contains("user") || !s.contains("password") ||
+            !s.contains("mountpoint") || !s.contains("encoder") ||
+            !s.contains("encoderQuality") || !s.contains("encoderSampleRate") ||
+            !s.contains("encoderChannels") || !s.contains("protocol")) {
         error("erroneous stream config");
         return;
     }
@@ -285,11 +276,11 @@ void MainWindow::addStream()
         if(s.contains("selected"))
             oic->setStreamInfo(s.value("selected").toString());
     }
-    
+
     ui->statuswidget->startStreaming();
     ui->cbStreamInfo->setDisabled(true);
     oic->connectStream();
-    _dsp->addOutput(oic);    
+    _dsp->addOutput(oic);
     oic->start();
 }
 void MainWindow::addFileRecorder()
@@ -299,19 +290,18 @@ void MainWindow::addFileRecorder()
     OutputFile *f = 0;
     Encoder *e = 0;
     if(!s.contains("recordPath") || !s.contains("recordFileName") ||
-        !s.contains("encoder") || !s.contains("encoderQuality") ||
-        !s.contains("encoderSampleRate"))
-    {
+            !s.contains("encoder") || !s.contains("encoderQuality") ||
+            !s.contains("encoderSampleRate")) {
         error("erroneous recorder config");
         return;
     }
-    
+
     e = constructEncoder(s);
     if(!e)
         return;
- 
+
     f = new OutputFile(s.value("recordPath").toString(),
-        s.value("recordFileName").toString());
+                       s.value("recordFileName").toString());
     f->setEncoder(e);
     connect(f, SIGNAL(stateChanged(QString)), ui->statuswidget, SLOT(setRecorderState(QString)));
     if(!f->init()) {
@@ -321,13 +311,13 @@ void MainWindow::addFileRecorder()
         return;
     }
     f->setName("SELECTED_RECORDER");
-    
+
     ui->statuswidget->startRecording();
     _dsp->addOutput(f);
     f->start();
 }
 Encoder* MainWindow::constructEncoder(const QSettings &s) const
-{   
+{
     Encoder *e;
     EncoderConfig c;
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
@@ -343,8 +333,8 @@ Encoder* MainWindow::constructEncoder(const QSettings &s) const
         c.mode = EncoderConfig::CBR;
 
     c.quality = s.value("encoderQuality").toFloat();
- 
-    if(s.value("encoder").toString() == QString("Lame MP3")) 
+
+    if(s.value("encoder").toString() == QString("Lame MP3"))
         e = new EncoderLame(c);
     else if(s.value("encoder").toString() == QString("Ogg Vorbis"))
         e = new EncoderVorbis(c);
@@ -353,7 +343,7 @@ Encoder* MainWindow::constructEncoder(const QSettings &s) const
     if(!e->init()) {
         delete e;
         return 0;
-    }    
+    }
     return e;
 }
 void MainWindow::updateStreamSettings()
@@ -363,13 +353,11 @@ void MainWindow::updateStreamSettings()
     s.beginGroup("stream");
     QStringList connections = s.childGroups();
     QStringListIterator it(connections);
-    while (it.hasNext())
-    {
+    while (it.hasNext()) {
         ui->cbStreamInfo->addItem(it.next());
     }
     // is there a selected entry?
-    if (s.contains("selected"))
-    {
+    if (s.contains("selected")) {
         int i = ui->cbStreamInfo->findText(s.value("selected").toString());
         ui->cbStreamInfo->setCurrentIndex(i);
     }
@@ -379,5 +367,5 @@ void MainWindow::setStreamInfo(QString name)
     QSettings s;
     s.beginGroup("stream");
     s.setValue("selected", name);
-    s.endGroup();    
+    s.endGroup();
 }

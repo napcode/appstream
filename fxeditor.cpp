@@ -6,6 +6,9 @@ FXEditor::FXEditor(QWidget *parent) :
     _ui(new Ui::FXEditor)
 {
     _ui->setupUi(this);
+    _ui->knob2->setScale(0.0f, 2.0f, 0.4f);
+    _ui->knob2->setRange(0.0f, 2.0f);
+    //_ui->knob2->setMass(10.0f);
 }
 
 FXEditor::~FXEditor()
@@ -15,6 +18,6 @@ FXEditor::~FXEditor()
 
 void FXEditor::connectWithProcessor(const CompressorProcessor& cp)
 {
-     connect(_ui->dial1, SIGNAL(valueChanged(int)), &cp, SLOT(setThreshold(double)));
-     connect(_ui->dial3, SIGNAL(valueChanged(int)), &cp, SLOT(setGain(int)));
+    connect(_ui->knob1, SIGNAL(valueChanged(double)), &cp, SLOT(setThreshold(double)));
+    connect(_ui->knob2, SIGNAL(valueChanged(double)), &cp, SLOT(setGain(double)));
 }
