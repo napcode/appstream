@@ -42,22 +42,15 @@ public:
      * @brief setup encoding process. this is called once at the beginning of the encoding process
      */
     virtual void setup() = 0;
+
     /**
      * @brief encode
-     * @param buffer ptr to sample buffer. should be in the range [-32768,32768]. buffer is assumed to be interleaved
+     * @param buffer ptr to sample buffer. buffer is assumed to be interleaved
      * @param samples number of samples in buffer
      * @return true if no error occurred
      */
-    virtual void encode(short *buffer, uint32_t samples) = 0;
+    virtual void encode(sample_t *buffer, uint32_t samples) = 0;
     
-    /**
-     * @brief encode
-     * @param buffer ptr to sample buffer. should be in the range [-1,1]. buffer is assumed to be interleaved
-     * @param samples number of samples un buffer
-     * @return true if no error occurred     
-     */
-    virtual void encode(float *buffer, uint32_t samples) = 0;
-
     /**
      * @brief finialize is called once after the all input has been encoded. this can be used to finalize the output
      */

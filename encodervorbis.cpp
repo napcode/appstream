@@ -23,8 +23,8 @@ EncoderVorbis::~EncoderVorbis(void)
 
 bool EncoderVorbis::init()
 {
-    int ret;
-
+    int ret = 0;
+ 
     vorbis_info_init(&_vi);
     if(_config.mode == EncoderConfig::CBR) {
         ret = vorbis_encode_init(&_vi,
@@ -83,7 +83,7 @@ void EncoderVorbis::setup()
         _bufferValid += _opg.body_len;
     }
 }
-void EncoderVorbis::encode(short *buffer, uint32_t samples)
+void EncoderVorbis::encode(sample_t *buffer, uint32_t samples)
 {
     _bufferValid = 0;
     
@@ -96,14 +96,14 @@ void EncoderVorbis::encode(short *buffer, uint32_t samples)
     if (_config.numInChannels == 1)
     {
         for (i = 0; i < samples; ++i)
-            vbuffer[0][i] = buffer[i] / 32768.0f;
+            vbuffer[0][i] = buffer[i];
     }
     else
     {
         for (i = 0; i < (samples>>1); ++i)
         {
-            vbuffer[0][i] = buffer[i << 1] / 32768.0f;
-            vbuffer[1][i] = buffer[(i << 1) + 1] / 32768.0f;
+            vbuffer[0][i] = buffer[i << 1];
+            vbuffer[1][i] = buffer[(i << 1) + 1];
         }
     }
     vorbis_analysis_wrote(&_vdsp, i);
@@ -131,9 +131,6 @@ void EncoderVorbis::encode(short *buffer, uint32_t samples)
             }
         }
     }
-}
-void EncoderVorbis::encode(float *buffer, uint32_t samples)
-{
 }
 void EncoderVorbis::finalize()
 {

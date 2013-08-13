@@ -14,8 +14,7 @@ public:
     bool init();
 
     void setup();
-    void encode(short *buffer, uint32_t samples);
-    void encode(float *buffer, uint32_t samples);
+    void encode(sample_t *buffer, uint32_t samples);
     void finalize();
 
     QString getVersion() const;

@@ -1,6 +1,5 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
-#include "audiosystem.h"
 #include "serverconnectiondialog.h"
 #include "streaminfodialog.h"
 #include <QSettings>
@@ -59,9 +58,29 @@ void SettingsDialog::applyAudioSettings()
         int i = ui->cbSampleRate->findText(s.value("sampleRate").toString());
         ui->cbSampleRate->setCurrentIndex(i);
     }
-    if (s.contains("bitsPerSample"))
+    if (s.contains("sampleFormat"))
     {
-        int i = ui->cbBitsPerSample->findText(s.value("bitsPerSample").toString());
+        AudioSystem::SAMPLEFORMAT f = static_cast<AudioSystem::SAMPLEFORMAT>(s.value("sampleFormat").toInt());
+        int i;
+        switch(f) {
+            case AudioSystem::INT8:
+                i = ui->cbBitsPerSample->findText("8");   
+                break;
+            case AudioSystem::INT16:
+                i = ui->cbBitsPerSample->findText("16");   
+                break;
+            case AudioSystem::INT24:
+                i = ui->cbBitsPerSample->findText("24");   
+                break;
+            case AudioSystem::INT32:
+                i = ui->cbBitsPerSample->findText("32");   
+                break;
+            case AudioSystem::FLOAT:
+                i = ui->cbBitsPerSample->findText("Float");   
+                break;
+            default:
+                i = ui->cbBitsPerSample->findText("Float");   
+        }
         ui->cbBitsPerSample->setCurrentIndex(i);
     }
     if (s.contains("numChannels"))
@@ -147,7 +166,7 @@ void SettingsDialog::accept()
     {
         s.beginGroup("audio");
         s.setValue("sampleRate", ui->cbSampleRate->currentText());
-        s.setValue("bitsPerSample", ui->cbBitsPerSample->currentText());
+        s.setValue("sampleFormat", getSampleFormat(ui->cbBitsPerSample->currentText()));
         s.setValue("numChannels", ui->cbChannels->currentText());
         s.setValue("deviceName", ui->cbInputDevices->currentText());
         s.endGroup();
@@ -189,7 +208,7 @@ void SettingsDialog::updateAudioDeviceList(int)
     ui->cbInputDevices->clear();
 
     m.sampleRate = ui->cbSampleRate->currentText().toInt();
-    m.bitsPerSample = ui->cbBitsPerSample->currentText().toInt();
+    m.sampleFormat = getSampleFormat(ui->cbBitsPerSample->currentText());
     m.numChannels = ui->cbChannels->currentText().toInt();
     AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
     AudioSystem::DeviceList dl = as.getDeviceList();
@@ -200,6 +219,21 @@ void SettingsDialog::updateAudioDeviceList(int)
             ui->cbInputDevices->addItem(it->first);
         ++it;
     }
+}
+AudioSystem::SAMPLEFORMAT SettingsDialog::getSampleFormat(const QString& text) const
+{
+    if(text == QString("8"))
+        return AudioSystem::INT8;
+    else if(text == QString("16"))
+        return AudioSystem::INT16;
+    else if(text == QString("24"))
+        return AudioSystem::INT24;
+    else if(text == QString("32"))
+        return AudioSystem::INT32;
+    else if(text == QString("Float"))
+        return AudioSystem::FLOAT;
+    else
+        return AudioSystem::FLOAT;
 }
 void SettingsDialog::updateEncoderMode(int)
 {

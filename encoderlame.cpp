@@ -60,7 +60,7 @@ void EncoderLame::setup()
 {
     // nothing to do here
 }
-void EncoderLame::encode(short *buffer, uint32_t samples)
+void EncoderLame::encode(sample_t *buffer, uint32_t samples)
 {
     int rc;
 
@@ -71,41 +71,9 @@ void EncoderLame::encode(short *buffer, uint32_t samples)
         resize(samples);
 
     if (_config.numInChannels == 2)
-    {
-        rc = lame_encode_buffer_interleaved(_lgf, buffer, samples / _config.numInChannels, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
-    }
+        rc = lame_encode_buffer_interleaved_ieee_double(_lgf, buffer, samples / _config.numInChannels, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
     else if (_config.numInChannels == 1)
-    {
-        rc = lame_encode_buffer(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
-    }
-    else
-    {
-        emit error("Lame can't handle more than 2 channels. Should never happen.");
-        assert(0);
-    }
-
-    if (rc >= 0)
-        _bufferValid = rc;
-    else
-    {
-        _bufferValid = 0;
-        handleRC(rc);
-    }
-}
-void EncoderLame::encode(float *buffer, uint32_t samples)
-{
-    int rc;
-
-    if (samples == 0 || !isInitialized())
-        return;
-
-    if (_allocedFrames < samples)
-        resize(samples);
-
-    if (_config.numInChannels == 2)
-        rc = lame_encode_buffer_interleaved_ieee_float(_lgf, buffer, samples / _config.numInChannels, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
-    else if (_config.numInChannels == 1)
-        rc = lame_encode_buffer_ieee_float(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
+        rc = lame_encode_buffer_ieee_double(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
     else
     {
         emit error("Lame can't handle more than 2 channels.");

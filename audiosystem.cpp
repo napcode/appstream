@@ -16,10 +16,10 @@ Manager &Manager::getInstance()
     return *_instance;
 }
 
-Manager::Manager()
-    :   _state(INVALID), 
-        _stream(0),
-		_dsp(0)
+    Manager::Manager()
+:   _state(INVALID), 
+    _stream(0),
+    _dsp(0)
 {
     connect(this, SIGNAL(message(QString)), Logger::getInstance(), SLOT(message(QString)));
     connect(this, SIGNAL(warn(QString)), Logger::getInstance(), SLOT(warn(QString)));
@@ -107,24 +107,30 @@ bool Manager::checkModeSupported(const Device &d, const Mode &m) const
     PaStreamParameters params;
     params.device = d.second;
     params.channelCount = m.numChannels;
-    switch (m.bitsPerSample)
-    {
-    case 8:
-        params.sampleFormat = paInt8; break;
-    case 16:
-        params.sampleFormat = paInt16; break;
-    case 24:
-        params.sampleFormat = paInt24; break;
-    case 32:
-        params.sampleFormat = paInt32; break;
-    default:
-        params.sampleFormat = paInt16;
-    }
     params.suggestedLatency = pdi->defaultHighInputLatency;
+    params.sampleFormat = getSampleFormat(m.sampleFormat);
     params.hostApiSpecificStreamInfo = NULL;
     if (Pa_IsFormatSupported(&params , 0 , m.sampleRate) == paNoError)
         return true;
     return false;
+}
+PaSampleFormat Manager::getSampleFormat(SAMPLEFORMAT t) const
+{
+    switch (t)
+    {
+        case INT8:
+            return paInt8; 
+        case INT16:
+            return paInt16; 
+        case INT24:
+            return paInt24; 
+        case INT32:
+            return paInt32; 
+        case FLOAT:
+            return paFloat32; 
+        default:
+            return paFloat32;
+    }
 }
 bool Manager::openDeviceStream()
 {
@@ -136,7 +142,7 @@ bool Manager::openDeviceStream()
     QSettings s;
     s.beginGroup("audio");
     if (!s.contains("deviceName") || !s.contains("sampleRate")
-            || !s.contains("bitsPerSample") || !s.contains("numChannels"))
+            || !s.contains("sampleFormat") || !s.contains("numChannels"))
     {
         emit error("invalid device config found. Please reconfigure.");
         return false;
@@ -151,24 +157,12 @@ bool Manager::openDeviceStream()
     Mode m;
     m.sampleRate = s.value("sampleRate").toInt();
     m.numChannels = s.value("numChannels").toInt();    
-    m.bitsPerSample = s.value("bitsPerSample").toInt();
-    switch (m.bitsPerSample)
-    {
-    case 8:
-        params.sampleFormat = paInt8; break;
-    case 16:
-        params.sampleFormat = paInt16; break;
-    case 24:
-        params.sampleFormat = paInt24; break;
-    case 32:
-        params.sampleFormat = paInt32; break;
-    default:
-        params.sampleFormat = paFloat32;
-    }
+    m.sampleFormat = static_cast<SAMPLEFORMAT>(s.value("sampleFormat").toInt());
+    params.sampleFormat = getSampleFormat(m.sampleFormat);
 
     // FIXME we'll set that for now to
-    params.sampleFormat = paInt16;
-    m.bitsPerSample = 16;
+    //params.sampleFormat = paInt16;
+    //m.sampleFormat = 16;
     //m.numChannels = 1;
     // END FIXME
 
@@ -178,13 +172,13 @@ bool Manager::openDeviceStream()
     params.hostApiSpecificStreamInfo = 0;
     emit message("Opening device...");
     err = Pa_OpenStream(&_stream,
-                        &params,
-                        0,
-                        m.sampleRate,
-                        PA_FRAMES,
-                        paNoFlag,
-                        Manager::_PAcallback,
-                        this);
+            &params,
+            0,
+            m.sampleRate,
+            PA_FRAMES,
+            paNoFlag,
+            Manager::_PAcallback,
+            this);
     if (err != paNoError)
     {
         emit error("Unable to open device");
@@ -223,30 +217,77 @@ bool Manager::closeDeviceStream()
     return true;
 }
 int Manager::_PAcallback(const void *input,
-                         void *output,
-                         unsigned long frames,
-                         const PaStreamCallbackTimeInfo *ti,
-                         PaStreamCallbackFlags statusFlags,
-                         void *user)
+        void *output,
+        unsigned long frames,
+        const PaStreamCallbackTimeInfo *ti,
+        PaStreamCallbackFlags statusFlags,
+        void *user)
 {
     // get "this" pointer
     Manager *self = static_cast<Manager *>(user);
-    static uint32_t k = 0;
     const sample_t *in = static_cast<const sample_t *>(input);
+    static sample_t *scratch = 0;
+    static uint32_t length = 0;
     if(self->_dsp) {        
-        short *v = (short*)input;
         uint8_t channels = self->_streamingMode.numChannels;
-        /*
-        for(uint32_t i = 0; i < frames * channels; i += channels ) {
-            for(uint8_t c = 0; c < channels; ++c) {
-                v[i+c] = 30000 * sin((2*3.1415*((55.0*(c+1))/44100.0)*k));
+        if(length < (frames*channels)) {
+            int32_t size;
+            switch(self->_streamingMode.sampleFormat) {
+                case INT8:
+                    size = 8; break;
+                case INT16:
+                    size = 16; break;
+                case INT24:
+                    size = 32; break;
+                case INT32:
+                    size = 32; break;
+                case FLOAT:
+                    size = 32; break;
+                default:
+                    assert(0);
             }
-            ++k;
+            scratch = (sample_t*)realloc(scratch, frames * channels * size);
+            length = frames * channels;
         }
-
-        */       
-		self->_dsp->feed(in, frames*channels);
+        switch(self->_streamingMode.sampleFormat) {
+            case INT8:
+                self->convert((int8_t*)input, frames*channels, scratch); break;
+            case INT16:
+                self->convert((int16_t*)input, frames*channels, scratch); break;
+            case INT24:
+                self->convert24((int32_t*)input, frames*channels, scratch); break;
+            case INT32:
+                self->convert((int32_t*)input, frames*channels, scratch); break;
+            case FLOAT:
+                self->convert((float*)input, frames*channels, scratch); break;
+            default:
+                return paAbort;
+        }
+        short *v = (short*)input;
+        self->_dsp->feed(scratch, frames*channels);
     }
-
     return paContinue;
+}
+void Manager::convert(int8_t *in, uint32_t len, sample_t *out)
+{
+    for(uint32_t i = 0; i < len; ++i)
+        out[i] = in[i] / 255.0f;
+}
+void Manager::convert(int16_t *in, uint32_t len, sample_t *out)
+{
+    for(uint32_t i = 0; i < len; ++i)
+        out[i] = in[i] / 32768.0f;
+}
+void Manager::convert24(int32_t *in, uint32_t len, sample_t *out)
+{
+}
+void Manager::convert(int32_t *in, uint32_t len, sample_t *out)
+{
+    for(uint32_t i = 0; i < len; ++i)
+        out[i] = in[i] / (double)INT_MAX;
+}
+void Manager::convert(float *in, uint32_t len, sample_t *out)
+{
+    for(uint32_t i = 0; i < len; ++i)
+        out[i] = in[i];
 }

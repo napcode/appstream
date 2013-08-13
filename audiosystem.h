@@ -8,15 +8,26 @@
 #include <portaudio.h>
 #include <stdint.h>
 
+#include "config.h"
+
 class DSP;
+
+typedef int32_t int24_t;
 
 namespace AudioSystem {
 
+enum SAMPLEFORMAT {
+    INT8, 
+    INT16, 
+    INT24, 
+    INT32, 
+    FLOAT
+};
 struct Mode
 {
     int sampleRate;
     int numChannels;
-    int bitsPerSample;
+    SAMPLEFORMAT sampleFormat;
 };
 
 typedef QPair<QString,int> Device;
@@ -68,6 +79,13 @@ private:
                             const PaStreamCallbackTimeInfo* ti,
                             PaStreamCallbackFlags statusFlags,
                             void *user);
+    PaSampleFormat getSampleFormat(SAMPLEFORMAT t) const;
+    void convert(int8_t* input, uint32_t len, sample_t *out);
+    void convert(int16_t* input, uint32_t len, sample_t *out);
+    void convert24(int32_t* input, uint32_t len, sample_t *out);
+    void convert(int32_t* input, uint32_t len, sample_t *out);
+    void convert(float* input, uint32_t len, sample_t *out);
+
     State _state;
     static Manager* _instance;
     PaStream *_stream;

@@ -17,8 +17,7 @@ public:
     bool init();
     // reimplemented from Encoder
     void setup();
-    void encode(short *buffer, uint32_t samples);
-    void encode(float *buffer, uint32_t samples);
+    void encode(sample_t *buffer, uint32_t samples);
     void finalize();
 
 	// reimplemented from Encoder

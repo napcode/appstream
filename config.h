@@ -7,6 +7,8 @@
 #define OUTPUT_RINGSIZE 2048
 #define PROJECT_NAME "appStream"
 
-typedef short sample_t;
+// NOTE:
+// lame encoder currently assumes interleaved doubles!
+typedef double sample_t;
 
 #endif

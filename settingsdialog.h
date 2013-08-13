@@ -2,6 +2,7 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
+#include "audiosystem.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -31,6 +32,7 @@ private:
     void applyRecordSettings();
     void applyConnectionSettings();
     void applyStreamSettings();
+    AudioSystem::SAMPLEFORMAT getSampleFormat(const QString& text) const;
 
     Ui::SettingsDialog *ui;
 
