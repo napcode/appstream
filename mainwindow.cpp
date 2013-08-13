@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<sample_t>("sample_t");
     qRegisterMetaType<MeterValues>("MeterValues");
     _fxeditor = new FXEditor(this);
-    _fxeditor->setShown(false);
+    _fxeditor->setVisible(false);
     // create & start DSP
     _dsp = new DSP();
     as.setDSP(_dsp);
