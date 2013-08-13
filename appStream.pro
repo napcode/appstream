@@ -5,9 +5,11 @@
 #-------------------------------------------------
 
 QT       += core gui
+TEMPLATE = app
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+ICON = res/app.icns
 TARGET = appStream
 TEMPLATE = app
 CONFIG += debug_and_release
@@ -93,7 +95,7 @@ win32:CONFIG(debug, debug|release) {
     LIBS += -lAdvAPI32
 }
 unix {
-    LIBS += -lportaudio -lmp3lame -lshout -lvorbisenc -lvorbis -logg -lqwt
+    LIBS += -lportaudio -lmp3lame -lshout -lvorbisenc -lvorbis -logg 
 }
 
 INCLUDEPATH += $$PWD/dep/portaudio/include
