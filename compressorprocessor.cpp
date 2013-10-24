@@ -1,15 +1,16 @@
 #include "compressorprocessor.h"
 #include <math.h>
+#include <stdio.h>
 
 CompressorProcessor::CompressorProcessor(uint8_t channels, uint32_t samplerate)
     :	Processor(channels, samplerate),
-        _threshold(70.0f),
-        _slope(80.0f),
+        _threshold(20.0f),
+        _slope(0.0f),
         _tla(2),
         _tw(100),
         _ta(10),
-        _tr(300),
-        _g(1.0f)
+        _tr(3000),
+        _g(10.0f)
 {
 
 }
@@ -57,6 +58,7 @@ void CompressorProcessor::processMono(sample_t *in, sample_t *out, uint32_t samp
            double  _tr        // release time (ms)
        )*/
 
+    double mean = 0.0;
     double threshold = _threshold * 0.01;          // threshold to unity (0...1)
     double slope = _slope * 0.01;              // slope to unity
     _tla *= 1e-3;                // lookahead time to seconds
@@ -108,12 +110,15 @@ void CompressorProcessor::processMono(sample_t *in, sample_t *out, uint32_t samp
 
         // the very easy hard knee 1:N compressor
         double  gain = 1.0;
-        if (env > threshold)
+        if (env > threshold) {
             gain = gain - (env - threshold) * slope;
+            mean += gain;
+        }
 
         // result - hard kneed compressed channels...
         out[i] = in[i] * gain * _g;
     }
+    printf("%lf\n", mean/samples);
 }
 void CompressorProcessor::processStereo(sample_t *in, sample_t *out, uint32_t samples)
 {
@@ -130,7 +135,7 @@ void CompressorProcessor::processStereo(sample_t *in, sample_t *out, uint32_t sa
              double  _ta,       // attack time  (ms)
              double  _tr        // release time (ms)
          )*/
-
+    double mean = 0.0;
     double threshold = _threshold * 0.01;          // threshold to unity (0...1)
     double slope = _slope * 0.01;              // slope to unity
     double tla = _tla * 1e-3;                // lookahead time to seconds
@@ -182,8 +187,10 @@ void CompressorProcessor::processStereo(sample_t *in, sample_t *out, uint32_t sa
 
         // the very easy hard knee 1:N compressor
         double  gain = 1.0;
-        if (env > threshold)
+        if (env > threshold) {
             gain = gain - (env - threshold) * slope;
+            mean += gain;
+        }
 
         // result - hard kneed compressed channels...
         out[i] = in[i] * gain * _g;
