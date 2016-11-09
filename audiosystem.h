@@ -1,5 +1,4 @@
-#ifndef AUDIOSYSTEM_H
-#define AUDIOSYSTEM_H
+#pragma once
 
 #include <QObject>
 #include <QList>
@@ -9,6 +8,7 @@
 #include <stdint.h>
 
 #include "config.h"
+#include <memory>
 
 class DSP;
 
@@ -42,8 +42,9 @@ public:
         READY,
         STREAMING
     };
+    ~Manager();
 
-    static Manager& getInstance();
+    static std::unique_ptr<Manager> create();
 
     bool init();
     DeviceList getDeviceList() const;
@@ -69,7 +70,6 @@ signals:
 
 private:
     Manager();
-    ~Manager();
 
     static int _PAcallback(const void* input,
         void* output,
@@ -92,4 +92,3 @@ private:
     DSP* _dsp;
 };
 }
-#endif // AUDIOSYSTEM_H

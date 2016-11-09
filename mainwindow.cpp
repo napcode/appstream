@@ -23,8 +23,10 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     // needed for logger
     _instance = this;
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
-    as.init();
+
+    _manager = AudioSystem::Manager::create();
+    _manager->init();
+
     // setup settings system
     QCoreApplication::setOrganizationName("apparatus");
     QCoreApplication::setOrganizationDomain("apparatus.de");
@@ -38,7 +40,7 @@ MainWindow::MainWindow(QWidget* parent)
     _fxeditor->setVisible(false);
     // create & start DSP
     _dsp = new DSP();
-    as.setDSP(_dsp);
+    _manager->setDSP(_dsp);
     connect(_dsp, SIGNAL(newPeaks(MeterValues)), ui->meterwidget, SLOT(setValues(MeterValues)));
 
     QSettings s;
@@ -66,8 +68,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
-    if (as.getState() == AudioSystem::Manager::STREAMING)
+    if (_manager->getState() == AudioSystem::Manager::STREAMING)
         stop();
     QSettings s;
     s.beginGroup("general");
@@ -79,7 +80,7 @@ void MainWindow::toolbarTriggered(QAction* a)
 {
     QString text;
     if (a == ui->actionSettings) {
-        SettingsDialog s;
+        SettingsDialog s(*_manager.get());
         s.exec();
         updateStreamSettings();
     }
@@ -160,8 +161,7 @@ void MainWindow::toggleStreaming()
 }
 void MainWindow::start()
 {
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
-    if (as.getState() != AudioSystem::Manager::INITIALIZED)
+    if (_manager->getState() != AudioSystem::Manager::INITIALIZED)
         return;
 
     QSettings s;
@@ -171,24 +171,23 @@ void MainWindow::start()
         return;
     }
 
-    if (as.openDeviceStream()) {
-        prepareDSP(as.getCurrentMode().numChannels, as.getCurrentMode().sampleRate);
-        ui->meterwidget->setNumChannels(as.getCurrentMode().numChannels);
+    if (_manager->openDeviceStream()) {
+        prepareDSP(_manager->getCurrentMode().numChannels, _manager->getCurrentMode().sampleRate);
+        ui->meterwidget->setNumChannels(_manager->getCurrentMode().numChannels);
 
         _dsp->start();
-        as.startDeviceStream();
+        _manager->startDeviceStream();
         ui->meterwidget->toggleActive(true);
         ui->actionRun->setChecked(true);
     }
 }
 void MainWindow::stop()
 {
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
-    if (as.getState() != AudioSystem::Manager::STREAMING)
+    if (_manager->getState() != AudioSystem::Manager::STREAMING)
         return;
 
-    as.stopDeviceStream();
-    as.closeDeviceStream();
+    _manager->stopDeviceStream();
+    _manager->closeDeviceStream();
     _dsp->disable();
     _dsp->reset();
     ui->meterwidget->toggleActive(false);
@@ -327,10 +326,10 @@ Encoder* MainWindow::constructEncoder(const QSettings& s) const
 {
     Encoder* e;
     EncoderConfig c;
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
+    
     c.sampleRateOut = s.value("encoderSampleRate").toInt();
     c.numInChannels = _dsp->getNumChannels();
-    c.sampleRateIn = as.getCurrentMode().sampleRate;
+    c.sampleRateIn = _manager->getCurrentMode().sampleRate;
     QString mode = s.value("encoderMode").toString();
     if (mode == "CBR")
         c.mode = EncoderConfig::CBR;

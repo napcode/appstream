@@ -5,14 +5,9 @@
 #include <math.h>
 using namespace AudioSystem;
 
-Manager* Manager::_instance = 0;
-
-Manager& Manager::getInstance()
+std::unique_ptr<Manager> Manager::create()
 {
-    if (!_instance) {
-        _instance = new Manager;
-    }
-    return *_instance;
+    return std::unique_ptr<Manager>(new Manager);
 }
 
 Manager::Manager()

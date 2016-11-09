@@ -8,9 +8,10 @@
 #include <iostream>
 
 
-SettingsDialog::SettingsDialog(QWidget* parent)
-: QDialog(parent),
-  ui(new Ui::SettingsDialog)
+SettingsDialog::SettingsDialog(const AudioSystem::Manager& manager, QWidget* parent)
+: QDialog(parent)
+, _manager(manager)
+, ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
 
@@ -196,19 +197,17 @@ void SettingsDialog::accept()
 }
 void SettingsDialog::updateAudioDeviceList(int)
 {
-    AudioSystem::Mode m;
+    AudioSystem::Mode mode;
     ui->cbInputDevices->clear();
 
-    m.sampleRate = ui->cbSampleRate->currentText().toInt();
-    m.sampleFormat = getSampleFormat(ui->cbBitsPerSample->currentText());
-    m.numChannels = ui->cbChannels->currentText().toInt();
-    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
-    AudioSystem::DeviceList dl = as.getDeviceList();
-    AudioSystem::DeviceList::Iterator it = dl.begin();
-    while (it != dl.end()) {
-        if (as.checkModeSupported(*it, m))
-            ui->cbInputDevices->addItem(it->first);
-        ++it;
+    mode.sampleRate = ui->cbSampleRate->currentText().toInt();
+    mode.sampleFormat = getSampleFormat(ui->cbBitsPerSample->currentText());
+    mode.numChannels = ui->cbChannels->currentText().toInt();
+
+    AudioSystem::DeviceList dl = _manager.getDeviceList();
+    for (const auto& list_entry : dl) {
+        if (_manager.checkModeSupported(list_entry, mode))
+            ui->cbInputDevices->addItem(list_entry.first);
     }
 }
 AudioSystem::SAMPLEFORMAT SettingsDialog::getSampleFormat(const QString& text) const

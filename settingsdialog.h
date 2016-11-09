@@ -12,7 +12,7 @@ class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget* parent = 0);
+    explicit SettingsDialog(const AudioSystem::Manager&, QWidget* parent = 0);
     ~SettingsDialog();
 
 public slots:
@@ -33,6 +33,7 @@ private:
     void applyStreamSettings();
     AudioSystem::SAMPLEFORMAT getSampleFormat(const QString& text) const;
 
+    const AudioSystem::Manager& _manager;
     Ui::SettingsDialog* ui;
 
 private slots:

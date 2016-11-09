@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "logger.h"
 #include "fxeditor.h"
+#include "types.h"
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,7 @@ private:
     Ui::MainWindow* ui;
     DSP* _dsp;
     FXEditor* _fxeditor;
+    AudioSystem::ManagerPtr _manager;
 };
 
 #endif // MAINWINDOW_H
