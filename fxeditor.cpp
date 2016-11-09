@@ -1,9 +1,9 @@
 #include "fxeditor.h"
 #include "ui_fxeditor.h"
 
-FXEditor::FXEditor(QWidget *parent) :
-    QDockWidget(parent),
-    _ui(new Ui::FXEditor)
+FXEditor::FXEditor(QWidget* parent)
+: QDockWidget(parent),
+  _ui(new Ui::FXEditor)
 {
     _ui->setupUi(this);
 }

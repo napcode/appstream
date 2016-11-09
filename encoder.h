@@ -7,20 +7,19 @@
 #include "config.h"
 #include "ringbuffer.h"
 
-struct EncoderConfig
-{
-    enum Mode
-    {
-        CBR,            /* 64 - 320 */
-        VBR             /* 0.0 - 1.0 */
+struct EncoderConfig {
+    enum Mode {
+        CBR, /* 64 - 320 */
+        VBR /* 0.0 - 1.0 */
     };
     EncoderConfig()
-    :   sampleRateIn(44100),
-        sampleRateOut(44100),
-        numInChannels(2),
-        mode(CBR), 
-        quality(128)
-    {}
+    : sampleRateIn(44100),
+      sampleRateOut(44100),
+      numInChannels(2),
+      mode(CBR),
+      quality(128)
+    {
+    }
     uint32_t sampleRateIn;
     uint32_t sampleRateOut;
     uint8_t numInChannels;
@@ -28,12 +27,11 @@ struct EncoderConfig
     float quality;
 };
 
-class Encoder : public QObject
-{
+class Encoder : public QObject {
     Q_OBJECT
 public:
     Encoder(EncoderConfig c = EncoderConfig());
-    virtual ~Encoder() ;
+    virtual ~Encoder();
 
     virtual bool init() = 0;
     bool isInitialized() const { return _initialized; }
@@ -49,12 +47,12 @@ public:
      * @param samples number of samples in buffer
      * @return true if no error occurred
      */
-    virtual void encode(sample_t *buffer, uint32_t samples) = 0;
-    
+    virtual void encode(sample_t* buffer, uint32_t samples) = 0;
+
     /**
      * @brief finialize is called once after the all input has been encoded. this can be used to finalize the output
      */
-     virtual void finalize() = 0;
+    virtual void finalize() = 0;
 
     const QString& getName() const { return _name; }
     void setName(const QString& name) { _name = name; }
@@ -75,9 +73,9 @@ signals:
     void error(QString msg) const;
 
 protected:
-    EncoderConfig _config;    
-	QString _name;
-	bool _initialized;
+    EncoderConfig _config;
+    QString _name;
+    bool _initialized;
     char* _buffer;
     uint32_t _bufferSize;
     uint32_t _bufferValid;
@@ -85,4 +83,3 @@ protected:
 };
 
 #endif // ENCODER_H
-

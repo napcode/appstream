@@ -8,9 +8,9 @@
 #include <iostream>
 
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::SettingsDialog)
+SettingsDialog::SettingsDialog(QWidget* parent)
+: QDialog(parent),
+  ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
 
@@ -24,7 +24,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->addStreamInfo, SIGNAL(released()), this, SLOT(addStreamInfo()));
     connect(ui->editStreamInfo, SIGNAL(released()), this, SLOT(editStreamInfo()));
     connect(ui->rmStreamInfo, SIGNAL(released()), this, SLOT(rmStreamInfo()));
-	connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
+    connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->cbEncoderMode, SIGNAL(currentIndexChanged(int)), this, SLOT(updateEncoderMode(int)));
     connect(ui->sbEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySpinBoxChanged(int)));
     connect(ui->slEncoderQuality, SIGNAL(valueChanged(int)), this, SLOT(qualitySliderChanged(int)));
@@ -53,43 +53,39 @@ void SettingsDialog::applyAudioSettings()
 {
     QSettings s;
     s.beginGroup("audio");
-    if (s.contains("sampleRate"))
-    {
+    if (s.contains("sampleRate")) {
         int i = ui->cbSampleRate->findText(s.value("sampleRate").toString());
         ui->cbSampleRate->setCurrentIndex(i);
     }
-    if (s.contains("sampleFormat"))
-    {
+    if (s.contains("sampleFormat")) {
         AudioSystem::SAMPLEFORMAT f = static_cast<AudioSystem::SAMPLEFORMAT>(s.value("sampleFormat").toInt());
         int i;
-        switch(f) {
+        switch (f) {
             case AudioSystem::INT8:
-                i = ui->cbBitsPerSample->findText("8");   
+                i = ui->cbBitsPerSample->findText("8");
                 break;
             case AudioSystem::INT16:
-                i = ui->cbBitsPerSample->findText("16");   
+                i = ui->cbBitsPerSample->findText("16");
                 break;
             case AudioSystem::INT24:
-                i = ui->cbBitsPerSample->findText("24");   
+                i = ui->cbBitsPerSample->findText("24");
                 break;
             case AudioSystem::INT32:
-                i = ui->cbBitsPerSample->findText("32");   
+                i = ui->cbBitsPerSample->findText("32");
                 break;
             case AudioSystem::FLOAT:
-                i = ui->cbBitsPerSample->findText("Float");   
+                i = ui->cbBitsPerSample->findText("Float");
                 break;
             default:
-                i = ui->cbBitsPerSample->findText("Float");   
+                i = ui->cbBitsPerSample->findText("Float");
         }
         ui->cbBitsPerSample->setCurrentIndex(i);
     }
-    if (s.contains("numChannels"))
-    {
+    if (s.contains("numChannels")) {
         int i = ui->cbChannels->findText(s.value("numChannels").toString());
         ui->cbChannels->setCurrentIndex(i);
     }
-    if (s.contains("deviceName"))
-    {
+    if (s.contains("deviceName")) {
         int i = ui->cbInputDevices->findText(s.value("deviceName").toString());
         ui->cbInputDevices->setCurrentIndex(i);
     }
@@ -97,33 +93,33 @@ void SettingsDialog::applyAudioSettings()
 }
 void SettingsDialog::applyRecordSettings()
 {
-	QSettings s;
-	s.beginGroup("record");
-	if(s.contains("encoder")) {
-		int i = ui->cbEncoder->findText(s.value("encoder").toString());
-		ui->cbEncoder->setCurrentIndex(i);        
-	}
-    if(s.contains("encoderMode")) {
+    QSettings s;
+    s.beginGroup("record");
+    if (s.contains("encoder")) {
+        int i = ui->cbEncoder->findText(s.value("encoder").toString());
+        ui->cbEncoder->setCurrentIndex(i);
+    }
+    if (s.contains("encoderMode")) {
         int i = ui->cbEncoderMode->findText(s.value("encoderMode").toString());
         ui->cbEncoderMode->setCurrentIndex(i);
     }
     updateEncoderMode(0);
-	if(s.contains("encoderQuality")) {
-        if(ui->cbEncoderMode->currentText() == "CBR")
-		    ui->slEncoderQuality->setValue(s.value("encoderQuality").toInt());
-        else if(ui->cbEncoderMode->currentText() == "VBR")
-            ui->slEncoderQuality->setValue(s.value("encoderQuality").toFloat()*10);
+    if (s.contains("encoderQuality")) {
+        if (ui->cbEncoderMode->currentText() == "CBR")
+            ui->slEncoderQuality->setValue(s.value("encoderQuality").toInt());
+        else if (ui->cbEncoderMode->currentText() == "VBR")
+            ui->slEncoderQuality->setValue(s.value("encoderQuality").toFloat() * 10);
     }
 
-	if(s.contains("encoderSampleRate")) {
-		int i = ui->cbEncoderSamplerate->findText(s.value("encoderSampleRate").toString());
-		ui->cbEncoderSamplerate->setCurrentIndex(i);
-	}
-	if(s.contains("recordPath"))
-		ui->leRecordPath->setText(s.value("recordPath").toString());
-	if(s.contains("recordFileName"))
-		ui->leRecordFilename->setText(s.value("recordFileName").toString());
-	s.endGroup();
+    if (s.contains("encoderSampleRate")) {
+        int i = ui->cbEncoderSamplerate->findText(s.value("encoderSampleRate").toString());
+        ui->cbEncoderSamplerate->setCurrentIndex(i);
+    }
+    if (s.contains("recordPath"))
+        ui->leRecordPath->setText(s.value("recordPath").toString());
+    if (s.contains("recordFileName"))
+        ui->leRecordFilename->setText(s.value("recordFileName").toString());
+    s.endGroup();
 }
 void SettingsDialog::applyConnectionSettings()
 {
@@ -132,12 +128,10 @@ void SettingsDialog::applyConnectionSettings()
     s.beginGroup("connection");
     QStringList connections = s.childGroups();
     QStringListIterator it(connections);
-    while (it.hasNext())
-    {
+    while (it.hasNext()) {
         ui->cbConnection->addItem(it.next());
     }
-    if (s.contains("selected"))
-    {
+    if (s.contains("selected")) {
         int i = ui->cbConnection->findText(s.value("selected").toString());
         ui->cbConnection->setCurrentIndex(i);
     }
@@ -149,13 +143,11 @@ void SettingsDialog::applyStreamSettings()
     s.beginGroup("stream");
     QStringList connections = s.childGroups();
     QStringListIterator it(connections);
-    while (it.hasNext())
-    {
+    while (it.hasNext()) {
         ui->cbStreamInfo->addItem(it.next());
     }
     // is there a selected entry?
-    if (s.contains("selected"))
-    {
+    if (s.contains("selected")) {
         int i = ui->cbStreamInfo->findText(s.value("selected").toString());
         ui->cbStreamInfo->setCurrentIndex(i);
     }
@@ -188,17 +180,17 @@ void SettingsDialog::accept()
     }
     {
         /* store record settings here */
-		s.beginGroup("record");
-		s.setValue("encoder", ui->cbEncoder->currentText());
+        s.beginGroup("record");
+        s.setValue("encoder", ui->cbEncoder->currentText());
         s.setValue("encoderMode", ui->cbEncoderMode->currentText());
-        if(ui->cbEncoderMode->currentText() == "CBR")        
+        if (ui->cbEncoderMode->currentText() == "CBR")
             s.setValue("encoderQuality", ui->slEncoderQuality->value());
-        else if(ui->cbEncoderMode->currentText() == "VBR")
-            s.setValue("encoderQuality", ui->slEncoderQuality->value()/10.0f);
-		s.setValue("encoderSampleRate", ui->cbEncoderSamplerate->currentText());
-		s.setValue("recordPath", ui->leRecordPath->text());
-		s.setValue("recordFileName", ui->leRecordFilename->text());
-		s.endGroup();
+        else if (ui->cbEncoderMode->currentText() == "VBR")
+            s.setValue("encoderQuality", ui->slEncoderQuality->value() / 10.0f);
+        s.setValue("encoderSampleRate", ui->cbEncoderSamplerate->currentText());
+        s.setValue("recordPath", ui->leRecordPath->text());
+        s.setValue("recordFileName", ui->leRecordFilename->text());
+        s.endGroup();
     }
     this->done(QDialog::Accepted);
 }
@@ -210,11 +202,10 @@ void SettingsDialog::updateAudioDeviceList(int)
     m.sampleRate = ui->cbSampleRate->currentText().toInt();
     m.sampleFormat = getSampleFormat(ui->cbBitsPerSample->currentText());
     m.numChannels = ui->cbChannels->currentText().toInt();
-    AudioSystem::Manager &as = AudioSystem::Manager::getInstance();
+    AudioSystem::Manager& as = AudioSystem::Manager::getInstance();
     AudioSystem::DeviceList dl = as.getDeviceList();
     AudioSystem::DeviceList::Iterator it = dl.begin();
-    while (it != dl.end())
-    {
+    while (it != dl.end()) {
         if (as.checkModeSupported(*it, m))
             ui->cbInputDevices->addItem(it->first);
         ++it;
@@ -222,34 +213,34 @@ void SettingsDialog::updateAudioDeviceList(int)
 }
 AudioSystem::SAMPLEFORMAT SettingsDialog::getSampleFormat(const QString& text) const
 {
-    if(text == QString("8"))
+    if (text == QString("8"))
         return AudioSystem::INT8;
-    else if(text == QString("16"))
+    else if (text == QString("16"))
         return AudioSystem::INT16;
-    else if(text == QString("24"))
+    else if (text == QString("24"))
         return AudioSystem::INT24;
-    else if(text == QString("32"))
+    else if (text == QString("32"))
         return AudioSystem::INT32;
-    else if(text == QString("Float"))
+    else if (text == QString("Float"))
         return AudioSystem::FLOAT;
     else
         return AudioSystem::FLOAT;
 }
 void SettingsDialog::updateEncoderMode(int)
 {
-    if(ui->cbEncoderMode->currentText() == "CBR") {
+    if (ui->cbEncoderMode->currentText() == "CBR") {
         ui->slEncoderQuality->setMinimum(64);
         ui->slEncoderQuality->setMaximum(320);
         ui->slEncoderQuality->setSingleStep(32);
         ui->slEncoderQuality->setPageStep(32);
         ui->slEncoderQuality->setTickInterval(32);
-        ui->sbEncoderQuality->setMinimum(64);        
+        ui->sbEncoderQuality->setMinimum(64);
         ui->sbEncoderQuality->setMaximum(320);
         ui->sbEncoderQuality->setSingleStep(32);
         ui->slEncoderQuality->setValue(128);
         //ui->slEncoderQuality->
     }
-    else if (ui->cbEncoderMode->currentText() == "VBR" ) {
+    else if (ui->cbEncoderMode->currentText() == "VBR") {
         ui->slEncoderQuality->setMinimum(0);
         ui->slEncoderQuality->setMaximum(10);
         ui->slEncoderQuality->setSingleStep(1);
@@ -273,8 +264,7 @@ void SettingsDialog::addConnection()
 {
     ServerConnectionDialog scd;
     int ret = scd.exec();
-    if (ret == QDialog::Accepted)
-    {
+    if (ret == QDialog::Accepted) {
         applyConnectionSettings();
     }
 }
@@ -290,7 +280,7 @@ void SettingsDialog::rmConnection()
 {
     if (ui->cbConnection->currentText().isNull() || ui->cbConnection->currentText().isEmpty())
         return;
-    QMessageBox m(QMessageBox::Warning, "Delete connection?", "Delete the selected connection?", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox m(QMessageBox::Warning, "Delete connection?", "Delete the selected connection?", QMessageBox::Yes | QMessageBox::No);
     m.setDefaultButton(QMessageBox::No);
     int ret = m.exec();
     if (ret != QMessageBox::Yes)
@@ -309,8 +299,7 @@ void SettingsDialog::addStreamInfo()
 {
     StreamInfoDialog sid;
     int ret = sid.exec();
-    if (ret == QDialog::Accepted)
-    {
+    if (ret == QDialog::Accepted) {
         applyStreamSettings();
     }
 }
@@ -326,7 +315,7 @@ void SettingsDialog::rmStreamInfo()
 {
     if (ui->cbStreamInfo->currentText().isNull() || ui->cbStreamInfo->currentText().isEmpty())
         return;
-    QMessageBox m(QMessageBox::Warning, "Delete stream?", "Delete the selected stream?", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox m(QMessageBox::Warning, "Delete stream?", "Delete the selected stream?", QMessageBox::Yes | QMessageBox::No);
     m.setDefaultButton(QMessageBox::No);
     int ret = m.exec();
     if (ret != QMessageBox::Yes)
@@ -343,6 +332,6 @@ void SettingsDialog::rmStreamInfo()
 }
 void SettingsDialog::openFileDialog()
 {
-	QString dir = QFileDialog::getExistingDirectory(this,"Select Directory");
-	ui->leRecordPath->setText(dir);
+    QString dir = QFileDialog::getExistingDirectory(this, "Select Directory");
+    ui->leRecordPath->setText(dir);
 }

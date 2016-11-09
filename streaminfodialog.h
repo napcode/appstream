@@ -7,20 +7,19 @@ namespace Ui {
 class StreamInfoDialog;
 }
 
-class StreamInfoDialog : public QDialog
-{
+class StreamInfoDialog : public QDialog {
     Q_OBJECT
-    
+
 public:
-    explicit StreamInfoDialog(QWidget *parent = 0);
+    explicit StreamInfoDialog(QWidget* parent = 0);
     ~StreamInfoDialog();
 
-    void setStreamInfo(const QString &name);
+    void setStreamInfo(const QString& name);
 public slots:
     void accept();
-    
+
 private:
-    Ui::StreamInfoDialog *ui;
+    Ui::StreamInfoDialog* ui;
 };
 
 #endif // STREAMINFODIALOG_H

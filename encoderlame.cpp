@@ -1,14 +1,12 @@
 #include "encoderlame.h"
 
 EncoderLame::EncoderLame(EncoderConfig c)
-    : Encoder(c)
+: Encoder(c)
 {
-
 }
 EncoderLame::~EncoderLame()
 {
-    if (_lgf)
-    {
+    if (_lgf) {
         lame_close(_lgf);
         _lgf = 0;
     }
@@ -30,15 +28,14 @@ bool EncoderLame::init()
     lame_set_num_channels(_lgf, _config.numInChannels);
     lame_set_in_samplerate(_lgf, _config.sampleRateIn);
     lame_set_out_samplerate(_lgf, _config.sampleRateOut);
-    if(_config.mode == EncoderConfig::CBR)
+    if (_config.mode == EncoderConfig::CBR)
         lame_set_brate(_lgf, _config.quality);
     else if (_config.mode == EncoderConfig::VBR) {
-        lame_set_VBR(_lgf,  vbr_mtrh);
-        lame_set_VBR_quality(_lgf, 10.0 - 10*_config.quality);        
+        lame_set_VBR(_lgf, vbr_mtrh);
+        lame_set_VBR_quality(_lgf, 10.0 - 10 * _config.quality);
     }
 
-    if ((rc = lame_init_params(_lgf)) < 0)
-    {
+    if ((rc = lame_init_params(_lgf)) < 0) {
         emit error("unable to init lame");
         emit error("Channels " + QString::number(_config.numInChannels));
         emit error("RateIn " + QString::number(_config.sampleRateIn));
@@ -46,8 +43,7 @@ bool EncoderLame::init()
         emit error("BitRate " + QString::number(_config.quality));
         return false;
     }
-    else
-    {
+    else {
         _initialized = true;
         emit message("Lame initialized");
         emit message("Version: " + getVersion());
@@ -60,7 +56,7 @@ void EncoderLame::setup()
 {
     // nothing to do here
 }
-void EncoderLame::encode(sample_t *buffer, uint32_t samples)
+void EncoderLame::encode(sample_t* buffer, uint32_t samples)
 {
     int rc;
 
@@ -71,42 +67,42 @@ void EncoderLame::encode(sample_t *buffer, uint32_t samples)
         resize(samples);
 
     if (_config.numInChannels == 2)
-        rc = lame_encode_buffer_interleaved_ieee_double(_lgf, buffer, samples / _config.numInChannels, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
+        rc = lame_encode_buffer_interleaved_ieee_double(_lgf, buffer, samples / _config.numInChannels, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
     else if (_config.numInChannels == 1)
-        rc = lame_encode_buffer_ieee_double(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char *>(_buffer), _bufferSize);
-    else
-    {
+        rc = lame_encode_buffer_ieee_double(_lgf, buffer, buffer, samples, reinterpret_cast<unsigned char*>(_buffer), _bufferSize);
+    else {
         emit error("Lame can't handle more than 2 channels.");
         assert(0);
     }
 
     if (rc >= 0)
         _bufferValid = rc;
-    else
-    {
+    else {
         _bufferValid = 0;
         handleRC(rc);
     }
 }
 void EncoderLame::finalize()
 {
-    
 }
 
 void EncoderLame::handleRC(int rc) const
 {
-    switch (rc)
-    {
-    case -1:
-        emit error("Lame: out buffer to small"); break;
-    case -2:
-        emit error("Lame: unable to allocate memory"); break;
-    case -3:
-        emit error("Lame: init not called. Should never happen."); break;
-    case -4:
-        emit error("Lame: psycho acoustic problem occurred"); break;
-    default:
-        emit error("Lame: unknown error occurred. ");
+    switch (rc) {
+        case -1:
+            emit error("Lame: out buffer to small");
+            break;
+        case -2:
+            emit error("Lame: unable to allocate memory");
+            break;
+        case -3:
+            emit error("Lame: init not called. Should never happen.");
+            break;
+        case -4:
+            emit error("Lame: psycho acoustic problem occurred");
+            break;
+        default:
+            emit error("Lame: unknown error occurred. ");
     }
 }
 void EncoderLame::resize(uint32_t newSize)
@@ -120,8 +116,7 @@ void EncoderLame::resize(uint32_t newSize)
 QString EncoderLame::getVersion() const
 {
     QString info;
-    if (!isInitialized())
-    {
+    if (!isInitialized()) {
         emit error("lame is not initialized. Can't get version info.");
         return info;
     }

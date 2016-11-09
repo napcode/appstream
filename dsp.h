@@ -12,14 +12,13 @@
 #include "processor.h"
 #include "meterprocessor.h"
 
-// outputs 
+// outputs
 #include "output.h"
 
 // encoders
 #include "encoder.h"
 
-class DSP : public QThread
-{
+class DSP : public QThread {
     Q_OBJECT
 public:
     DSP();
@@ -28,14 +27,14 @@ public:
     // add peaks and maybe more
     ProcessorChain& getProcessorChain() { return _processorChain; }
     const ProcessorChain& getProcessorChain() const { return _processorChain; }
-    void addProcessor(Processor *p); 
-    void removeProcessor(Processor *p);
+    void addProcessor(Processor* p);
+    void removeProcessor(Processor* p);
 
     OutputList& getOutputList() { return _outputList; }
     const OutputList& getOutputList() const { return _outputList; }
-    void addOutput(Output *o);
-    void removeOutput(Output *o);
-    
+    void addOutput(Output* o);
+    void removeOutput(Output* o);
+
     void setNumChannels(uint8_t channels) { _numChannels = channels; }
     uint8_t getNumChannels() const { return _numChannels; }
 
@@ -55,7 +54,7 @@ private:
     void initPeaks();
     void checkPeaks();
 
-	bool _active;
+    bool _active;
     RingBuffer<sample_t> _inbuffer;
     QMutex _work;
     QMutex _outputLock;
@@ -63,8 +62,8 @@ private:
     QWaitCondition _workCondition;
 
     uint8_t _numChannels;
-    sample_t *_readbuffer;
-    sample_t *_writebuffer;
+    sample_t* _readbuffer;
+    sample_t* _writebuffer;
     ProcessorChain _processorChain;
     OutputList _outputList;
 };

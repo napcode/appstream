@@ -6,11 +6,10 @@
 #include <stdint.h>
 #include "meterprocessor.h"
 
-class MeterWidget : public QLabel
-{
+class MeterWidget : public QLabel {
     Q_OBJECT
 public:
-    MeterWidget(QWidget *parent, uint8_t channels = 1);
+    MeterWidget(QWidget* parent, uint8_t channels = 1);
     ~MeterWidget();
 
     uint8_t getNumChannels() const { return _numChannels; }
@@ -22,7 +21,8 @@ public slots:
     void setValues(MeterValues m);
     void toggleActive(bool active) { _isActive = active; }
 protected:
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
+
 private:
     bool _isActive;
     uint8_t _numChannels;

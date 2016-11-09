@@ -8,12 +8,11 @@ namespace Ui {
 class SettingsDialog;
 }
 
-class SettingsDialog : public QDialog
-{
+class SettingsDialog : public QDialog {
     Q_OBJECT
-    
+
 public:
-    explicit SettingsDialog(QWidget *parent = 0);
+    explicit SettingsDialog(QWidget* parent = 0);
     ~SettingsDialog();
 
 public slots:
@@ -24,8 +23,8 @@ public slots:
     void editStreamInfo();
     void rmStreamInfo();
     void accept();
-	void openFileDialog();
-    
+    void openFileDialog();
+
 private:
     void applySettings();
     void applyAudioSettings();
@@ -34,7 +33,7 @@ private:
     void applyStreamSettings();
     AudioSystem::SAMPLEFORMAT getSampleFormat(const QString& text) const;
 
-    Ui::SettingsDialog *ui;
+    Ui::SettingsDialog* ui;
 
 private slots:
     void updateAudioDeviceList(int);

@@ -7,11 +7,9 @@
 
 #include <QObject>
 
-class Processor : public QObject
-{
+class Processor : public QObject {
 public:
-    enum ProcessorType
-    {
+    enum ProcessorType {
         INVALID,
         METER,
         EQ,
@@ -20,8 +18,8 @@ public:
     };
 
     Processor(uint8_t channels, uint32_t samplerate);
-    virtual ~Processor() {};
-    virtual void process(sample_t *in, sample_t *out, uint32_t samples) = 0;
+    virtual ~Processor(){};
+    virtual void process(sample_t* in, sample_t* out, uint32_t samples) = 0;
 
     uint8_t getChannels() const
     {
@@ -41,12 +39,13 @@ public:
     {
         _type = t;
     }
+
 protected:
     uint8_t _numChannels;
     uint32_t _sampleRate;
     ProcessorType _type;
 };
 
-typedef std::list<Processor *> ProcessorChain;
+typedef std::list<Processor*> ProcessorChain;
 
 #endif

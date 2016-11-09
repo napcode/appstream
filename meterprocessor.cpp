@@ -4,7 +4,7 @@
 #include <iostream>
 
 MeterProcessor::MeterProcessor(uint8_t channels, uint32_t samplerate)
-    : Processor(channels, samplerate)
+: Processor(channels, samplerate)
 {
     _v.resize(_numChannels);
     _z1.resize(_numChannels);
@@ -16,9 +16,8 @@ MeterProcessor::MeterProcessor(uint8_t channels, uint32_t samplerate)
 }
 MeterProcessor::~MeterProcessor()
 {
-
 }
-void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
+void MeterProcessor::process(sample_t* in, sample_t* out, uint32_t samples)
 {
     // initPeaks();
     for (uint8_t c = 0; c < _numChannels; ++c) {
@@ -28,16 +27,16 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
         m = _reset[c] ? 0 : _v[c];
         _reset[c] = false;
         //n /= 4;
-        for (uint32_t s = c; s < samples - (_numChannels*3); s += _numChannels) {
-            sample_t *p = in + s;
+        for (uint32_t s = c; s < samples - (_numChannels * 3); s += _numChannels) {
+            sample_t* p = in + s;
             t2 = z2 / 2;
-            t1 = fabsf (*(p) - t2);
+            t1 = fabsf(*( p )-t2);
             z1 += _w * (t1 - z1);
-            t1 = fabsf (*(p + _numChannels) - t2);
+            t1 = fabsf(*(p + _numChannels) - t2);
             z1 += _w * (t1 - z1);
-            t1 = fabsf (*(p + _numChannels*2) - t2);
+            t1 = fabsf(*(p + _numChannels * 2) - t2);
             z1 += _w * (t1 - z1);
-            t1 = fabsf (*(p + _numChannels*3) - t2);
+            t1 = fabsf(*(p + _numChannels * 3) - t2);
             z1 += _w * (t1 - z1);
             z2 += 4 * _w * (z1 - z2);
             if (z2 > m)
@@ -51,7 +50,7 @@ void MeterProcessor::process(sample_t *in, sample_t *out, uint32_t samples)
 }
 void MeterProcessor::initPeaks()
 {
-    for(uint8_t i = 0; i < _numChannels; ++i) {
+    for (uint8_t i = 0; i < _numChannels; ++i) {
         _v[i] = 0.0f;
         _z1[i] = 0.0f;
         _z2[i] = 0.0f;
@@ -60,7 +59,7 @@ void MeterProcessor::initPeaks()
 }
 MeterValues MeterProcessor::getValues()
 {
-    for(uint8_t i = 0; i < _numChannels; ++i) {
+    for (uint8_t i = 0; i < _numChannels; ++i) {
         _reset[i] = true;
         _v[i] = clamp(fabs((_g * _v[i])), 0.0f, 1.0f);
     }

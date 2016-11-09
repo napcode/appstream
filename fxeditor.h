@@ -7,16 +7,16 @@ namespace Ui {
 class FXEditor;
 }
 
-class FXEditor : public QDockWidget
-{
+class FXEditor : public QDockWidget {
     Q_OBJECT
-    
+
 public:
-    explicit FXEditor(QWidget *parent = 0);
+    explicit FXEditor(QWidget* parent = 0);
     ~FXEditor();
     void connectWithProcessor(const CompressorProcessor& cp);
+
 private:
-    Ui::FXEditor *_ui;
+    Ui::FXEditor* _ui;
 };
 
 #endif // FXEDITOR_H

@@ -16,16 +16,14 @@
 /**
  * @brief abstract output type
  */
-class Output : public QThread
-{
-	Q_OBJECT
+class Output : public QThread {
+    Q_OBJECT
 public:
-	enum OutputType
-    {
-    	INVALID,
-    	DEVICE,
-    	STREAM,
-    	FILE
+    enum OutputType {
+        INVALID,
+        DEVICE,
+        STREAM,
+        FILE
     };
     Output();
 
@@ -37,7 +35,7 @@ public:
 
     /* output can be everything. samples or bytes */
     virtual void output(const char* buffer, uint32_t size) = 0;
-    
+
     OutputType getType() const
     {
         return _type;
@@ -51,7 +49,7 @@ public:
         return _encoder;
     }
     /* transfers ownership to Output */
-    void setEncoder(Encoder *e)
+    void setEncoder(Encoder* e)
     {
         delete _encoder;
         _encoder = e;
@@ -65,18 +63,19 @@ signals:
     void message(QString msg) const;
     void warn(QString msg) const;
     void error(QString msg) const;
+
 protected:
     QString _name;
     bool _active;
     OutputType _type;
-    Encoder *_encoder;
-   // uint32_t _blockSize;
-	RingBuffer<sample_t> _inbuffer;
+    Encoder* _encoder;
+    // uint32_t _blockSize;
+    RingBuffer<sample_t> _inbuffer;
 
-	QMutex _work;
+    QMutex _work;
     QWaitCondition _workCondition;
 };
 
-typedef std::list<Output *> OutputList;
+typedef std::list<Output*> OutputList;
 
 #endif
