@@ -13,7 +13,7 @@ ICON = res/app.icns
 TARGET = appStream
 TEMPLATE = app
 CONFIG += debug_and_release
-
+CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
