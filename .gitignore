@@ -6,4 +6,6 @@ qrc_*.*
 appStream
 Makefile
 appStream.pro.user
-
+*.png
+*.mp3
+*.ogg
